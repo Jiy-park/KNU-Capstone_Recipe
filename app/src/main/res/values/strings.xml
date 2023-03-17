@@ -1,5 +1,4 @@
 <resources>
-    <string name="app_name">Capstone_Recipe</string>
-    <!-- TODO: Remove or change this placeholder text -->
+    <string name="app_name">토킹 레시피</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

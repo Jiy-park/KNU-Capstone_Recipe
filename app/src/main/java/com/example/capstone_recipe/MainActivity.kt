@@ -52,4 +52,37 @@ class MainActivity : AppCompatActivity() {
             .replace(R.id.mainFrame, fragment)
             .commit()
     }
+
+    fun replaceFragment(fragmentIndex:FRAGMENTS) {
+        when(fragmentIndex){
+            FRAGMENTS.MAIN->supportFragmentManager
+                .beginTransaction()
+                .replace(R.id.mainFrame, MainFragment())
+                .commit()
+            FRAGMENTS.RECIPE->supportFragmentManager
+                .beginTransaction()
+                .replace(R.id.mainFrame, RecipeFragment())
+                .commit()
+            FRAGMENTS.PROFILE->supportFragmentManager
+                .beginTransaction()
+                .replace(R.id.mainFrame, ProfileFragment())
+                .commit()
+            FRAGMENTS.FRIENDS->supportFragmentManager
+                .beginTransaction()
+                .replace(R.id.mainFrame, FriendsFragment())
+                .commit()
+            FRAGMENTS.SETTING->supportFragmentManager
+                .beginTransaction()
+                .replace(R.id.mainFrame, SettingFragment())
+                .commit()
+        }
+    }
+
+    enum class FRAGMENTS{
+        MAIN,
+        RECIPE,
+        PROFILE,
+        FRIENDS,
+        SETTING
+    }
 }

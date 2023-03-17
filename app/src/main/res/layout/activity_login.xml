@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.sothree.slidinguppanel.SlidingUpPanelLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/slidingLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Login"
+    android:gravity="bottom"
+    app:umanoOverlay="true"
+    app:umanoPanelHeight="0dp"
+    app:umanoFadeColor="@android:color/transparent"
+    app:umanoShadowHeight="0dp">
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/mainFrame"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/style_main_color">
+
+        <ImageView
+            android:id="@+id/ivBackgroundHead"
+            android:layout_width="483dp"
+            android:layout_height="334dp"
+            android:rotation="20"
+            android:src="@drawable/background_head"
+            tools:translationX="-163dp"
+            tools:translationY ="-51dp"
+            tools:ignore="MissingConstraints" />
+
+        <TextView
+            android:id="@+id/tvTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="토킹레시피"
+            android:textSize="40sp"
+            android:textColor="@color/white"
+            android:fontFamily="@font/maple_bold"
+            app:drawableLeftCompat="@drawable/head"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.379" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnSignIn"
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/style_round_button"
+            android:paddingHorizontal="10dp"
+            android:text="로그인"
+            android:fontFamily="@font/kopup_d_bold"
+            android:textColor="@color/main_text"
+            android:textSize="15sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvTitle"
+            app:layout_constraintVertical_bias="0.716" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnSignUp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="1분만에 회원가입"
+            android:textSize="12sp"
+            android:fontFamily="@font/kopup_d_light"
+            android:textColor="@color/white"
+            android:background="@android:color/transparent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/btnSignIn"/>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="500dp"
+        android:orientation="vertical"
+        android:background="@drawable/style_main_color">
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/signIn"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/style_layout_conner"
+            android:padding="40dp"
+            android:visibility="gone">
+            <TextView
+                android:id="@+id/tvLogin"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="로그인"
+                android:fontFamily="@font/kopup_d_bold"
+                android:textColor="@color/main_text"
+                android:textSize="20sp"
+                android:paddingBottom="5dp"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"/>
+
+            <EditText
+                android:id="@+id/editID"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/kopup_d_bold"
+                android:textSize="15sp"
+                android:textColor="@color/main_text"
+                android:backgroundTint="@color/hint_text"
+                android:hint="아이디"
+                android:textColorHint="@color/hint_text"
+                android:drawableLeft="@drawable/ic_profile"
+                android:drawablePadding="15dp"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tvLogin"/>
+
+            <EditText
+                android:id="@+id/editPW"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/kopup_d_bold"
+                android:textSize="15sp"
+                android:textColor="@color/main_text"
+                android:backgroundTint = "@color/hint_text"
+                android:hint="비밀번호"
+                android:textColorHint="@color/hint_text"
+                android:inputType="textPassword"
+                android:drawableLeft="@drawable/ic_lock"
+                android:drawablePadding="15dp"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/editID"/>
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btnSignInSlide"
+                android:layout_width="250dp"
+                android:layout_height="wrap_content"
+                android:background="@drawable/style_main_color_round_button"
+                android:text="로그인"
+                android:textSize="15sp"
+                android:textColor="@color/white"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/editPW"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintVertical_bias="0.2"/>
+            <TextView
+                android:id="@+id/tvSignUpSlide"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="회원가입"
+                android:textColor="@color/main_text"
+                android:textSize="15sp"
+                android:layout_marginTop="10dp"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/btnSignInSlide"/>
+
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/signUp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone">
+            <TextView
+                android:id="@+id/tvSignUp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="회원가입"
+                app:layout_constraintTop_toTopOf="@id/signUp"
+                app:layout_constraintLeft_toLeftOf="@id/signUp"
+                app:layout_constraintRight_toRightOf="@id/signUp"
+                app:layout_constraintBottom_toBottomOf="@id/signUp"/>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </LinearLayout>
+</com.sothree.slidinguppanel.SlidingUpPanelLayout>
