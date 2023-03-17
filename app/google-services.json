@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "123187997955",
+    "firebase_url": "https://knu-capstone-f9f55-default-rtdb.asia-southeast1.firebasedatabase.app/",
+    "project_id": "knu-capstone-f9f55",
+    "storage_bucket": "knu-capstone-f9f55.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:123187997955:android:bc2c8bb5b3208fe9a78d36",
+        "android_client_info": {
+          "package_name": "com.example.capstone_recipe"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "123187997955-opcnfesh99elnj48vfpajqdvkkg64ssp.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAYuVR92KwleZOZ3CRn0vNRIaj7k9gHcc4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "123187997955-opcnfesh99elnj48vfpajqdvkkg64ssp.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
