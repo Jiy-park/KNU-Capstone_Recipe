@@ -1,5 +1,6 @@
 package com.example.capstone_recipe
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -8,9 +9,12 @@ import com.example.capstone_recipe.fragments.*
 
 class MainActivity : AppCompatActivity() {
     private val binding by lazy { ActivityMainBinding.inflate(layoutInflater) }
+    var isLogin = false
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
+        if(!isLogin) { requestSignIn() }
+
         supportFragmentManager
             .beginTransaction()
             .add(R.id.mainFrame, MainFragment())
@@ -43,6 +47,11 @@ class MainActivity : AppCompatActivity() {
                 else -> false
             }
         }
+    }
+
+    private fun requestSignIn(){ // 로그인
+        val intent = Intent(binding.root.context, Login::class.java)
+        startActivity(intent)
     }
 
     // 화면 전환 구현 메소드
