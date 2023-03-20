@@ -1,12 +1,24 @@
 package com.example.capstone_recipe
 
+import android.animation.ObjectAnimator
+import android.animation.TimeInterpolator
 import android.content.Context
+import android.content.Intent
+import android.content.res.Resources
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.provider.Settings.Panel
+import android.util.DisplayMetrics
 import android.util.Log
+import android.util.Property
 import android.view.KeyEvent
 import android.view.View
+import android.view.animation.AccelerateDecelerateInterpolator
+import android.view.animation.AccelerateInterpolator
+import android.view.animation.AlphaAnimation
+import android.view.animation.Animation
+import android.view.animation.Interpolator
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -15,7 +27,11 @@ import com.example.capstone_recipe.dbSchema.User
 import com.google.firebase.database.*
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
+import com.sothree.slidinguppanel.PanelSlideListener
 import com.sothree.slidinguppanel.PanelState
+import render.animations.Attention
+import render.animations.Bounce
+import render.animations.Render
 
 
 class Login : AppCompatActivity() {
@@ -23,18 +39,33 @@ class Login : AppCompatActivity() {
     private val DB by lazy { Firebase.database("https://knu-capstone-f9f55-default-rtdb.asia-southeast1.firebasedatabase.app/") }
     private val usersRef by lazy { DB.getReference("users") }
     private lateinit var context: Context
-
+    private lateinit var render: Render
     private var pressTime = 0L
     private val timeInterval = 1000L
+
     private var idCheck = false
     private var pwCheck = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
         context =  binding.root.context // 컨텍스트 정의
-
         binding.slidingLayout.isTouchEnabled = false // 슬라이딩 패널 터치 잠금
+        render = Render(context)
+
+        binding.slidingLayout.addPanelSlideListener(object :PanelSlideListener { // 패널 올라올 때 토끼 같이 올라옴
+            override fun onPanelSlide(panel: View, slideOffset: Float) {
+                binding.slidingRabbit.translationY =  -(slideOffset * panel.height)
+            }
+            override fun onPanelStateChanged(panel: View, previousState: PanelState, newState: PanelState) { // 토끼 올라오는 조건
+                if(binding.slidingLayout.panelState == PanelState.DRAGGING){
+                    if(previousState == PanelState.COLLAPSED) { binding.slidingRabbit.visibility = View.VISIBLE }
+                    if(previousState == PanelState.ANCHORED) { binding.slidingRabbit.visibility = View.VISIBLE }
+                    if(previousState == PanelState.EXPANDED){ binding.slidingRabbit.visibility = View.GONE }
+                }
+            }
+        })
 
         binding.btnSignIn.setOnClickListener { // 로그인 버튼
             binding.signIn.visibility = View.VISIBLE
@@ -143,17 +174,17 @@ class Login : AppCompatActivity() {
         idRef.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 if (dataSnapshot.exists()) {
-                    if(pw == dataSnapshot.child("pw").value){
-                        Toast.makeText(context, "로그인!", Toast.LENGTH_SHORT).show()
-                        finish()
+                    if(pw == dataSnapshot.child("pw").value){ // 로그인 성공
+//                        Toast.makeText(context, "로그인!", Toast.LENGTH_SHORT).show()
+                        moveToMain()
                     }
-                    else{
+                    else{ // 비밀번호 틀림
                         binding.tvCheckerIDPW.visibility = View.VISIBLE
                         binding.editSignInID.backgroundTintList = ContextCompat.getColorStateList(context, R.color.main_color_start)
                         binding.editSignInPW.backgroundTintList = ContextCompat.getColorStateList(context, R.color.main_color_start)
                     }
                 }
-                else{
+                else{ // 아이디 없음
                     binding.tvCheckerIDPW.visibility = View.VISIBLE
                     binding.editSignInID.backgroundTintList = ContextCompat.getColorStateList(context, R.color.main_color_start)
                     binding.editSignInPW.backgroundTintList = ContextCompat.getColorStateList(context, R.color.main_color_start)
@@ -171,5 +202,18 @@ class Login : AppCompatActivity() {
         signIn(id, pw)
     }
 
+    private fun moveToMain(){ // 로그인
+        val intent = Intent(binding.root.context, MainActivity::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        startActivity(intent)
+
+        startActivity(intent)
+    }
+
+    //    fun convertPixelsToDp(px: Float, context: Context): Float { // px to dp
+//        val resources = context.resources
+//        val metrics: DisplayMetrics = resources.displayMetrics
+//        return px / (metrics.densityDpi.toFloat() / DisplayMetrics.DENSITY_DEFAULT)
+//    }
 }
 

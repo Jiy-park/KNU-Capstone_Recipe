@@ -19,19 +19,36 @@
         android:layout_height="match_parent"
         android:background="@drawable/style_main_color">
 
+<!--        <ImageView-->
+<!--        토끼 머리는 이것을 기억할 것입니다... -->
+<!--            android:id="@+id/ivBackgroundHead"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:adjustViewBounds="true"-->
+<!--            android:rotation="15"-->
+<!--            android:alpha="0.2"-->
+<!--            android:cropToPadding="true"-->
+<!--            android:padding="50dp"-->
+<!--            android:scaleType="fitStart"-->
+<!--            android:scaleX="2"-->
+<!--            android:scaleY="2"-->
+<!--            android:src="@drawable/background_head"-->
+<!--            android:visibility="visible"-->
+<!--            app:layout_constraintCircle="@id/tvTitle"-->
+<!--            app:layout_constraintCircleRadius="170dp"-->
+<!--            app:layout_constraintCircleAngle="330"-->
+<!--            tools:ignore="MissingConstraints" />-->
+
         <ImageView
-            android:id="@+id/ivBackgroundHead"
-            android:layout_width="wrap_content"
+            android:id="@+id/slidingRabbit"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:rotation="20"
-            android:src="@drawable/background_head"
-            android:visibility="gone"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:ignore="MissingConstraints" />
+            android:src="@drawable/sliding_rabbit"
+            android:scaleType="fitEnd"
+            android:visibility="visible"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
 
         <TextView
             android:id="@+id/tvTitle"
@@ -79,10 +96,12 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 <!--    슬라이딩 패널-->
     <LinearLayout
+        android:id="@+id/slidingPanel"
         android:layout_width="match_parent"
         android:layout_height="550dp"
         android:orientation="vertical">
 <!--        로그인 패널-->
+
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/signIn"
             android:layout_width="match_parent"
