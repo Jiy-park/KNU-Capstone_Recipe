@@ -1,28 +1,86 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/mainFrame"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@+id/bottomNavi"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <com.google.android.material.bottomnavigation.BottomNavigationView
-        android:id="@+id/bottomNavi"
+    tools:context=".MainActivity"
+    android:orientation="vertical"
+    android:weightSum="13">
+    <!--    최상단 패널-->
+    <include layout="@layout/common_top_panel"
+        android:id="@+id/topPanel" />
+    <!--    카드뷰 패널-->
+    <include layout="@layout/common_profile_panel"
+        android:id="@+id/profilePanel"/>
+    <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:itemRippleColor="@android:color/transparent"
-        app:labelVisibilityMode="labeled"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:menu="@menu/main_menu"/>
-</androidx.constraintlayout.widget.ConstraintLayout>
+        android:text="오늘은 어떤 요리를 해볼까요?"
+        android:textColor="@color/main_text"
+        android:fontFamily="@font/kopup_d_bold"
+        android:padding="15dp"
+        android:textSize="20sp"
+        app:drawableStartCompat="@drawable/ic_quot" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:paddingHorizontal="15dp">
+        <androidx.constraintlayout.widget.Group
+            android:id="@+id/groupLocker"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:elevation="1dp"
+            android:layout_marginEnd="7.5dp"
+            app:constraint_referenced_ids="layerLocker"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/groupCreate"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintHorizontal_weight="1"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"/>
+
+        <androidx.constraintlayout.widget.Group
+            android:id="@+id/groupCreate"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:elevation="1dp"
+            android:layout_marginStart="7.5dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintHorizontal_weight="1"
+            app:layout_constraintStart_toEndOf="@+id/groupLocker"
+            app:layout_constraintTop_toTopOf="parent"/>
+
+        <include layout="@layout/common_locker_recipe"
+            android:id="@+id/layerLocker"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginEnd="7.5dp"
+            app:constraint_referenced_ids="layerLocker"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/layerCreate"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintHorizontal_weight="1"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"/>
+
+        <include layout="@layout/common_create_recipe"
+            android:id="@+id/layerCreate"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginStart="7.5dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintHorizontal_weight="1"
+            app:layout_constraintStart_toEndOf="@+id/layerLocker"
+            app:layout_constraintTop_toTopOf="parent"/>
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+</LinearLayout>

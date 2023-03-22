@@ -54,6 +54,8 @@ class Login : AppCompatActivity() {
         binding.slidingLayout.isTouchEnabled = false // 슬라이딩 패널 터치 잠금
         render = Render(context)
 
+
+        setupFocusChangeListeners()
         binding.slidingLayout.addPanelSlideListener(object :PanelSlideListener { // 패널 올라올 때 토끼 같이 올라옴
             override fun onPanelSlide(panel: View, slideOffset: Float) {
                 binding.slidingRabbit.translationY =  -(slideOffset * panel.height)
@@ -88,13 +90,37 @@ class Login : AppCompatActivity() {
             }, 400)
         }
 
-        binding.editSignUpID.setOnFocusChangeListener { _, hasFocus -> // 회원가입 아이디 중복 체크
-            if(!hasFocus) { checkUserID(binding.editSignUpID.text.toString()) }
-        }
+//        binding.editSignUpID.setOnFocusChangeListener { _, hasFocus -> // 회원가입 패널 아이디 포커스 관리 + 아이디 중복 체크
+//            if(hasFocus) { binding.slidingRabbit.setImageResource(R.drawable.login_2)  }
+//            else {
+//                binding.slidingRabbit.setImageResource(R.drawable.login_1)
+//                checkUserID(binding.editSignUpID.text.toString())
+//            }
+//        }
+//
+//        binding.editSignUpPWCheck.setOnFocusChangeListener { _, hasFocus -> // 회원가입 패널 비밀번호 확인 포커스 관리 + 비번 기입 체크
+//            if(hasFocus) { binding.slidingRabbit.setImageResource(R.drawable.login_3) }
+//            if(!hasFocus) {
+//                binding.slidingRabbit.setImageResource(R.drawable.login_1)
+//                checkPW()
+//            }
+//        }
+//
+//        binding.editSignUpPW.setOnFocusChangeListener { _, hasFocus ->  // 회원가입 패널 비밀번호 포커스 관리
+//            if(hasFocus) { binding.slidingRabbit.setImageResource(R.drawable.login_3) }
+//            else { binding.slidingRabbit.setImageResource(R.drawable.login_1) }
+//        }
+//
+//        binding.editSignInID.setOnFocusChangeListener { _, hasFocus ->
+//            if(hasFocus) { binding.slidingRabbit.setImageResource(R.drawable.login_2) }
+//            else { binding.slidingRabbit.setImageResource(R.drawable.login_1) }
+//        }
+//
+//        binding.editSignInPW.setOnFocusChangeListener { _, hasFocus ->
+//            if(hasFocus) { binding.slidingRabbit.setImageResource(R.drawable.login_3) }
+//            else { binding.slidingRabbit.setImageResource(R.drawable.login_1) }
+//        }
 
-        binding.editSignUpPWCheck.setOnFocusChangeListener { _, hasFocus -> // 비밀번호 입력 확인
-            if(!hasFocus) { checkPW() }
-        }
 
         binding.btnSlideSignIn.setOnClickListener {// 로그인 패널 내 로그인 버튼
             val id = binding.editSignInID.text.toString()
@@ -113,6 +139,40 @@ class Login : AppCompatActivity() {
         binding.tvSignInPanel.setOnClickListener { binding.slidingLayout.panelState = PanelState.COLLAPSED }
         binding.tvSignUpPanel.setOnClickListener { binding.slidingLayout.panelState = PanelState.COLLAPSED  }
     }
+
+    private fun setupFocusChangeListeners() {
+        val editSignUpID = binding.editSignUpID
+        val editSignUpPWCheck = binding.editSignUpPWCheck
+        val editSignUpPW = binding.editSignUpPW
+        val editSignInID = binding.editSignInID
+        val editSignInPW = binding.editSignInPW
+
+        val onFocusChanged: (View, Boolean) -> Unit = { view, hasFocus ->
+            val slidingRabbit = binding.slidingRabbit
+            slidingRabbit.setImageResource(
+                when {
+                    hasFocus && (view == binding.editSignUpID  || view == editSignInID) ->
+                        R.drawable.login_2
+                    hasFocus && (view == editSignUpPWCheck || view == editSignUpPW || view == editSignInPW) ->
+                        R.drawable.login_3
+                    else -> R.drawable.login_1
+                }
+            )
+
+            if (!hasFocus && view == editSignUpID) {
+                checkUserID(editSignUpID.text.toString())
+            } else if (!hasFocus && view == editSignUpPWCheck) {
+                checkPW()
+            }
+        }
+
+        editSignUpID.setOnFocusChangeListener(onFocusChanged)
+        editSignUpPWCheck.setOnFocusChangeListener(onFocusChanged)
+        editSignUpPW.setOnFocusChangeListener(onFocusChanged)
+        editSignInID.setOnFocusChangeListener(onFocusChanged)
+        editSignInPW.setOnFocusChangeListener(onFocusChanged)
+    }
+
 
     private fun checkUserID(userID:String){
         val idRef = usersRef.child(userID)
@@ -139,7 +199,7 @@ class Login : AppCompatActivity() {
     private fun checkPW(){
         val pw1 = binding.editSignUpPW.text.toString()
         val pw2 = binding.editSignUpPWCheck.text.toString()
-        if(pw1 == pw2){ // 제대로 함
+        if((pw1 == pw2) && pw1.isNotEmpty() && pw2.isNotEmpty()){ // 제대로 함
             binding.tvCheckerPW.visibility = View.GONE
             binding.editSignUpPW.backgroundTintList = ContextCompat.getColorStateList(context, R.color.hint_text)
             binding.editSignUpPWCheck.backgroundTintList = ContextCompat.getColorStateList(context, R.color.hint_text)

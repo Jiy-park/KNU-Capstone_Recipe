@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/layerLocker"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="15dp"
+    android:background="@drawable/style_round_button"
+    android:backgroundTint="@color/main_color_start">
+
+    <ImageView
+        android:id="@+id/ivLockerImage"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_gravity="right"
+        android:scaleType="fitEnd"
+        android:src="@drawable/ic_locker_recipe"/>
+    <TextView
+        android:id="@+id/tvLockerName"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:text="보관함"
+        android:textSize="25sp"
+        android:textColor="@color/white"
+        android:fontFamily="@font/kopup_d_bold"/>
+    <TextView
+        android:id="@+id/tvLockerDetail"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:text="이전에 만든 레시피나 저장해둔 레시피를 확인해보세요."
+        android:textSize="10sp"
+        android:textColor="@color/white"
+        android:fontFamily="@font/kopup_d_light"/>
+</LinearLayout>

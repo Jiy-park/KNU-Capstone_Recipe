@@ -57,4 +57,7 @@ dependencies {
 
     //뷰 애니메이션 :: https://github.com/gayanvoice/android-animations-kotlin
     implementation 'com.github.gayanvoice:android-animations-kotlin:1.0.1'
+
+    //카드뷰
+    implementation 'androidx.cardview:cardview:1.0.0'
 }
