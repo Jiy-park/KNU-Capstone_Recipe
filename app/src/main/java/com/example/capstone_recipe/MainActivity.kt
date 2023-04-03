@@ -1,15 +1,25 @@
 package com.example.capstone_recipe
 
+import android.Manifest
 import android.content.Context
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.KeyEvent
+import android.view.LayoutInflater
+import android.widget.TextView
 import android.widget.Toast
-import androidx.fragment.app.Fragment
+import androidx.activity.result.contract.ActivityResultContracts
 import com.example.capstone_recipe.databinding.ActivityMainBinding
+import com.example.capstone_recipe.dialog.DIALOG_SIZE
+import com.example.capstone_recipe.dialog.DeveloperInfo
+import com.example.capstone_recipe.dialog.DialogFunc
+import com.example.capstone_recipe.dialog.DialogInterface
 
 class MainActivity : AppCompatActivity() {
+
+
+
     private val binding by lazy { ActivityMainBinding.inflate(layoutInflater) }
     private lateinit var context: Context
 
@@ -21,11 +31,19 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
         context = binding.root.context
 
-        binding.groupCreate.setOnClickListener {
+        binding.layerCreate.groupCreate.setOnClickListener {
             Toast.makeText(context, "create", Toast.LENGTH_SHORT).show()
         }
-        binding.groupLocker.setOnClickListener {
-            Toast.makeText(context, "locker", Toast.LENGTH_SHORT).show()
+        binding.topPanel.btnSetting.setOnClickListener {
+            DialogFunc.settingDialog(context)
+        }
+        binding.layerLocker.groupLocker.setOnClickListener {
+            val intent = Intent(context, RecipeLocker::class.java)
+            startActivity(intent)
+        }
+        binding.layerCreate.groupCreate.setOnClickListener {
+            val intent = Intent(context, RecipeCreate::class.java)
+            startActivity(intent)
         }
     }
 

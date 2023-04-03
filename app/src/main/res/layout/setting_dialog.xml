@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="250dp"
+    android:paddingTop="20dp"
+    android:orientation="vertical">
+    <LinearLayout
+        android:id="@+id/linearTop"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+<!--        읽어주기-->
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="7"
+            android:drawableLeft="@drawable/ic_speaking"
+            android:drawablePadding="15dp"
+            android:fontFamily="@font/kopup_d_medium"
+            android:text="읽어주기"
+            android:textColor="@color/main_text"
+            android:gravity="center|start"/>
+        <Switch
+            android:id="@+id/switchSpeak"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="3"
+            android:checked="false"
+            android:thumb="@drawable/style_switch_thumb_selector"
+            android:track="@drawable/style_switch_track_selector"
+            tools:ignore="UseSwitchCompatOrMaterialXml" />
+    </LinearLayout>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginVertical="5dp"
+        android:background="?android:attr/listDivider" />
+<!--    음성인식-->
+    <LinearLayout
+        android:id="@+id/linearMid"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="7"
+            android:drawableLeft="@drawable/ic_mic"
+            android:drawablePadding="15dp"
+            android:fontFamily="@font/kopup_d_medium"
+            android:text="음성인식"
+            android:textColor="@color/main_text"
+            android:gravity="center|start"/>
+        <Switch
+            android:id="@+id/switchListen"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="3"
+            android:checked="false"
+            android:thumb="@drawable/style_switch_thumb_selector"
+            android:track="@drawable/style_switch_track_selector"
+            tools:ignore="UseSwitchCompatOrMaterialXml" />
+    </LinearLayout>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginVertical="5dp"
+        android:background="?android:attr/listDivider" />
+<!--    팝업메시지-->
+    <LinearLayout
+        android:id="@+id/linearBottom"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="7"
+            android:drawableLeft="@drawable/ic_noti"
+            android:drawablePadding="15dp"
+            android:fontFamily="@font/kopup_d_medium"
+            android:text="팝업메시지 설정"
+            android:textColor="@color/main_text"
+            android:gravity="center|start"/>
+        <Switch
+            android:id="@+id/switchMSG"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="3"
+            android:checked="false"
+            android:thumb="@drawable/style_switch_thumb_selector"
+            android:track="@drawable/style_switch_track_selector"
+            tools:ignore="UseSwitchCompatOrMaterialXml" />
+    </LinearLayout>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginVertical="5dp"
+        android:background="?android:attr/listDivider" />
+    <TextView
+        android:id="@+id/tvDeveloperInfo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingTop="10dp"
+        android:layout_gravity="end"
+        android:text="개발자 정보"
+        android:fontFamily="@font/kopup_d_medium"
+        android:textColor="@color/main_text"/>
+</LinearLayout>

@@ -15,4 +15,5 @@
     <color name="hint_text">#DADADA</color>
     <color name="main_color_start">#FF6D89</color>
     <color name="main_color_end">#FFB7A4</color>
+    <color name="background_gray">#EEEEEE</color>
 </resources>

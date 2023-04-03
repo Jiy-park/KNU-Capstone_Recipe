@@ -1,3 +1,59 @@
 <resources>
+    <string name="title_activity_login">LoginActivity</string>
+    <string name="prompt_email">Email</string>
+    <string name="prompt_password">Password</string>
+    <string name="action_sign_in">Sign in or register</string>
+    <string name="action_sign_in_short">Sign in</string>
+    <string name="welcome">"Welcome !"</string>
+    <string name="invalid_username">Not a valid username</string>
+    <string name="invalid_password">Password must be >5 characters</string>
+    <string name="login_failed">"Login failed"</string>
+
+
+
+
     <string name="app_name">토킹레시피</string>
+    <string name="login">로그인</string>
+    <string name="signup_in_1min">1분만에 회원가입</string>
+    <string name="id">아이디</string>
+    <string name="pw">비밀번호</string>
+    <string name="error__wrong_id_or_pw">아이디 또는 비밀번호를 잘못 입력했습니다.</string>
+    <string name="signup">회원가입</string>
+    <string name="error__already_using_id">이미 사용중인 아이디입니다.</string>
+    <string name="pw_check">비밀번호 확인</string>
+    <string name="error__wrong_pw">비밀번호가 동일하지 않습니다.</string>
+    <string name="user_name">닉네임</string>
+    <string name="complete_signup">가입완료</string>
+    <string name="login_with_SNS">SNS로 로그인</string>
+    <string name="test_id">qq</string>
+    <string name="test_pw">q</string>
+    <string name="today_sentence">오늘은 어떤 요리를 해볼까요?:D</string>
+    <string name="prev">이전</string>
+    <string name="next">다음</string>
+    <string name="test_locker_master">퍼팬의 레시피 보관함</string>
+    <string name="question_cooking_time">얼마나 걸리나요?</string>
+    <string name="min">분</string>
+    <string name="recipe_created_by_master">내가 만든 레시피</string>
+    <string name="wide">펼치기</string>
+    <string name="test_profile_name">퍼팬 @perphenim</string>
+    <string name="test_friends_count">친구 16</string>
+    <string name="test_write_post_count">작성글 61</string>
+    <string name="test_like_count">추천 11</string>
+    <string name="ingredient_name">재료 이름</string>
+    <string name="require_amount">필요량</string>
+    <string name="test_post_title">퍼팬 님의 요리</string>
+    <string name="recipe_create">레시피 만들기</string>
+    <string name="create">만들기</string>
+    <string name="create_sentence">새로운 나만의 레시피를 만들어 모두에게 공유해보세요.</string>
+    <string name="developer_info">개발자 정보</string>
+    <string name="developer_JiY">박지용</string>
+    <string name="developer_LHJ">이현진</string>
+    <string name="developer_LHJ_">이희종</string>
+    <string name="developer_LHY">임효영</string>
+    <string name="okok">알겠어요;;</string>
+    <string name="test_tile">TEST_TILE</string>
+    <string name="ok">확인</string>
+    <string name="cancel">취소</string>
+    <string name="title">제목</string>
+    <!-- TODO: Remove or change this placeholder text -->
 </resources>

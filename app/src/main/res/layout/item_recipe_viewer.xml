@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/tableRecipeViewer"
+    android:layout_width="match_parent"
+    android:layout_height="140dp"
+    android:orientation="horizontal"
+    android:layout_marginBottom="10dp"
+    android:weightSum="3">
+    <include layout="@layout/common_recipe_viewer"
+        android:id="@+id/ivRecipeThumbnail11"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:layout_marginEnd="5dp"
+        android:visibility="visible"/>
+    <include layout="@layout/common_recipe_viewer"
+        android:id="@+id/ivRecipeThumbnail22"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:layout_marginStart="5dp"
+        android:layout_marginEnd="5dp"/>
+    <include layout="@layout/common_recipe_viewer"
+        android:id="@+id/ivRecipeThumbnail33"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:layout_marginStart="5dp"/>
+</LinearLayout>

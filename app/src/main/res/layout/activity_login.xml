@@ -17,7 +17,8 @@
         android:id="@+id/mainFrame"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@drawable/style_main_color">
+        android:background="@drawable/style_main_color"
+        tools:ignore="VisualLintBounds">
 
 <!--        <ImageView-->
 <!--        토끼 머리는 이것을 기억할 것입니다... -->
@@ -48,22 +49,24 @@
             android:visibility="gone"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"/>
+            app:layout_constraintBottom_toBottomOf="parent"
+            tools:ignore="ContentDescription" />
 
         <TextView
             android:id="@+id/tvTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/app_name"
-            android:textSize="40sp"
-            android:textColor="@color/white"
             android:fontFamily="@font/maple_bold"
+            android:text="@string/app_name"
+            android:textColor="@color/white"
+            android:textSize="40sp"
             app:drawableLeftCompat="@drawable/head_outline"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.379" />
+            app:layout_constraintVertical_bias="0.379"
+            tools:ignore="TextContrastCheck" />
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btnSignIn"
@@ -71,7 +74,7 @@
             android:layout_height="wrap_content"
             android:background="@drawable/style_round_button"
             android:paddingHorizontal="10dp"
-            android:text="로그인"
+            android:text="@string/login"
             android:fontFamily="@font/kopup_d_bold"
             android:textColor="@color/main_text"
             android:textSize="15sp"
@@ -85,23 +88,24 @@
             android:id="@+id/btnSignUp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="1분만에 회원가입"
-            android:textSize="12sp"
-            android:fontFamily="@font/kopup_d_light"
-            android:textColor="@color/white"
             android:background="@android:color/transparent"
+            android:fontFamily="@font/kopup_d_light"
+            android:text="@string/signup_in_1min"
+            android:textColor="@color/white"
+            android:textSize="12sp"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/btnSignIn"/>
+            app:layout_constraintTop_toBottomOf="@id/btnSignIn"
+            tools:ignore="TextContrastCheck" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 <!--    슬라이딩 패널-->
     <LinearLayout
         android:id="@+id/slidingPanel"
         android:layout_width="match_parent"
         android:layout_height="550dp"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        tools:ignore="VisualLintBounds">
 <!--        로그인 패널-->
-
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/signIn"
             android:layout_width="match_parent"
@@ -113,7 +117,7 @@
                 android:id="@+id/tvSignInPanel"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="로그인"
+                android:text="@string/login"
                 android:fontFamily="@font/kopup_d_bold"
                 android:textColor="@color/main_text"
                 android:textSize="20sp"
@@ -132,14 +136,17 @@
                 android:textSize="15sp"
                 android:textColor="@color/main_text"
                 android:backgroundTint="@color/hint_text"
-                android:hint="아이디"
+                android:text="@string/test_id"
+                android:hint="@string/id"
                 android:textColorHint="@color/hint_text"
                 android:drawableStart="@drawable/ic_profile"
                 android:drawablePadding="15dp"
                 android:singleLine="true"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tvSignInPanel"/>
+                app:layout_constraintTop_toBottomOf="@id/tvSignInPanel"
+                android:inputType="text"
+                android:importantForAutofill="no" />
 
             <EditText
                 android:id="@+id/editSignInPW"
@@ -149,20 +156,22 @@
                 android:textSize="15sp"
                 android:textColor="@color/main_text"
                 android:backgroundTint = "@color/hint_text"
-                android:hint="비밀번호"
+                android:text="@string/test_pw"
+                android:hint="@string/pw"
                 android:textColorHint="@color/hint_text"
                 android:inputType="textPassword"
                 android:drawableStart="@drawable/ic_lock"
                 android:drawablePadding="15dp"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/editSignInID"/>
+                app:layout_constraintTop_toBottomOf="@id/editSignInID"
+                android:importantForAutofill="no" />
 
             <TextView
                 android:id="@+id/tvCheckerIDPW"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="아이디 또는 비밀번호를 잘못 입력했습니다."
+                android:text="@string/error__wrong_id_or_pw"
                 android:fontFamily="@font/kopup_d_light"
                 android:textColor="@color/main_color_start"
                 android:textSize="11sp"
@@ -179,7 +188,7 @@
                 android:layout_width="250dp"
                 android:layout_height="wrap_content"
                 android:background="@drawable/style_main_color_round_button"
-                android:text="로그인"
+                android:text="@string/login"
                 android:textSize="15sp"
                 android:textColor="@color/white"
                 app:layout_constraintLeft_toLeftOf="parent"
@@ -191,7 +200,7 @@
                 android:id="@+id/tvSlideSignUp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="회원가입"
+                android:text="@string/signup"
                 android:textColor="@color/main_text"
                 android:textSize="15sp"
                 android:layout_marginTop="10dp"
@@ -211,7 +220,7 @@
                 android:id="@+id/tvSignUpPanel"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="회원가입"
+                android:text="@string/signup"
                 android:fontFamily="@font/kopup_d_bold"
                 android:textColor="@color/main_text"
                 android:textSize="20sp"
@@ -229,20 +238,22 @@
                 android:textSize="15sp"
                 android:textColor="@color/main_text"
                 android:backgroundTint="@color/hint_text"
-                android:hint="아이디"
+                android:hint="@string/id"
                 android:textColorHint="@color/hint_text"
                 android:drawableStart="@drawable/ic_profile"
                 android:drawablePadding="15dp"
                 android:singleLine="true"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tvSignUpPanel"/>
+                app:layout_constraintTop_toBottomOf="@id/tvSignUpPanel"
+                android:inputType="text"
+                android:importantForAutofill="no" />
 
             <TextView
                 android:id="@+id/tvCheckerID"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="이미 사용중인 아이디입니다."
+                android:text="@string/error__already_using_id"
                 android:fontFamily="@font/kopup_d_light"
                 android:textColor="@color/main_color_start"
                 android:textSize="11sp"
@@ -262,14 +273,15 @@
                 android:textSize="15sp"
                 android:textColor="@color/main_text"
                 android:backgroundTint = "@color/hint_text"
-                android:hint="비밀번호"
+                android:hint="@string/pw"
                 android:textColorHint="@color/hint_text"
                 android:inputType="textPassword"
                 android:drawableStart="@drawable/ic_lock"
                 android:drawablePadding="15dp"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tvCheckerID"/>
+                app:layout_constraintTop_toBottomOf="@id/tvCheckerID"
+                android:importantForAutofill="no" />
 
             <EditText
                 android:id="@+id/editSignUpPWCheck"
@@ -279,20 +291,21 @@
                 android:textSize="15sp"
                 android:textColor="@color/main_text"
                 android:backgroundTint = "@color/hint_text"
-                android:hint="비밀번호 확인"
+                android:hint="@string/pw_check"
                 android:textColorHint="@color/hint_text"
                 android:inputType="textPassword"
                 android:drawableStart="@drawable/ic_check"
                 android:drawablePadding="15dp"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/editSignUpPW"/>
+                app:layout_constraintTop_toBottomOf="@id/editSignUpPW"
+                android:importantForAutofill="no" />
 
             <TextView
                 android:id="@+id/tvCheckerPW"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="비밀번호가 동일하지 않습니다."
+                android:text="@string/error__wrong_pw"
                 android:fontFamily="@font/kopup_d_light"
                 android:textColor="@color/main_color_start"
                 android:textSize="11sp"
@@ -312,21 +325,23 @@
                 android:textSize="15sp"
                 android:textColor="@color/main_text"
                 android:backgroundTint = "@color/hint_text"
-                android:hint="닉네임"
+                android:hint="@string/user_name"
                 android:textColorHint="@color/hint_text"
                 android:singleLine="true"
                 android:drawableStart="@drawable/head_fill"
                 android:drawablePadding="15dp"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tvCheckerPW"/>
+                app:layout_constraintTop_toBottomOf="@id/tvCheckerPW"
+                android:inputType="text"
+                android:importantForAutofill="no" />
 
             <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/btnSignUpSlide"
                 android:layout_width="250dp"
                 android:layout_height="wrap_content"
                 android:background="@drawable/style_main_color_round_button"
-                android:text="가입완료"
+                android:text="@string/complete_signup"
                 android:textSize="15sp"
                 android:textColor="@color/white"
                 app:layout_constraintLeft_toLeftOf="parent"
@@ -338,7 +353,7 @@
                 android:layout_width="250dp"
                 android:layout_height="wrap_content"
                 android:background="@drawable/style_stroke_round_button"
-                android:text="SNS로 로그인"
+                android:text="@string/login_with_SNS"
                 android:textSize="15sp"
                 android:textColor="@color/main_color_start"
                 android:layout_marginTop="5dp"

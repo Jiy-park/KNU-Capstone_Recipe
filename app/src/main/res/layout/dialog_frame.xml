@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+
+    tools:layout_gravity="center"
+    tools:background="#1E3322"
+
+    android:layout_width="300dp"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:clipToOutline="true"
+    tools:ignore="UnusedAttribute">
+
+<!--    상단 토끼 이미지-->
+    <ImageView
+        android:id="@+id/iv"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:src="@drawable/login_2"
+        android:scaleType="fitEnd"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        tools:ignore="ContentDescription" />
+<!--    다이얼로그-->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:paddingTop="20dp"
+        android:paddingHorizontal="20dp"
+        android:paddingBottom="10dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/iv"
+        android:background="@drawable/style_round_button"
+        android:clipToOutline="true">
+<!--        다이얼로그 타이틀바-->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/layerDialogTitle"
+            android:layout_width="260dp"
+            android:layout_height="wrap_content"
+            android:paddingVertical="10dp">
+
+            <TextView
+                android:id="@+id/tvDialogTitle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/kopup_d_medium"
+                android:text="@string/test_tile"
+                android:textColor="@color/main_text"
+                android:textSize="20sp"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toLeftOf="@id/ivDialogTopClose"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/ivDialogTopClose"
+                android:layout_width="30dp"
+                android:layout_height="0dp"
+                android:src="@drawable/ic_close"
+                android:visibility="visible"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintRight_toRightOf="parent"/>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+<!--        다이얼로그 메인 콘텐츠-->
+        <LinearLayout
+            android:id="@+id/layerDialogMainContent"
+            android:layout_width="match_parent"
+            android:layout_height="150dp"
+            android:orientation="vertical">
+        </LinearLayout>
+<!--        다이얼로그 하단 버튼-->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btnDialogOK"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@color/white"
+                android:fontFamily="@font/kopup_d_medium"
+                android:text="@string/ok"
+                android:textColor="#F06292"
+                android:textSize="20sp" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btnDialogCancel"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@color/white"
+                android:fontFamily="@font/kopup_d_medium"
+                android:text="@string/cancel"
+                android:textColor="#F06292"
+                android:textSize="20sp" />
+        </LinearLayout>
+    </LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/constraintLayout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingHorizontal="15dp">
+    <!--    상단 부분-->
+    <LinearLayout
+        android:id="@+id/layerDefaultMode"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent">
+        <TextView
+            android:id="@+id/tvRecipeLockerName"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="10"
+            android:text="내가 만든 레시피"
+            android:textColor="@color/main_text"
+            android:fontFamily="@font/kopup_d_medium"
+            android:textSize="15sp"/>
+        <TextView
+            android:id="@+id/tvCollapseToggle"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="2"
+            android:gravity="center"
+            android:text="펼치기"
+            android:textColor="@color/main_text"
+            android:fontFamily="@font/kopup_d_medium"
+            android:textSize="12sp"
+            android:drawableRight="@drawable/ic_arrow_right"/>
+    </LinearLayout>
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerviewAccordion"
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:visibility="visible"
+        android:nestedScrollingEnabled="false"/>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="30dp"
+        android:background="?android:attr/listDivider"/>
+</LinearLayout>

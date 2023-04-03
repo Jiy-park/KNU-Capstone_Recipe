@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/layerCreate"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="15dp"
+    android:background="@drawable/style_round_button"
+    android:backgroundTint="@color/main_color_end">
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/groupCreate"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:constraint_referenced_ids="ivCreateImage, tvCreateName, tvCreateDetail"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/ivCreateImage"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_gravity="right"
+        android:layout_weight="1"
+        android:scaleType="fitEnd"
+        android:src="@drawable/ic_create_recipe"
+        app:layout_constraintBottom_toTopOf="@+id/tvCreateName"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="ContentDescription,RtlHardcoded,ImageContrastCheck" />
+
+    <TextView
+        android:id="@+id/tvCreateName"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:fontFamily="@font/kopup_d_bold"
+        android:text="@string/create"
+        android:textColor="@color/white"
+        android:textSize="25sp"
+        app:layout_constraintBottom_toTopOf="@+id/tvCreateDetail"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/ivCreateImage"
+        tools:ignore="TextContrastCheck" />
+
+    <TextView
+        android:id="@+id/tvCreateDetail"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:fontFamily="@font/kopup_d_light"
+        android:text="@string/create_sentence"
+        android:textColor="@color/white"
+        android:textSize="11sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvCreateName"
+        tools:ignore="TextContrastCheck" />
+</androidx.constraintlayout.widget.ConstraintLayout>

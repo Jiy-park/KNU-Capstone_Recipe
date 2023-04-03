@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".RecipeLocker">
+<!--    최상단 패널-->
+    <include layout="@layout/common_top_panel_sub"
+        android:id="@+id/layerTopPanel"/>
+
+<!--    보관함 이름-->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="15dp">
+        <TextView
+            android:id="@+id/tvLockerMaster"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:drawablePadding="5dp"
+            android:text="@string/test_locker_master"
+            android:textColor="@color/main_text"
+            android:fontFamily="@font/kopup_d_bold"
+            android:textSize="20sp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toLeftOf="@id/btnEditLockerMaster"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+
+        <androidx.appcompat.widget.AppCompatImageButton
+            android:id="@+id/btnEditLockerMaster"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:background="@color/white"
+            android:minWidth="48dp"
+            android:src="@drawable/ic_create"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:ignore="SpeakableTextPresentCheck,ImageContrastCheck,TouchTargetSizeCheck" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerviewRecipeHolder"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+
+</LinearLayout>

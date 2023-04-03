@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingHorizontal="15dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+<!--    상단 부분-->
+    <LinearLayout
+        android:id="@+id/layerDefaultMode"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent">
+
+        <TextView
+            android:id="@+id/tvRecipeLockerName"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="10"
+            android:fontFamily="@font/kopup_d_medium"
+            android:text="@string/recipe_created_by_master"
+            android:textColor="@color/main_text"
+            android:textSize="15sp"
+            tools:ignore="TextContrastCheck" />
+
+        <TextView
+            android:id="@+id/tvCollapseToggle"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="2"
+            android:fontFamily="@font/kopup_d_medium"
+            android:gravity="center"
+            android:text="@string/wide"
+            android:textColor="@color/main_text"
+            android:textSize="12sp"
+            app:drawableRightCompat="@drawable/ic_arrow_right"
+            tools:ignore="TextContrastCheck" />
+    </LinearLayout>
+<!--    레시피 보이는 부분-->
+    <LinearLayout
+        android:id="@+id/tableRecipeViewer"
+        android:layout_width="match_parent"
+        android:layout_height="120dp"
+        android:orientation="horizontal"
+        android:weightSum="4"
+        app:layout_constraintTop_toBottomOf="@id/layerDefaultMode"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:baselineAligned="false">
+        <include layout="@layout/common_recipe_viewer"
+            android:id="@+id/ivRecipeThumbnail11"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:layout_marginEnd="5dp"/>
+        <include layout="@layout/common_recipe_viewer"
+            android:id="@+id/ivRecipeThumbnail22"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:layout_marginStart="5dp"
+            android:layout_marginEnd="5dp"/>
+        <include layout="@layout/common_recipe_viewer"
+            android:id="@+id/ivRecipeThumbnail33"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:layout_marginStart="5dp"
+            android:layout_marginEnd="5dp"/>
+        <include layout="@layout/common_recipe_viewer"
+            android:id="@+id/ivRecipeThumbnail44"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:layout_marginStart="5dp"/>
+    </LinearLayout>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:layout_marginVertical="10dp"
+        android:background="?android:attr/listDivider"
+        app:layout_constraintTop_toBottomOf="@+id/tableRecipeViewer"/>
+</androidx.constraintlayout.widget.ConstraintLayout>

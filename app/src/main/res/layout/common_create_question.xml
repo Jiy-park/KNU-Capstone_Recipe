@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/tvQuestion"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/kopup_d_medium"
+        android:gravity="center|start"
+        android:text="@string/question_cooking_time"
+        android:textColor="@color/main_text"
+        android:textSize="15sp"
+        tools:ignore="TextContrastCheck" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="@drawable/style_round_10">
+
+        <EditText
+            android:id="@+id/editAnswer"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="8"
+            android:backgroundTint="@color/background_gray"
+            android:importantForAutofill="no"
+            android:inputType="number"
+            android:paddingStart="8dp"
+            tools:ignore="LabelFor,RtlSymmetry,SpeakableTextPresentCheck,TouchTargetSizeCheck,VisualLintTextFieldSize" />
+
+        <TextView
+            android:id="@+id/tvUnit"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="2"
+            android:gravity="center"
+            android:text="@string/min"
+            tools:ignore="TextContrastCheck" />
+    </LinearLayout>
+</LinearLayout>
