@@ -20,12 +20,12 @@ import com.example.capstone_recipe.data_class.RecipeBasicInfo
 import com.example.capstone_recipe.data_class.RecipeIngredient
 import com.example.capstone_recipe.databinding.FragmentRecipeCreateStepFirstBinding
 
-class RecipeCreateStepFirst(_ingredientList: MutableList<RecipeIngredient>, _recipeBasicInfo: RecipeBasicInfo) : Fragment() {
+class RecipeCreateStepFirst(private val ingredientList: MutableList<RecipeIngredient>, private val recipeBasicInfo: RecipeBasicInfo) : Fragment() {
+    // ingredientList -> 재료 리스트
+    // recipeBasicInfo -> 레시피 기본 정보
     private lateinit var binding:FragmentRecipeCreateStepFirstBinding
     private lateinit var context:Context
     private val ingredientIdList = mutableListOf<Int>() // 재료 추가 뷰 아이디 저장용 리스트
-    private var ingredientList = _ingredientList    // 재료 리스트
-    private var recipeBasicInfo = _recipeBasicInfo  // 레시피 기본 정보
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = FragmentRecipeCreateStepFirstBinding.inflate(inflater, container, false)

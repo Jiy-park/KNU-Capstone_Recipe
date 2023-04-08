@@ -14,9 +14,8 @@ import com.example.capstone_recipe.data_class.RecipeStep
 import com.example.capstone_recipe.databinding.ItemCreateExplainationBinding
 import com.example.capstone_recipe.dialog.DialogFunc
 
-class ExplanationAdapter(_createStepList: MutableList<RecipeStep>, var parent: RecipeCreateStepSecond): RecyclerView.Adapter<ExplanationAdapter.Holder>() {
+class ExplanationAdapter(private val createStepList: MutableList<RecipeStep>, private val parent: RecipeCreateStepSecond): RecyclerView.Adapter<ExplanationAdapter.Holder>() {
     private lateinit var context: Context
-    private var createStepList = _createStepList
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): Holder {
         val binding = ItemCreateExplainationBinding.inflate(LayoutInflater.from(parent.context), parent, false)

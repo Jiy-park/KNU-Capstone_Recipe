@@ -15,16 +15,16 @@ import com.example.capstone_recipe.data_class.RecipeStep
 import com.example.capstone_recipe.data_class.SHARE
 import com.example.capstone_recipe.databinding.FragmentRecipeCreateStepThirdBinding
 
-class RecipeCreateStepThird(_recipeBasicInfo: RecipeBasicInfo, private val _createStepList: MutableList<RecipeStep>) : Fragment() {
+class RecipeCreateStepThird(private val recipeBasicInfo: RecipeBasicInfo, private val createStepList: MutableList<RecipeStep>) : Fragment() {
     private lateinit var binding: FragmentRecipeCreateStepThirdBinding
     private lateinit var context: Context
     private lateinit var adapter:SelectMainImageAdapter
-    private var recipeBasicInfo = _recipeBasicInfo
+//    private var recipeBasicInfo = _recipeBasicInfo
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = FragmentRecipeCreateStepThirdBinding.inflate(inflater, container, false)
         context = binding.root.context
-        adapter = SelectMainImageAdapter(recipeBasicInfo, _createStepList)
+        adapter = SelectMainImageAdapter(recipeBasicInfo, createStepList)
 
         binding.recyclerviewSelectMainImage.adapter = adapter
         binding.recyclerviewSelectMainImage.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
@@ -42,7 +42,7 @@ class RecipeCreateStepThird(_recipeBasicInfo: RecipeBasicInfo, private val _crea
         }
 
         binding.btn.setOnClickListener {
-            Log.d("LOG_CHECK", "_recipeBasicInfo : $recipeBasicInfo \n_createStepList : $_createStepList")
+            Log.d("LOG_CHECK", "_recipeBasicInfo : $recipeBasicInfo \n_createStepList : $createStepList")
         }
 
         return binding.root

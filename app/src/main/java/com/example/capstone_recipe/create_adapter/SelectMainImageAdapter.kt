@@ -14,13 +14,13 @@ import com.example.capstone_recipe.data_class.RecipeBasicInfo
 import com.example.capstone_recipe.data_class.RecipeStep
 import com.example.capstone_recipe.databinding.ItemSelectMainImageBinding
 
-class SelectMainImageAdapter(_recipeBasicInfo:RecipeBasicInfo, _createStepList: MutableList<RecipeStep>):RecyclerView.Adapter<SelectMainImageAdapter.Holder>() {
+class SelectMainImageAdapter(private val recipeBasicInfo:RecipeBasicInfo, private val createStepList: MutableList<RecipeStep>):RecyclerView.Adapter<SelectMainImageAdapter.Holder>() {
+    // recipeBasicInfo -> 레시피 기본 정보(  대표 이미지, 공개 대상 )
+    // createStepList -> 대표 이미지 리스트 용
     private lateinit var binding: ItemSelectMainImageBinding
     private lateinit var context: Context
     private lateinit var checkedView: View
     private var checkedId = -1
-    private var recipeBasicInfo = _recipeBasicInfo      // 레시피 기본 정보(  대표 이미지, 공개 대상 )
-    private var createStepList = _createStepList        // 대표 이미지 리스트 용
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): Holder {
         binding = ItemSelectMainImageBinding.inflate(LayoutInflater.from(parent.context), parent, false)

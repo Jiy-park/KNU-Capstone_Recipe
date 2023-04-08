@@ -26,7 +26,7 @@ import com.example.capstone_recipe.create_adapter.ItemTouchHelperCallback
 import com.example.capstone_recipe.data_class.RecipeStep
 import com.example.capstone_recipe.databinding.FragmentRecipeCreateStepSecondBinding
 
-class RecipeCreateStepSecond(_createStepList: MutableList<RecipeStep>) : Fragment() {
+class RecipeCreateStepSecond(private val createStepList: MutableList<RecipeStep>) : Fragment() {
     private lateinit var storagePermission: ActivityResultLauncher<String>  // 저장소 권한
     private lateinit var galleryLauncher: ActivityResultLauncher<String>    //갤러리
     private lateinit var binding: FragmentRecipeCreateStepSecondBinding
@@ -37,7 +37,6 @@ class RecipeCreateStepSecond(_createStepList: MutableList<RecipeStep>) : Fragmen
     private var recipeStepImagePosition = 0                 // 이미지가 몇번째 단계의 이미지인지
     private var beforeImageUri: Uri? = null                 // 이미지 변경 전 - 이미지 선택 취소 시 beforeImage 로 저장
 
-    private var createStepList = _createStepList
 
     @SuppressLint("NotifyDataSetChanged")
     override fun onCreate(savedInstanceState: Bundle?) {
