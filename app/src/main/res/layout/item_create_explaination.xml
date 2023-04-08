@@ -29,16 +29,17 @@
                 android:fontFamily="@font/kopup_d_medium"
                 android:backgroundTint="@color/white"
                 android:gravity="start|top"/>
+
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/ivExplanationImage"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_weight="1"
                 android:layout_gravity=""
+                android:layout_weight="1"
                 android:background="@drawable/style_round_10"
                 android:clipToOutline="true"
                 android:scaleType="fitXY"
-                android:src="@drawable/ex_img"/>
+                android:src="@drawable/ex_img" />
 
         </LinearLayout>
         <LinearLayout

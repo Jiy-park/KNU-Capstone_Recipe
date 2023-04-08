@@ -1,36 +1,71 @@
 package com.example.capstone_recipe.create_fragments
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.content.Context
+import android.content.pm.PackageManager
+import android.graphics.drawable.Drawable
+import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.Toast
+import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.AppCompatImageView
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import androidx.recyclerview.widget.RecyclerView.ItemDecoration
-import com.example.capstone_recipe.MainActivity
 import com.example.capstone_recipe.create_adapter.ExplanationAdapter
 import com.example.capstone_recipe.create_adapter.ItemTouchHelperCallback
+import com.example.capstone_recipe.data_class.RecipeStep
 import com.example.capstone_recipe.databinding.FragmentRecipeCreateStepSecondBinding
-import java.util.*
 
-class RecipeCreateStepSecond : Fragment() {
+class RecipeCreateStepSecond(_createStepList: MutableList<RecipeStep>) : Fragment() {
+    private lateinit var storagePermission: ActivityResultLauncher<String>  // 저장소 권한
+    private lateinit var galleryLauncher: ActivityResultLauncher<String>    //갤러리
     private lateinit var binding: FragmentRecipeCreateStepSecondBinding
     private lateinit var context: Context
     private lateinit var adapter: ExplanationAdapter
-    private lateinit var itemTouchHelper : ItemTouchHelper
+    private lateinit var itemTouchHelper : ItemTouchHelper  // 아이템 드래그 용
+    private var recipeStepImage: ImageView? = null          // 어댑터에서 galleryLauncher 호출하여 이미지를 바꾸기 위하여
+    private var recipeStepImagePosition = 0                 // 이미지가 몇번째 단계의 이미지인지
+    private var beforeImageUri: Uri? = null                 // 이미지 변경 전 - 이미지 선택 취소 시 beforeImage 로 저장
+
+    private var createStepList = _createStepList
+
+    @SuppressLint("NotifyDataSetChanged")
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        storagePermission = registerForActivityResult(ActivityResultContracts.RequestPermission()){ isGranted-> // 갤러리 권한 요청
+            if(isGranted == false) { Toast.makeText(context, "권한을 승인해야 레시피 제작 시 이미지를 첨부할 수 있습니다.", Toast.LENGTH_SHORT).show() }
+        }
+
+        galleryLauncher = registerForActivityResult(ActivityResultContracts.GetContent()){ uri-> // 갤러리 열기
+            if(uri == null){        // 사용자가 이미지 선택 취소 -> 기존 이미지로 변경
+                recipeStepImage?.setImageURI(beforeImageUri)
+                createStepList[recipeStepImagePosition].Image = beforeImageUri
+            }
+            else{                   // 사용자가 새로운 이미지 선택 -> 해당 이미지로 변경
+                recipeStepImage?.setImageURI(uri)
+                createStepList[recipeStepImagePosition].Image = uri
+            }
+            adapter.notifyItemChanged(recipeStepImagePosition)
+        }
+    }
+
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = FragmentRecipeCreateStepSecondBinding.inflate(inflater, container, false)
         context = binding.root.context
 
-        adapter = ExplanationAdapter()
+        adapter = ExplanationAdapter(createStepList, this@RecipeCreateStepSecond)
         itemTouchHelper = ItemTouchHelper(ItemTouchHelperCallback(adapter))
         itemTouchHelper.attachToRecyclerView(binding.recyclerviewCreateExplanation)
 
@@ -39,5 +74,25 @@ class RecipeCreateStepSecond : Fragment() {
 
         return binding.root
     }
-}
 
+    fun setImageFromGallery(targetView: AppCompatImageView, targetViewPos: Int){
+        // 어댑터에서 해당 함수 호출 시 권한 확인 후 (권한 없으면 다시 신청)
+        // 이미지를 바꿀 대상을 recipeStepImage 에 저장 -> 해당 이미지가 몇번째 단계인지 recipeStepImagePosition 에 저장
+        // 해당 이미지의 uri 를 beforeImageUri 에 저장
+        val permission = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) { ContextCompat.checkSelfPermission(context,Manifest.permission.READ_MEDIA_IMAGES) }
+                        else { ContextCompat.checkSelfPermission(context, Manifest.permission.READ_EXTERNAL_STORAGE) }
+
+        if(permission == PackageManager.PERMISSION_DENIED){ requestPermission() }
+        else{
+            recipeStepImage = targetView
+            recipeStepImagePosition = targetViewPos
+            beforeImageUri = createStepList[targetViewPos].Image
+            galleryLauncher.launch("image/*")
+        }
+    }
+
+    private fun requestPermission(){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) { storagePermission.launch(Manifest.permission.READ_MEDIA_IMAGES) }
+        else{ storagePermission.launch(Manifest.permission.READ_EXTERNAL_STORAGE) }
+    }
+}

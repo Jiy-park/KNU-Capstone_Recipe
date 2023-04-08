@@ -2,6 +2,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+<!--    targetSdk-33 이상-->
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES"/>
+<!--    targetSdk-33 이하-->
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
 
     <application
@@ -13,11 +16,19 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Capstone_Recipe"
         tools:targetApi="31">
-
+        <activity
+            android:name=".test_______.TestActivity"
+            android:exported="false" />
+        <activity
+            android:name=".TalkingRecipe"
+            android:exported="false" />
+        <activity
+            android:name=".PostViewer"
+            android:exported="false" />
         <activity
             android:name=".RecipeCreate"
-            android:windowSoftInputMode="adjustResize|stateAlwaysHidden"
-            android:exported="false" />
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize|stateAlwaysHidden" />
         <activity
             android:name=".RecipeLocker"
             android:exported="false" />
@@ -36,6 +47,20 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+
+<!--        test-->
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.provider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths"/>
+        </provider>
+<!--        test-->
+
     </application>
 
 </manifest>

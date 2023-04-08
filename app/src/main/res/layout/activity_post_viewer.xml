@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".PostViewer">
+<!--    최상단 패널-->
+    <include layout="@layout/common_top_panel_sub"
+        android:id="@+id/layerTopPanel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="15dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+<!--    메인 콘텐츠-->
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/scrollView2"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="15dp"
+        app:layout_constraintBottom_toTopOf="@+id/btnStartTalkingRecipe"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/layerTopPanel">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <!--            게시글 타이틀-->
+            <include
+                android:id="@+id/layerPostTitle"
+                layout="@layout/common_viewer_title_main" />
+
+                <!--            게시글 메인 이미지-->
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/ivMainImage"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:maxHeight="250dp"
+                android:scaleType="centerCrop"
+                android:src="@drawable/ex_img" />
+            <!--            레시피 정보-->
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="100dp">
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/__timer"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:src="@drawable/ic_timer"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/__people"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/__people"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:src="@drawable/ic_profile"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/__calorie"
+                    app:layout_constraintStart_toEndOf="@+id/__timer"
+                    app:layout_constraintTop_toTopOf="parent" />
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/__calorie"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:src="@drawable/ic_fire"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/__level"
+                    app:layout_constraintStart_toEndOf="@+id/__people"
+                    app:layout_constraintTop_toTopOf="parent" />
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/__level"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:src="@drawable/ic_level"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/__calorie"
+                    app:layout_constraintTop_toTopOf="parent" />
+                <TextView
+                    android:id="@+id/tvCreateTime"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/kopup_d_medium"
+                    android:text="30분"
+                    android:textColor="@color/main_text"
+                    android:textSize="15sp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/__people"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/__timer" />
+                <TextView
+                    android:id="@+id/tvCreateServing"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/kopup_d_medium"
+                    android:text="2인분"
+                    android:textColor="@color/main_text"
+                    android:textSize="15sp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/__calorie"
+                    app:layout_constraintStart_toEndOf="@+id/__timer"
+                    app:layout_constraintTop_toBottomOf="@+id/__people" />
+                <TextView
+                    android:id="@+id/tvCreateCalorie"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/kopup_d_medium"
+                    android:text="2125Kcal"
+                    android:textColor="@color/main_text"
+                    android:textSize="15sp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/__level"
+                    app:layout_constraintStart_toEndOf="@+id/__people"
+                    app:layout_constraintTop_toBottomOf="@+id/__calorie" />
+                <TextView
+                    android:id="@+id/tvCreateLevel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/kopup_d_medium"
+                    android:text="쉬움"
+                    android:textColor="@color/main_text"
+                    android:textSize="15sp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/__calorie"
+                    app:layout_constraintTop_toBottomOf="@+id/__level" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="재료"
+                android:textColor="@color/main_text"
+                android:fontFamily="@font/kopup_d_medium"
+                android:textSize="17sp"
+                android:padding="15dp"/>
+<!--            재료 설명-->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerviewRecipeIngredients"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingHorizontal="15dp"
+                android:overScrollMode="never"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="재료 영양성분"
+                android:textColor="@color/main_text"
+                android:fontFamily="@font/kopup_d_medium"
+                android:textSize="17sp"
+                android:padding="15dp"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="레시피"
+                android:textColor="@color/main_text"
+                android:fontFamily="@font/kopup_d_medium"
+                android:textSize="17sp"
+                android:padding="15dp"/>
+<!--            레시피 단계-->
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recyclerviewRecipeStep"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:nestedScrollingEnabled="false"
+                    android:overScrollMode="never"
+                    android:paddingHorizontal="15dp" />
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+    <!--    토킹레시피 버튼-->
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btnStartTalkingRecipe"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="토킹레시피"
+        android:background="@drawable/style_main_color"
+        android:fontFamily="@font/kopup_d_medium"
+        android:textColor="@color/white"
+        android:textSize="15sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+</androidx.constraintlayout.widget.ConstraintLayout>

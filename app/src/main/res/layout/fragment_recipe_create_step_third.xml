@@ -1,18 +1,77 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".create_fragments.RecipeCreateStepThird"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".create_fragments.RecipeCreateStepThird">
-
+    android:orientation="vertical"
+    android:background="@color/white">
     <TextView
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="3"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:padding="15dp"
+        android:text="대표 이미지를 골라주세요"
+        android:textColor="@color/main_text"
+        android:fontFamily="@font/kopup_d_medium"/>
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerviewSelectMainImage"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="10dp"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="15dp"
+        android:text="누가 읽을 수 있나요?"
+        android:textColor="@color/main_text"
+        android:fontFamily="@font/kopup_d_medium"/>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <RadioGroup
+        android:id="@+id/rgLevelSelection"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="5dp">
+        <RadioButton
+            android:id="@+id/radioShareOnlyMe"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginHorizontal="10dp"
+            android:text="나만 공개"
+            android:textColor="@color/white"
+            android:fontFamily="@font/kopup_d_medium"
+            android:textAlignment="center"
+            android:background="@drawable/style_radio_share_select"
+            android:button="@null"
+            android:checked="true"/>
+        <RadioButton
+            android:id="@+id/radioShareOnlyFriends"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="친구 공개"
+            android:textColor="@color/white"
+            android:fontFamily="@font/kopup_d_medium"
+            android:textAlignment="center"
+            android:background="@drawable/style_radio_share_select"
+            android:button="@null"/>
+        <RadioButton
+            android:id="@+id/radioShareAll"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginHorizontal="10dp"
+            android:text="모두 공개"
+            android:textColor="@color/white"
+            android:fontFamily="@font/kopup_d_medium"
+            android:textAlignment="center"
+            android:background="@drawable/style_radio_share_select"
+            android:button="@null"/>
+    </RadioGroup>
+    <Button
+        android:id="@+id/btn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+</LinearLayout>

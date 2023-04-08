@@ -13,4 +13,9 @@
         <item name="android:statusBarColor">#FF6D89</item>
         <!-- Customize your theme here. -->
     </style>
+
+    <style name="style_number_picker_timer">
+        <item name="android:textSize">30sp</item>
+        <item name="android:textColorPrimary">@color/main_text</item>
+    </style>
 </resources>

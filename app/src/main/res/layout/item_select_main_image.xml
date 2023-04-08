@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:layout_gravity="center"
+    android:layout_width="120dp"
+    android:layout_height="120dp"
+    android:layout_marginHorizontal="5dp"
+    tools:ignore="UnusedAttribute">
+    <FrameLayout
+        android:id="@+id/frameChecked"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="invisible"
+        android:background="@drawable/style_main_image_selected_frame"/>
+    <TextView
+        android:layout_width="60dp"
+        android:layout_height="30dp"
+        android:text="대표"
+        android:textColor="@color/white"
+        android:fontFamily="@font/kopup_d_medium"
+        android:textSize="13sp"
+        android:gravity="center"/>
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/ivMainImage"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:padding="2dp"
+        android:src="@drawable/ex_img_profile" />
+</FrameLayout>

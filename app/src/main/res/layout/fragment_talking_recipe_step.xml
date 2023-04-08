@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:weightSum="7"
+    android:orientation="vertical"
+    android:background="@color/white"
+    tools:context=".talking_recipe_fragment.TalkingRecipeStep">
+    <ImageView
+        android:id="@+id/ivRecipeStepImage"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="3"
+        android:layout_marginBottom="15dp"
+        android:src="@drawable/ex_img"/>
+    <TextView
+        android:id="@+id/tvRecipeStep"
+        android:layout_width="70dp"
+        android:layout_height="0dp"
+        android:layout_weight="0.5"
+        android:layout_marginHorizontal="15dp"
+        android:gravity="center"
+        android:text="1단계"
+        android:textColor="@color/main_color_start"
+        android:fontFamily="@font/kopup_d_medium"
+        android:background="@drawable/style_stroke_round_button"/>
+    <TextView
+        android:id="@+id/tvRecipeStepExplanation"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="3.5"
+        android:layout_marginTop="15dp"
+        android:padding="15dp"
+        android:text="1단계 어쩌구~~"
+        android:textColor="@color/main_text"
+        android:fontFamily="@font/kopup_d_medium"
+        android:textSize="20sp"/>
+</LinearLayout>

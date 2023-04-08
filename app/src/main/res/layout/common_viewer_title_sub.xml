@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="60dp"
+    android:orientation="horizontal">
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="8"
+        android:orientation="vertical">
+        <TextView
+            android:id="@+id/tvPostTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/kopup_d_medium"
+            android:singleLine="true"
+            android:text="황금올리브 맛있지용"
+            android:textColor="@color/main_text"
+            android:textSize="15sp" />
+
+        <TextView
+            android:id="@+id/tvPostCreator"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:fontFamily="@font/kopup_d_light"
+            android:singleLine="true"
+            android:text="퍼팬 @perphenim"
+            android:textColor="@color/hint_text"
+            android:textSize="12sp" />
+
+    </LinearLayout>
+
+    <FrameLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="2">
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/ivUserProfileImage"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_gravity="top|right"
+            android:background="@drawable/style_profile"
+            android:backgroundTint="@color/background_gray"
+            android:src="@drawable/ex_img_profile"/>
+    </FrameLayout>
+</LinearLayout>

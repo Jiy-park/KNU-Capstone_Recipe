@@ -1,36 +1,23 @@
 package com.example.capstone_recipe
 
-import android.animation.ObjectAnimator
-import android.animation.TimeInterpolator
 import android.content.Context
 import android.content.Intent
-import android.content.res.Resources
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.provider.Settings.Panel
-import android.util.DisplayMetrics
 import android.util.Log
-import android.util.Property
 import android.view.KeyEvent
 import android.view.View
-import android.view.animation.AccelerateDecelerateInterpolator
-import android.view.animation.AccelerateInterpolator
-import android.view.animation.AlphaAnimation
-import android.view.animation.Animation
-import android.view.animation.Interpolator
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.example.capstone_recipe.databinding.ActivityLoginBinding
-import com.example.capstone_recipe.dbSchema.User
+import com.example.capstone_recipe.data_class.User
 import com.google.firebase.database.*
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.sothree.slidinguppanel.PanelSlideListener
 import com.sothree.slidinguppanel.PanelState
-import render.animations.Attention
-import render.animations.Bounce
 import render.animations.Render
 
 

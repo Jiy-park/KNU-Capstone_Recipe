@@ -1,23 +1,22 @@
 package com.example.capstone_recipe.create_adapter
 
-import android.annotation.SuppressLint
 import android.content.Context
-import android.content.Intent
-import android.provider.MediaStore
-import android.util.Log
+import android.net.Uri
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.core.app.ActivityCompat.startActivityForResult
 import androidx.recyclerview.widget.RecyclerView
-import androidx.recyclerview.widget.RecyclerView.ItemDecoration
-import com.example.capstone_recipe.MainActivity
+import com.example.capstone_recipe.R
+import com.example.capstone_recipe.create_fragments.RecipeCreateStepSecond
+import com.example.capstone_recipe.data_class.RecipeStep
 import com.example.capstone_recipe.databinding.ItemCreateExplainationBinding
+import com.example.capstone_recipe.dialog.DialogFunc
 
-class ExplanationAdapter() : RecyclerView.Adapter<ExplanationAdapter.Holder>() {
+class ExplanationAdapter(_createStepList: MutableList<RecipeStep>, var parent: RecipeCreateStepSecond): RecyclerView.Adapter<ExplanationAdapter.Holder>() {
     private lateinit var context: Context
-    private var explanationList = mutableListOf<String>("")
+    private var createStepList = _createStepList
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): Holder {
         val binding = ItemCreateExplainationBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -26,45 +25,63 @@ class ExplanationAdapter() : RecyclerView.Adapter<ExplanationAdapter.Holder>() {
     }
 
     override fun onBindViewHolder(holder: Holder, position: Int) {
-        holder.bind(position, explanationList[position])
+        holder.bind(createStepList[position])
     }
 
-    override fun getItemCount() = explanationList.size
+    override fun getItemCount() = createStepList.size
 
     fun moveItem(fromPosition: Int, toPosition: Int) {
-        val item = explanationList.removeAt(fromPosition)
-        explanationList.add(toPosition, item)
+        val item = createStepList.removeAt(fromPosition)
+        createStepList.add(toPosition, item)
     }
 
     inner class Holder(private val binding: ItemCreateExplainationBinding): RecyclerView.ViewHolder(binding.root) {
-        private var currentPosition: Int = -1
+        var timerHour = 0
+        var timerMin = 0
+        var timerSec = 0
 
-        init {
-            binding.ivExplanationImage.setOnClickListener {
-            }
-            binding.tvAddExplanation.setOnClickListener {
-                explanationList.add(currentPosition+1, "")
-                notifyItemInserted(currentPosition+1)
-                for (i in currentPosition until explanationList.size) { notifyItemChanged(i) }
+        fun bind(oneStep: RecipeStep) {
+            val packageName = "com.example.capstone_recipe"
+            var uri = Uri.parse("android.resource://$packageName/${R.drawable.ex_img}") // 이미지 선택 안할 시 나오는 기본 이미지
 
+            binding.editExplanation.setText(oneStep.explanation)   // 설명
+            if (oneStep.Image != null) { uri = oneStep.Image } // 유저가 선택한 이미지로 세팅
+            binding.ivExplanationImage.setImageURI(uri)
+            setEvent()
+        }
+
+        private fun setEvent(){
+            binding.ivExplanationImage.setOnClickListener {     // 이미지 선택
+                parent.setImageFromGallery(binding.ivExplanationImage, bindingAdapterPosition)
             }
-            binding.tvRemoveExplanation.setOnClickListener {
-                if(explanationList.size > 1){
-                    explanationList.removeAt(currentPosition)
-                    notifyItemRemoved(currentPosition)
-                    for (i in currentPosition until explanationList.size) { notifyItemChanged(i) }
+
+            binding.tvAddExplanation.setOnClickListener {       // 추가 버튼
+                createStepList.add(bindingAdapterPosition+1, RecipeStep("", null, 0, 0, 0))
+                notifyItemInserted(bindingAdapterPosition+1)
+                for (i in bindingAdapterPosition until createStepList.size) { notifyItemChanged(i) }
+            }
+
+            binding.tvRemoveExplanation.setOnClickListener {    // 삭제 버튼
+                if(createStepList.size > 1){
+                    createStepList.removeAt(bindingAdapterPosition)
+                    notifyItemRemoved(bindingAdapterPosition)
+                    for (i in bindingAdapterPosition until createStepList.size) { notifyItemChanged(i) }
                 }
-                else {
-                    Toast.makeText(context, "과정은 하나 이상 입력해주세요!", Toast.LENGTH_SHORT).show() }
+                else { Toast.makeText(context, "과정은 하나 이상 입력해주세요!", Toast.LENGTH_SHORT).show() }
             }
-            binding.tvSetTimer.setOnClickListener {
-                Log.d("LOG_CHECK", "position : $currentPosition, list : ${explanationList[currentPosition]}")
+
+            binding.tvSetTimer.setOnClickListener {             // 타이머
+                DialogFunc.timerDialog(context, timerHour, timerMin, timerSec)
             }
+
+            binding.editExplanation.addTextChangedListener(object : TextWatcher { // 설명 저장
+                override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+                override fun afterTextChanged(s: Editable?) {
+                    createStepList[bindingAdapterPosition].explanation = binding.editExplanation.text.toString()
+                }
+            })
         }
 
-        fun bind(position: Int, explanation: String) {
-            currentPosition = position
-            binding.editExplanation.setText(explanation)
-        }
     }
 }
