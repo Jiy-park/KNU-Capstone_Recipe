@@ -10,12 +10,12 @@ import android.widget.Toast
 import com.example.capstone_recipe.databinding.DialogFrameBinding
 
 
+
 class DialogInterface(context: Context): Dialog(context){
     private val binding by lazy { DialogFrameBinding.inflate(layoutInflater) }
     var title:String = "TEST"
     lateinit var view:View
     var topCloseVisible = false
-
 
     fun initDialog(){
         setContentView(binding.root)
@@ -27,13 +27,14 @@ class DialogInterface(context: Context): Dialog(context){
         show()
     }
 
-    fun setDialogSize(fixedSize: DIALOG_SIZE?, variableSize: Int?){
+
+    fun setDialogSize(fixedSize: SIZE?, variableSize: Int?){
         fixedSize?.run {
             when(fixedSize){
-                DIALOG_SIZE.SMALL ->{ // 150dp
+                SIZE.SMALL ->{ // 150dp
                     binding.layerDialogMainContent.layoutParams.height = 150.dpToPx()
                 }
-                DIALOG_SIZE.NORMAL ->{ // 250dp
+                SIZE.NORMAL ->{ // 250dp
                     binding.layerDialogMainContent.layoutParams.height = 250.dpToPx()
                 }
             }
@@ -55,10 +56,10 @@ class DialogInterface(context: Context): Dialog(context){
     private fun Int.dpToPx(): Int {
         return (this * Resources.getSystem().displayMetrics.density).toInt()
     }
+    enum class SIZE{
+        SMALL,
+        NORMAL
+    }
 }
 
 
-enum class DIALOG_SIZE{
-    SMALL,
-    NORMAL
-}

@@ -19,7 +19,6 @@ class RecipeCreateStepThird(private val recipeBasicInfo: RecipeBasicInfo, privat
     private lateinit var binding: FragmentRecipeCreateStepThirdBinding
     private lateinit var context: Context
     private lateinit var adapter:SelectMainImageAdapter
-//    private var recipeBasicInfo = _recipeBasicInfo
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = FragmentRecipeCreateStepThirdBinding.inflate(inflater, container, false)

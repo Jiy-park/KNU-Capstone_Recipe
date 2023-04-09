@@ -23,8 +23,8 @@ import render.animations.Render
 
 class Login : AppCompatActivity() {
     private val binding by lazy { ActivityLoginBinding.inflate(layoutInflater) }
-    private val DB by lazy { Firebase.database("https://knu-capstone-f9f55-default-rtdb.asia-southeast1.firebasedatabase.app/") }
-    private val usersRef by lazy { DB.getReference("users") }
+    private val db by lazy { Firebase.database("https://knu-capstone-f9f55-default-rtdb.asia-southeast1.firebasedatabase.app/") }
+    private val usersRef by lazy { db.getReference("users") }
     private lateinit var context: Context
     private lateinit var render: Render
     private var pressTime = 0L
@@ -223,7 +223,7 @@ class Login : AppCompatActivity() {
                 if (dataSnapshot.exists()) {
                     if(pw == dataSnapshot.child("pw").value){ // 로그인 성공
 //                        Toast.makeText(context, "로그인!", Toast.LENGTH_SHORT).show()
-                        moveToMain()
+                        moveToMain(id)
                     }
                     else{ // 비밀번호 틀림
                         binding.tvCheckerIDPW.visibility = View.VISIBLE
@@ -244,14 +244,28 @@ class Login : AppCompatActivity() {
     }
 
     private fun signUp(id:String, pw:String, name:String){
-        usersRef.child(id).setValue(User(id, pw, name))
+        usersRef
+            .child(id)
+            .setValue(User(
+                ID = id,
+                PW = pw,
+                NAME = name,
+                SCORE = 0,
+                PROFILE_IMAGE = null,
+                BACK_IMAGE = null,
+                RECENT_RECIPE = null,
+                FRIENDS = listOf(),
+                UPLOAD_RECIPE = listOf(),
+                RECIPE_LOCKER = listOf()
+            ))
         Toast.makeText(context, "환영해요!", Toast.LENGTH_SHORT).show()
         signIn(id, pw)
     }
 
-    private fun moveToMain(){ // 로그인
+    private fun moveToMain(id:String){ // 로그인
         val intent = Intent(binding.root.context, MainActivity::class.java)
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        intent.putExtra("id", id)
         startActivity(intent)
     }
 

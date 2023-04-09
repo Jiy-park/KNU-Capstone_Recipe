@@ -136,7 +136,7 @@
                 android:textSize="15sp"
                 android:textColor="@color/main_text"
                 android:backgroundTint="@color/hint_text"
-                android:text="@string/test_id"
+                android:text="q"
                 android:hint="@string/id"
                 android:textColorHint="@color/hint_text"
                 android:drawableStart="@drawable/ic_profile"

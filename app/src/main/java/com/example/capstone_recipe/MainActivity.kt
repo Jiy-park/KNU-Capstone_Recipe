@@ -1,32 +1,19 @@
 package com.example.capstone_recipe
 
-import android.Manifest
 import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
-import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.KeyEvent
-import android.view.LayoutInflater
-import android.widget.ImageView
-import android.widget.TextView
 import android.widget.Toast
-import androidx.activity.result.ActivityResultLauncher
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.content.ContextCompat
 import com.example.capstone_recipe.databinding.ActivityMainBinding
-import com.example.capstone_recipe.dialog.DIALOG_SIZE
-import com.example.capstone_recipe.dialog.DeveloperInfo
 import com.example.capstone_recipe.dialog.DialogFunc
-import com.example.capstone_recipe.dialog.DialogInterface
 import com.example.capstone_recipe.test_______.TestActivity
 
 class MainActivity : AppCompatActivity() {
     private val binding by lazy { ActivityMainBinding.inflate(layoutInflater) }
     private lateinit var context: Context
-
+    private var id = ""
     private var pressTime = 0L //뒤로가기 키 두번 누르는거
     private val timeInterval = 1000L
 
@@ -37,15 +24,13 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
         context = binding.root.context
-
-
+        id = intent.getStringExtra("id").toString()
+        Toast.makeText(context, "$id", Toast.LENGTH_SHORT).show()
         testFunction() // 테스트용
-
 
 
         binding.layerCreate.groupCreate.setOnClickListener {
