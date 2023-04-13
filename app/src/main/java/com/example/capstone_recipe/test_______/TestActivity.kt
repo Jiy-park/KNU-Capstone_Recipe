@@ -33,8 +33,11 @@ class TestActivity : AppCompatActivity() {
                 permissionLauncher.launch(Manifest.permission.READ_MEDIA_IMAGES)
             }
         }
-        binding.btnDownload.setOnClickListener { downloadImage("images/temp_1681035425810.jpeg") }
+        //recipe_image/q_20230410135125/step/q_20230410_1351.jpeg
+//        binding.btnDownload.setOnClickListener { downloadImage("images/temp_1681035425810.jpeg") }
+        binding.btnDownload.setOnClickListener { downloadImage() }
     }
+
 
     fun uploadImage(uri: Uri){
         val fullPath = makeFilePath("images", "temp", uri)
@@ -65,8 +68,17 @@ class TestActivity : AppCompatActivity() {
         return "${path}/${userId}_${timeSuffix}.$ext" // 파일 경로
     }
 
-    fun downloadImage(path:String){
-        storage.getReference(path).downloadUrl
+//    fun downloadImage(path:String){
+//        storage.getReference(path).downloadUrl
+//            .addOnSuccessListener { uri->
+//                Glide.with(binding.root.context)
+//                    .load(uri)
+//                    .into(binding.iv)
+//            }
+//            .addOnFailureListener { Log.d("LOG_CHECK", "MainActivity :: downloadImage() called :: 실패 :${it.message}") }
+//    }
+    fun downloadImage(){
+        storage.getReference("recipe_image/q_20230410135125/step/q_20230410_1351_1.jpeg").downloadUrl
             .addOnSuccessListener { uri->
                 Glide.with(binding.root.context)
                     .load(uri)

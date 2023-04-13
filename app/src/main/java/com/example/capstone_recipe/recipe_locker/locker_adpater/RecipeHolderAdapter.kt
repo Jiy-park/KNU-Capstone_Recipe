@@ -1,4 +1,4 @@
-package com.example.capstone_recipe.locker_adpater
+package com.example.capstone_recipe.recipe_locker.locker_adpater
 
 import android.animation.ValueAnimator
 import android.annotation.SuppressLint

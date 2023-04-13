@@ -31,16 +31,16 @@
             android:exported="false"
             android:windowSoftInputMode="adjustResize|stateAlwaysHidden" />
         <activity
-            android:name=".RecipeLocker"
+            android:name=".recipe_locker.RecipeLocker"
             android:exported="false" />
         <activity
             android:name=".dialog.DeveloperInfo"
             android:exported="false" />
         <activity
-            android:name=".MainActivity"
+            android:name=".Login"
             android:exported="false" />
         <activity
-            android:name=".Login"
+            android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

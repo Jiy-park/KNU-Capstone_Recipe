@@ -1,58 +1,186 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity"
-    android:orientation="vertical"
-    android:weightSum="13">
-    <!--    최상단 패널-->
-    <include layout="@layout/common_top_panel_main"
-        android:id="@+id/topPanel" />
-    <!--    카드뷰 패널-->
-
-    <include
-        android:id="@+id/profilePanel"
-        layout="@layout/common_profile_panel" />
+    android:background="@drawable/style_main_color"
+    tools:context=".MainActivity">
 
     <TextView
+        android:id="@+id/tvTop"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/today_sentence"
-        android:textColor="@color/main_text"
-        android:fontFamily="@font/kopup_d_bold"
+        android:textSize="20sp"
+        android:drawablePadding="10dp"
+        android:fontFamily="@font/maple_bold"
         android:padding="15dp"
-        android:textSize="20sp"/>
-<!--    가운데 패널-->
-    <androidx.constraintlayout.widget.ConstraintLayout
+        android:text="토킹레시피"
+        android:textColor="@color/white"
+        app:drawableLeftCompat="@drawable/head_outline_thin"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tvSearchTrigger"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/main_search"
+        android:fontFamily="@font/kopup_d_medium"
+        android:layout_marginTop="40dp"
+        android:gravity="center"
+        android:text="오늘은 어떤 요리를\n시작할까요?"
+        android:textAlignment="center"
+        android:textColor="@color/main_text"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvTop" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:fontFamily="@font/kopup_d_medium"
+        android:gravity="center"
+        android:text="터치해서 레시피를 찾아보세요!"
+        android:textColor="@color/hint_text"
+        android:textSize="13sp"
+        android:paddingTop="90dp"
+        app:layout_constraintBottom_toBottomOf="@+id/tvSearchTrigger"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/tvSearchTrigger" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:layout_width="180dp"
+        android:layout_height="190dp"
+        android:src="@drawable/main_rabbit"
+        android:translationZ="-1dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvSearchTrigger" />
+
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="150dp"
-        android:paddingHorizontal="15dp">
-        <include layout="@layout/locker_recipe"
-            android:id="@+id/layerLocker"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_marginEnd="7.5dp"
-            app:constraint_referenced_ids="layerLocker"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/layerCreate"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintHorizontal_weight="1"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"/>
-        <include layout="@layout/create_recipe"
-            android:id="@+id/layerCreate"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_marginStart="7.5dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintHorizontal_weight="1"
-            app:layout_constraintStart_toEndOf="@+id/layerLocker"
-            app:layout_constraintTop_toTopOf="parent"/>
-    </androidx.constraintlayout.widget.ConstraintLayout>
+        android:layout_height="280dp"
+        android:background="@drawable/style_layout_conner"
+        android:padding="15dp"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
 
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="30dp"
+            android:orientation="horizontal"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
-</LinearLayout>
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/ivRecipeLocker"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:src="@drawable/ic_recipe_locker"
+                app:layout_constraintEnd_toStartOf="@+id/ivRecipeCreate"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/ivRecipeCreate"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:src="@drawable/ic_recipe_create"
+                app:layout_constraintEnd_toStartOf="@+id/ivUserInfo"
+                app:layout_constraintStart_toEndOf="@+id/ivRecipeLocker"
+                app:layout_constraintTop_toTopOf="parent" />
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/ivUserInfo"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:clipToOutline="true"
+                android:src="@drawable/ic_user_info"
+                app:layout_constraintEnd_toStartOf="@+id/ivSetting"
+                app:layout_constraintStart_toEndOf="@+id/ivRecipeCreate"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/ivSetting"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:src="@drawable/ic_setting_main"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/ivUserInfo"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/textView4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/kopup_d_medium"
+                android:text="보관함"
+                android:textColor="@color/main_text"
+                android:textSize="13sp"
+                app:layout_constraintEnd_toStartOf="@+id/ivRecipeCreate"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/ivRecipeLocker" />
+
+            <TextView
+                android:id="@+id/textView3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/kopup_d_medium"
+                android:text="만들기"
+                android:textColor="@color/main_text"
+                android:textSize="13sp"
+                app:layout_constraintEnd_toStartOf="@+id/ivUserInfo"
+                app:layout_constraintStart_toEndOf="@+id/ivRecipeLocker"
+                app:layout_constraintTop_toBottomOf="@+id/ivRecipeCreate" />
+
+            <TextView
+                android:id="@+id/textView5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/kopup_d_medium"
+                android:text="내정보"
+                android:textColor="@color/main_text"
+                android:textSize="13sp"
+                app:layout_constraintEnd_toStartOf="@+id/ivSetting"
+                app:layout_constraintStart_toEndOf="@+id/ivRecipeCreate"
+                app:layout_constraintTop_toBottomOf="@+id/ivUserInfo" />
+
+            <TextView
+                android:id="@+id/textView6"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/kopup_d_medium"
+                android:text="설정"
+                android:textColor="@color/main_text"
+                android:textSize="13sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/ivUserInfo"
+                app:layout_constraintTop_toBottomOf="@+id/ivSetting" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="최근 본 레시피"
+            android:fontFamily="@font/kopup_d_medium"
+            android:textColor="@color/main_text"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/layerRecentRecipe"/>
+
+        <include
+            android:id="@+id/layerRecentRecipe"
+            layout="@layout/common_recipe_viewer"
+            android:layout_gravity="bottom"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"/>
+    </LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,65 +1,112 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/prentLayout"
-    android:layout_width="100dp"
-    android:layout_height="150dp"
-    android:background="@color/hint_text">
-
-    <ImageView
-        android:id="@+id/ivRecipeDefaultImage"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:adjustViewBounds="true"
-        android:cropToPadding="true"
-        android:rotation="10"
-        android:scaleX="1.5"
-        android:scaleY="1.5"
-        android:src="@drawable/head_outline"
-        android:transformPivotX="70dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0"
-        tools:ignore="ContentDescription,ImageContrastCheck" />
-
+    android:layout_width="match_parent"
+    android:layout_height="100dp"
+    android:orientation="horizontal">
     <androidx.appcompat.widget.AppCompatImageView
-        android:id="@+id/ivRecipeMasterImage"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_marginEnd="5dp"
-        android:layout_marginTop="5dp"
-        android:background="@drawable/style_profile"
-        android:src="@drawable/ex_img_profile"
-        app:layout_constraintBottom_toTopOf="@+id/linearLayout"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0"/>
+        android:id="@+id/ivRecipeMainImage"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="5"
+        android:background="@drawable/style_round_10"
+        android:clipToOutline="true"
+        android:scaleType="centerCrop"
+        android:src="@drawable/ex_img"/>
 
-    <LinearLayout
-        android:id="@+id/linearLayout"
-        android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:background="@drawable/style_gradient_black"
-        android:padding="3dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        android:orientation="horizontal">
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_marginStart="15dp"
+        android:layout_weight="5">
 
         <TextView
-            android:id="@+id/tvRecipeDefaultText"
+            android:id="@+id/tvRecipeTitle"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:ellipsize="end"
+            android:layout_height="wrap_content"
             android:fontFamily="@font/kopup_d_medium"
-            android:maxLines="2"
-            android:text="@string/test_post_title"
-            android:textColor="@color/white"
-            android:textSize="10sp"
-            tools:ignore="SmallSp,TextContrastCheck" />
-    </LinearLayout>
-</androidx.constraintlayout.widget.ConstraintLayout>
+            android:text="레시피 제목"
+            android:textColor="@color/main_text"
+            android:textSize="18sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tvRecipeCreator"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/kopup_d_medium"
+            android:text="제작자이름 @ 제작자 아이디"
+            android:textColor="@color/hint_text"
+            android:textSize="13sp"
+            app:layout_constraintBottom_toTopOf="@+id/tvRecipeIntro"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvRecipeTitle" />
+
+        <TextView
+            android:id="@+id/tvRecipeIntro"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/kopup_d_medium"
+            android:text="한줄소개"
+            android:textColor="@color/hint_text"
+            android:textSize="13sp"
+            app:layout_constraintBottom_toTopOf="@+id/linearLayout"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvRecipeCreator" />
+
+        <LinearLayout
+            android:id="@+id/linearLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
+
+            <TextView
+                android:id="@+id/recipeTime"
+                android:layout_width="0dp"
+                android:layout_height="20dp"
+                android:layout_marginRight="4dp"
+                android:layout_weight="1"
+                android:background="@drawable/style_round_10"
+                android:fontFamily="@font/kopup_d_medium"
+                android:gravity="center"
+                android:text="시간"
+                android:textColor="@color/white" />
+
+            <TextView
+                android:id="@+id/recipeLevel"
+                android:layout_width="0dp"
+                android:layout_height="20dp"
+                android:layout_marginRight="4dp"
+                android:layout_weight="1"
+                android:background="@drawable/style_round_10"
+                android:fontFamily="@font/kopup_d_medium"
+                android:gravity="center"
+                android:text="쉬움"
+                android:textColor="@color/white" />
+
+            <TextView
+                android:id="@+id/recipeLike"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@drawable/style_round_10"
+                android:fontFamily="@font/kopup_d_medium"
+                android:gravity="center"
+                android:paddingHorizontal="5dp"
+                android:text="25"
+                android:textColor="@color/white"
+                app:drawableLeftCompat="@drawable/ic_heart_white" />
+        </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+</LinearLayout>

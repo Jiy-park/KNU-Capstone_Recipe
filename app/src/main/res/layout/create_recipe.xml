@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="15dp"
-    android:background="@drawable/style_round_button"
+    android:background="@drawable/style_round_30"
     android:backgroundTint="@color/main_color_end">
     <androidx.constraintlayout.widget.Group
         android:id="@+id/groupCreate"

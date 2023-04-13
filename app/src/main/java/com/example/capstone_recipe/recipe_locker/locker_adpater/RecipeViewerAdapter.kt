@@ -1,4 +1,4 @@
-package com.example.capstone_recipe.locker_adpater
+package com.example.capstone_recipe.recipe_locker.locker_adpater
 
 import android.util.Log
 import android.view.LayoutInflater
@@ -28,7 +28,7 @@ class RecipeViewerAdapter:RecyclerView.Adapter<RecipeViewerAdapter.Holder>() {
         if(position % 3 == 0){
             Log.d("LOG_CHECK", "RecipeViewerAdapter ::position $position")
             val triple = getElementFromList(position, recipeList)
-            holder.settingRecipe(triple)
+//            holder.settingRecipe(triple)
         }
     }
 
@@ -51,15 +51,15 @@ class RecipeViewerAdapter:RecyclerView.Adapter<RecipeViewerAdapter.Holder>() {
     }
 
     class Holder(private val binding:ItemRecipeViewerBinding):RecyclerView.ViewHolder(binding.root){
-        fun settingRecipe(tripleRecipe:Triple<String,String?,String?>){
-            // 첫번째 레시피 설정
-            binding.ivRecipeThumbnail11.tvRecipeDefaultText.text = tripleRecipe.first
-            // 두번째 레시피 설정
-            if(tripleRecipe.second == null){ binding.ivRecipeThumbnail22.prentLayout.visibility = View.GONE }
-            else{ binding.ivRecipeThumbnail22.tvRecipeDefaultText.text = tripleRecipe.second }
-            // 세번째 레시피 설정
-            if(tripleRecipe.second == null){ binding.ivRecipeThumbnail33.prentLayout.visibility = View.GONE }
-            else{ binding.ivRecipeThumbnail33.tvRecipeDefaultText.text = tripleRecipe.third }
-        }
+//        fun settingRecipe(tripleRecipe:Triple<String,String?,String?>){
+//            // 첫번째 레시피 설정
+//            binding.ivRecipeThumbnail11.tvRecipeDefaultText.text = tripleRecipe.first
+//            // 두번째 레시피 설정
+//            if(tripleRecipe.second == null){ binding.ivRecipeThumbnail22.prentLayout.visibility = View.GONE }
+//            else{ binding.ivRecipeThumbnail22.tvRecipeDefaultText.text = tripleRecipe.second }
+//            // 세번째 레시피 설정
+//            if(tripleRecipe.second == null){ binding.ivRecipeThumbnail33.prentLayout.visibility = View.GONE }
+//            else{ binding.ivRecipeThumbnail33.tvRecipeDefaultText.text = tripleRecipe.third }
+//        }
     }
 }

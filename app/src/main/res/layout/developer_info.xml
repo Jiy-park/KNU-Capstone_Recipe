@@ -79,7 +79,7 @@
         android:id="@+id/btn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/style_round_button"
+        android:background="@drawable/style_round_30"
         android:layout_margin="40dp"
         android:text="@string/okok"
         android:textColor="@color/main_text"

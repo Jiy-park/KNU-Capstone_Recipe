@@ -8,7 +8,7 @@ import android.view.KeyEvent
 import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
-import com.example.capstone_recipe.create_fragments.RecipeCreateStepFirst
+import com.example.capstone_recipe.recipe_create.create_fragments.RecipeCreateStepFirst
 import com.example.capstone_recipe.databinding.ActivityTalkingRecipeBinding
 import com.example.capstone_recipe.talking_recipe_fragment.TalkingRecipeStep
 

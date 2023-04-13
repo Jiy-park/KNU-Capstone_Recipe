@@ -1,4 +1,4 @@
-package com.example.capstone_recipe.create_adapter
+package com.example.capstone_recipe.recipe_create.create_adapter
 
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView

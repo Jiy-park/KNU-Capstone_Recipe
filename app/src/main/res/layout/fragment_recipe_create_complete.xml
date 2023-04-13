@@ -5,60 +5,58 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/style_main_color"
-    tools:context=".create_fragments.RecipeCreateComplete">
+    tools:context=".recipe_create.create_fragments.RecipeCreateComplete">
 
-    <TextView
-        android:id="@+id/tv"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="20dp"
-        android:fontFamily="@font/kopup_d_medium"
-        android:gravity="center"
-        android:text="레시피가 성공적으로\n등록됐어요!"
-        android:textColor="@color/white"
-        android:textSize="15sp"
-        app:layout_constraintBottom_toTopOf="@+id/iv"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        <TextView
+            android:id="@+id/tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            android:fontFamily="@font/kopup_d_medium"
+            android:gravity="center"
+            android:text="레시피가 성공적으로\n등록됐어요!"
+            android:textColor="@color/white"
+            android:textSize="15sp"
+            app:layout_constraintBottom_toTopOf="@+id/iv"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
 
-    <ImageView
-        android:id="@+id/iv"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/head_outline"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        <ImageView
+            android:id="@+id/iv"
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            android:src="@drawable/rabbit_upload_recipe"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-    <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/btnReturnMain"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="30dp"
-        android:background="@drawable/style_round_button"
-        android:text="메인 화면으로"
-        android:textColor="@color/main_text"
-        android:fontFamily="@font/kopup_d_medium"
-        android:textSize="15sp"
-        app:layout_constraintTop_toBottomOf="@id/iv"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"/>
-    <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/btnCheckPost"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="30dp"
-        android:layout_marginTop="10dp"
-        android:background="@drawable/style_round_button"
-        android:text="글 확인하기"
-        android:textColor="@color/main_color_start"
-        android:fontFamily="@font/kopup_d_medium"
-        android:textSize="15sp"
-        app:layout_constraintTop_toBottomOf="@id/btnReturnMain"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"/>
-
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnReturnMain"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="30dp"
+            android:background="@drawable/style_round_30"
+            android:text="메인 화면으로"
+            android:textColor="@color/main_text"
+            android:fontFamily="@font/kopup_d_medium"
+            android:textSize="15sp"
+            app:layout_constraintTop_toBottomOf="@id/iv"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnCheckPost"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="30dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/style_round_30"
+            android:text="글 확인하기"
+            android:textColor="@color/main_color_start"
+            android:fontFamily="@font/kopup_d_medium"
+            android:textSize="15sp"
+            app:layout_constraintTop_toBottomOf="@id/btnReturnMain"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"/>
+    </androidx.constraintlayout.widget.ConstraintLayout>

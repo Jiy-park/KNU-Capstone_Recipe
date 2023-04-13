@@ -1,4 +1,4 @@
-package com.example.capstone_recipe.create_fragments
+package com.example.capstone_recipe.recipe_create.create_fragments
 
 import android.app.Activity
 import android.app.ProgressDialog
@@ -20,7 +20,7 @@ import com.example.capstone_recipe.data_class.RecipeStep
 import com.example.capstone_recipe.databinding.FragmentRecipeCreateCompleteBinding
 import com.google.firebase.storage.FirebaseStorage
 
-class RecipeCreateComplete() : Fragment() {
+class RecipeCreateComplete(private val recipeId: String) : Fragment() {
     private lateinit var binding: FragmentRecipeCreateCompleteBinding
     private lateinit var context: Context
 
@@ -37,12 +37,10 @@ class RecipeCreateComplete() : Fragment() {
             requireActivity().supportFragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
             requireActivity().finish()
             val intent = Intent(context, PostViewer::class.java)
-            intent.putExtra("recipeID",1) // 포스트 고유 id값
+            intent.putExtra("recipeId", recipeId) // 포스트 고유 id값
             startActivity(intent)
         }
 
         return binding.root
     }
-
-
 }

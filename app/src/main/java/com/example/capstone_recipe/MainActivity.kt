@@ -8,18 +8,18 @@ import android.view.KeyEvent
 import android.widget.Toast
 import com.example.capstone_recipe.databinding.ActivityMainBinding
 import com.example.capstone_recipe.dialog.DialogFunc
-import com.example.capstone_recipe.test_______.TestActivity
+import com.example.capstone_recipe.recipe_locker.RecipeLocker
 
 class MainActivity : AppCompatActivity() {
     private val binding by lazy { ActivityMainBinding.inflate(layoutInflater) }
     private lateinit var context: Context
-    private var id = ""
     private var pressTime = 0L //뒤로가기 키 두번 누르는거
     private val timeInterval = 1000L
 
     private fun testFunction(){ // 테스트 용
-        binding.topPanel.tvTopTitle.setOnClickListener {
-            val intent = Intent(context, TestActivity::class.java)
+        binding.tvTop.setOnClickListener {
+            val intent = Intent(context, PostViewer::class.java)
+            intent.putExtra("recipeId", "20230412105019_q")
             startActivity(intent)
         }
     }
@@ -28,25 +28,32 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
         context = binding.root.context
-        id = intent.getStringExtra("id").toString()
-        Toast.makeText(context, "$id", Toast.LENGTH_SHORT).show()
+
         testFunction() // 테스트용
 
+        binding.tvSearchTrigger.setOnClickListener {
+            Toast.makeText(context, "!!", Toast.LENGTH_SHORT).show()
+        }
 
-        binding.layerCreate.groupCreate.setOnClickListener {
-            Toast.makeText(context, "create", Toast.LENGTH_SHORT).show()
-        }
-        binding.topPanel.btnSetting.setOnClickListener {
-            DialogFunc.settingDialog(context)
-        }
-        binding.layerLocker.groupLocker.setOnClickListener {
+        binding.ivRecipeLocker.setOnClickListener {
             val intent = Intent(context, RecipeLocker::class.java)
             startActivity(intent)
         }
-        binding.layerCreate.groupCreate.setOnClickListener {
+
+        binding.ivRecipeCreate.setOnClickListener {
             val intent = Intent(context, RecipeCreate::class.java)
             startActivity(intent)
         }
+
+        binding.ivUserInfo.setOnClickListener {
+            val intent = Intent(context, RecipeLocker::class.java)
+            startActivity(intent)
+        }
+
+        binding.ivSetting.setOnClickListener {
+            DialogFunc.settingDialog(context)
+        }
+
     }
 
 

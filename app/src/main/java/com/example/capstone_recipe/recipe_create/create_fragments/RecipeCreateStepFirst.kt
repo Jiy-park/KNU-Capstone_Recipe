@@ -1,4 +1,4 @@
-package com.example.capstone_recipe.create_fragments
+package com.example.capstone_recipe.recipe_create.create_fragments
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -15,17 +15,42 @@ import android.widget.ImageButton
 import android.widget.RadioButton
 import androidx.core.content.ContextCompat
 import com.example.capstone_recipe.R
+import com.example.capstone_recipe.UpdateValue
+import com.example.capstone_recipe.data_class.Ingredient
 import com.example.capstone_recipe.data_class.LEVEL
 import com.example.capstone_recipe.data_class.RecipeBasicInfo
-import com.example.capstone_recipe.data_class.RecipeIngredient
 import com.example.capstone_recipe.databinding.FragmentRecipeCreateStepFirstBinding
 
-class RecipeCreateStepFirst(private val ingredientList: MutableList<RecipeIngredient>, private val recipeBasicInfo: RecipeBasicInfo) : Fragment() {
-    // ingredientList -> 재료 리스트
-    // recipeBasicInfo -> 레시피 기본 정보
+class RecipeCreateStepFirst : Fragment() {
+    private lateinit var updateCollBack:UpdateValue
     private lateinit var binding:FragmentRecipeCreateStepFirstBinding
     private lateinit var context:Context
     private val ingredientIdList = mutableListOf<Int>() // 재료 추가 뷰 아이디 저장용 리스트
+    private val ingredientList = mutableListOf<Ingredient>()
+    private var level = LEVEL.EASY
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        updateCollBack = context as UpdateValue
+    }
+
+    override fun onStop() {
+        super.onStop()
+        val title = binding.editCreateTitle.text.toString()
+        val intro = binding.editCreateIntro.text.toString()
+        val time = binding.layerQuestionTime.editAnswer.text.toString()
+        val amount = binding.layerQuestionAmount.editAnswer.text.toString()
+        updateCollBack.updateBasicInfo(
+            RecipeBasicInfo(
+                title = title,
+                intro = intro,
+                time = time,
+                amount = amount,
+                level = level,
+            )
+        )
+        updateCollBack.updateIngredientList(ingredientList)
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = FragmentRecipeCreateStepFirstBinding.inflate(inflater, container, false)
@@ -36,11 +61,6 @@ class RecipeCreateStepFirst(private val ingredientList: MutableList<RecipeIngred
         binding.rgLevelSelection.setOnCheckedChangeListener { _, checkedId -> // 라디오 버튼 텍스트 변경
             setRadioTextColor(checkedId, context) //checkedId에 해당하는 라디오 버튼 텍스트만 색 변경 및 난이도 저장
         }
-
-        setEditChangeDetect(binding.editCreateTitle, TARGET.TITLE)
-        setEditChangeDetect(binding.editCreateIntro, TARGET.INTRO)
-        setEditChangeDetect(binding.layerQuestionTime.editAnswer, TARGET.TIME)
-        setEditChangeDetect(binding.layerQuestionAmount.editAnswer, TARGET.AMOUNT)
 
         binding.layerQuestionAmount.tvQuestion.text = "양은 얼마나 되나요?"
         binding.layerQuestionAmount.tvUnit.text = "인분"
@@ -79,7 +99,7 @@ class RecipeCreateStepFirst(private val ingredientList: MutableList<RecipeIngred
         binding.linearForIngredient.addView(addView)
 
         ingredientIdList.add(addView.id)
-        ingredientList.add(RecipeIngredient("", ""))
+        ingredientList.add(Ingredient("", ""))
 
 
         if(ingredientIdList.size == 1){
@@ -111,22 +131,6 @@ class RecipeCreateStepFirst(private val ingredientList: MutableList<RecipeIngred
         }
     }
 
-    private enum class TARGET{ TITLE, INTRO, TIME, AMOUNT }
-    private fun setEditChangeDetect(origin:EditText, target:TARGET){
-        origin.addTextChangedListener(object : TextWatcher{ // 리세피 제목 저장
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
-            override fun afterTextChanged(s: Editable?) {
-                when(target){
-                    TARGET.TITLE -> recipeBasicInfo.title = origin.text.toString()     // 레시피 제목 저장
-                    TARGET.INTRO -> recipeBasicInfo.intro = origin.text.toString()     // 레시피 한 줄 소개 저장
-                    TARGET.TIME -> recipeBasicInfo.time = origin.text.toString()      // 레시피 소요 시간 저장
-                    TARGET.AMOUNT -> recipeBasicInfo.amount = origin.text.toString()    // 레시피 음식 양 저장
-                }
-            }
-        })
-    }
-
     private fun setRadioTextColor(targetId:Int, context:Context){ // 라디오 버튼 텍스트 색 변경 함수
         val radioLevel = listOf<Int>(
             R.id.radioLevelEasy,
@@ -138,7 +142,7 @@ class RecipeCreateStepFirst(private val ingredientList: MutableList<RecipeIngred
             binding.root.findViewById<RadioButton>(radioLevel[i]).setTextColor(ContextCompat.getColor(context, R.color.main_text))
             if(radioLevel[i] == targetId){
                 binding.root.findViewById<RadioButton>(radioLevel[i]).setTextColor(ContextCompat.getColor(context, R.color.main_color_start))
-                recipeBasicInfo.level = LEVEL.values()[i] // 레시피 난이도 저장
+                level = LEVEL.values()[i] // 레시피 난이도 저장
             }
         }
     }

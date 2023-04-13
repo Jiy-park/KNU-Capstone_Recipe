@@ -35,7 +35,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/iv"
-        android:background="@drawable/style_round_button"
+        android:background="@drawable/style_round_30"
         android:clipToOutline="true">
 <!--        다이얼로그 타이틀바-->
         <androidx.constraintlayout.widget.ConstraintLayout

@@ -1,5 +1,7 @@
-package com.example.capstone_recipe.create_adapter
+package com.example.capstone_recipe.recipe_create.create_adapter
 
+import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Context
 import android.net.Uri
 import android.util.Log
@@ -10,13 +12,14 @@ import android.widget.FrameLayout
 import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.capstone_recipe.R
+import com.example.capstone_recipe.recipe_create.create_fragments.RecipeCreateStepThird
 import com.example.capstone_recipe.data_class.RecipeBasicInfo
 import com.example.capstone_recipe.data_class.RecipeStep
 import com.example.capstone_recipe.databinding.ItemSelectMainImageBinding
+import java.text.SimpleDateFormat
 
-class SelectMainImageAdapter(private val recipeBasicInfo:RecipeBasicInfo, private val createStepList: MutableList<RecipeStep>):RecyclerView.Adapter<SelectMainImageAdapter.Holder>() {
-    // recipeBasicInfo -> 레시피 기본 정보(  대표 이미지, 공개 대상 )
-    // createStepList -> 대표 이미지 리스트 용
+class SelectMainImageAdapter(private val parent: RecipeCreateStepThird, private val stepImageList: List<Uri?>):RecyclerView.Adapter<SelectMainImageAdapter.Holder>() {
+
     private lateinit var binding: ItemSelectMainImageBinding
     private lateinit var context: Context
     private lateinit var checkedView: View
@@ -29,10 +32,10 @@ class SelectMainImageAdapter(private val recipeBasicInfo:RecipeBasicInfo, privat
     }
 
     override fun onBindViewHolder(holder: Holder, position: Int) {
-        holder.settingClick(createStepList[position].Image)
+        holder.settingClick(stepImageList[position])
     }
 
-    override fun getItemCount() = createStepList.size
+    override fun getItemCount() = stepImageList.size
 
     inner class Holder(val binding: ItemSelectMainImageBinding):RecyclerView.ViewHolder(binding.root){
         fun settingClick(imageUri: Uri?){
@@ -47,6 +50,8 @@ class SelectMainImageAdapter(private val recipeBasicInfo:RecipeBasicInfo, privat
                 checkedView = itemView
                 checkedId = frameId
                 binding.frameChecked.visibility = View.VISIBLE
+                if(imageUri == null) { parent.setUri(uri) }
+                else { parent.setUri(imageUri) }
             }
             binding.ivMainImage.setOnClickListener {
                 if(checkedId != frameId){ // 이미지 선택시 해당 이미지를 대표 이미지로 선정
@@ -56,9 +61,16 @@ class SelectMainImageAdapter(private val recipeBasicInfo:RecipeBasicInfo, privat
                     checkedId = frameId
                     binding.frameChecked.visibility = View.VISIBLE
                 }
-                if(imageUri == null) { recipeBasicInfo.mainImage = uri }
-                else { recipeBasicInfo.mainImage = imageUri }
+                if(imageUri == null) { parent.setUri(uri) }
+                else { parent.setUri(imageUri) }
             }
         }
+        // 대표 이미지 : recipe_image/$recipeId/main/$userId_$recipeId_$yyyyMMdd_HHmm.jpeg
+//        @SuppressLint("SimpleDateFormat")
+//        fun makeMainImageFilePath(userId:String, uri: Uri): String { // 스텝 별 이미지
+//            val mimeType = activity.contentResolver?.getType(uri) ?: "/none" //마임타입 ex) images/jpeg
+//            val ext = mimeType.split("/")[1] //확장자 ex) jpeg
+//            return "${userId}_main.$ext" // 파일 경로
+//        }
     }
 }

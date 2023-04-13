@@ -68,7 +68,7 @@
             android:layout_width="100dp"
             android:layout_height="100dp"
             android:layout_gravity="center|right"
-            android:background="@drawable/style_profile"
+            android:background="@drawable/style_circle"
             android:backgroundTint="@color/background_gray"
             android:src="@drawable/ex_img_profile"/>
     </FrameLayout>

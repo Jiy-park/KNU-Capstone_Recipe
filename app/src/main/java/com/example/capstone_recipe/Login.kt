@@ -13,20 +13,20 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.example.capstone_recipe.databinding.ActivityLoginBinding
 import com.example.capstone_recipe.data_class.User
+import com.example.capstone_recipe.data_class.UserLogInInfo
 import com.google.firebase.database.*
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.sothree.slidinguppanel.PanelSlideListener
 import com.sothree.slidinguppanel.PanelState
-import render.animations.Render
 
 
 class Login : AppCompatActivity() {
-    private val binding by lazy { ActivityLoginBinding.inflate(layoutInflater) }
     private val db by lazy { Firebase.database("https://knu-capstone-f9f55-default-rtdb.asia-southeast1.firebasedatabase.app/") }
-    private val usersRef by lazy { db.getReference("users") }
+    private val binding by lazy { ActivityLoginBinding.inflate(layoutInflater) }
+    private val logInRef by lazy { db.getReference("logIn") }
+    private val pref by lazy{ Preference(context) }
     private lateinit var context: Context
-    private lateinit var render: Render
     private var pressTime = 0L
     private val timeInterval = 1000L
 
@@ -39,8 +39,9 @@ class Login : AppCompatActivity() {
 
         context =  binding.root.context // 컨텍스트 정의
         binding.slidingLayout.isTouchEnabled = false // 슬라이딩 패널 터치 잠금
-        render = Render(context)
 
+
+        if(pref.checkSetAutoLogInInfo()){ pref.autoLogIn(binding.editSignInID, binding.editSignInPW) }
 
         setupFocusChangeListeners()
         binding.slidingLayout.addPanelSlideListener(object :PanelSlideListener { // 패널 올라올 때 토끼 같이 올라옴
@@ -76,37 +77,6 @@ class Login : AppCompatActivity() {
                 binding.slidingLayout.panelState = PanelState.EXPANDED
             }, 400)
         }
-
-//        binding.editSignUpID.setOnFocusChangeListener { _, hasFocus -> // 회원가입 패널 아이디 포커스 관리 + 아이디 중복 체크
-//            if(hasFocus) { binding.slidingRabbit.setImageResource(R.drawable.login_2)  }
-//            else {
-//                binding.slidingRabbit.setImageResource(R.drawable.login_1)
-//                checkUserID(binding.editSignUpID.text.toString())
-//            }
-//        }
-//
-//        binding.editSignUpPWCheck.setOnFocusChangeListener { _, hasFocus -> // 회원가입 패널 비밀번호 확인 포커스 관리 + 비번 기입 체크
-//            if(hasFocus) { binding.slidingRabbit.setImageResource(R.drawable.login_3) }
-//            if(!hasFocus) {
-//                binding.slidingRabbit.setImageResource(R.drawable.login_1)
-//                checkPW()
-//            }
-//        }
-//
-//        binding.editSignUpPW.setOnFocusChangeListener { _, hasFocus ->  // 회원가입 패널 비밀번호 포커스 관리
-//            if(hasFocus) { binding.slidingRabbit.setImageResource(R.drawable.login_3) }
-//            else { binding.slidingRabbit.setImageResource(R.drawable.login_1) }
-//        }
-//
-//        binding.editSignInID.setOnFocusChangeListener { _, hasFocus ->
-//            if(hasFocus) { binding.slidingRabbit.setImageResource(R.drawable.login_2) }
-//            else { binding.slidingRabbit.setImageResource(R.drawable.login_1) }
-//        }
-//
-//        binding.editSignInPW.setOnFocusChangeListener { _, hasFocus ->
-//            if(hasFocus) { binding.slidingRabbit.setImageResource(R.drawable.login_3) }
-//            else { binding.slidingRabbit.setImageResource(R.drawable.login_1) }
-//        }
 
 
         binding.btnSlideSignIn.setOnClickListener {// 로그인 패널 내 로그인 버튼
@@ -162,7 +132,7 @@ class Login : AppCompatActivity() {
 
 
     private fun checkUserID(userID:String){
-        val idRef = usersRef.child(userID)
+        val idRef = logInRef.child(userID)
         idRef.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 if (dataSnapshot.exists()) { // 아이디 중복됨
@@ -217,12 +187,12 @@ class Login : AppCompatActivity() {
     }
 
     private  fun signIn(id:String, pw:String){
-        val idRef = usersRef.child(id)
+        val idRef = logInRef.child(id)
         idRef.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 if (dataSnapshot.exists()) {
                     if(pw == dataSnapshot.child("pw").value){ // 로그인 성공
-//                        Toast.makeText(context, "로그인!", Toast.LENGTH_SHORT).show()
+                        if(pref.getUseAutoLogIn()){ pref.saveAutoLogInInfo(id,pw) }
                         moveToMain(id)
                     }
                     else{ // 비밀번호 틀림
@@ -244,35 +214,40 @@ class Login : AppCompatActivity() {
     }
 
     private fun signUp(id:String, pw:String, name:String){
-        usersRef
+        val usersRef = db.getReference("users")
+        logInRef                                            // 유저 로그인 정보 db 업로드
             .child(id)
-            .setValue(User(
-                ID = id,
-                PW = pw,
-                NAME = name,
-                SCORE = 0,
-                PROFILE_IMAGE = null,
-                BACK_IMAGE = null,
-                RECENT_RECIPE = null,
-                FRIENDS = listOf(),
-                UPLOAD_RECIPE = listOf(),
-                RECIPE_LOCKER = listOf()
-            ))
-        Toast.makeText(context, "환영해요!", Toast.LENGTH_SHORT).show()
-        signIn(id, pw)
+            .setValue(
+                UserLogInInfo(
+                    id = id,
+                    pw = pw
+                ))
+            .addOnCompleteListener {
+                usersRef
+                    .child(id)                              // 로그인 정보 업로드 성공 시 유저 기본 정보 db 업로드
+                    .setValue(User(
+                        id = id,
+                        name = name,
+                        score = 0,
+                        profileImagePath = null,
+                        backgroundImagePath = null,
+                        recentRecipe = null,
+                        friends = listOf(),
+                        uploadRecipe = listOf(),
+                        recipeLocker = listOf()
+                    ))
+                    .addOnCompleteListener {
+                        Toast.makeText(context, "환영해요!", Toast.LENGTH_SHORT).show()
+                        signIn(id, pw)
+                    }
+            }
     }
 
     private fun moveToMain(id:String){ // 로그인
         val intent = Intent(binding.root.context, MainActivity::class.java)
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-        intent.putExtra("id", id)
         startActivity(intent)
     }
 
-    //    fun convertPixelsToDp(px: Float, context: Context): Float { // px to dp
-//        val resources = context.resources
-//        val metrics: DisplayMetrics = resources.displayMetrics
-//        return px / (metrics.densityDpi.toFloat() / DisplayMetrics.DENSITY_DEFAULT)
-//    }
 }
 
