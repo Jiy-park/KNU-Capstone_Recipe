@@ -18,13 +18,15 @@ data class Ingredient(                     // 레시피
 )
 
 data class RecipeBasicInfo(                     // 레시피 기본 정보
+    var id: String = "",
     var title: String = "",                     // 레시피 제목
     var intro: String = "",                     // 레시피 한 줄 소개
     var mainImagePath: String? = null,          // 레시피 대표 이미지
     var time: String = "",                      // 레시피 조리 시간
     var amount:String = "",                     // 레시피 요리 양
     var level: LEVEL = LEVEL.EASY,              // 레시피 난이도
-    var shareOption: SHARE = SHARE.ONLY_ME      // 레시피 공개 대상
+    var shareOption: SHARE = SHARE.ONLY_ME,      // 레시피 공개 대상
+    var score: Int = 0
 )
 
 enum class SHARE{

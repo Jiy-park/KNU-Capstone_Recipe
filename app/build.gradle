@@ -53,7 +53,7 @@ dependencies {
     //파이어베이스 추가
     implementation platform('com.google.firebase:firebase-bom:31.2.3')
     implementation 'com.google.firebase:firebase-analytics-ktx'
-    implementation 'com.google.firebase:firebase-database-ktx:20.1.0'
+    implementation 'com.google.firebase:firebase-database-ktx:20.2.0'
     implementation 'com.google.firebase:firebase-storage-ktx'
 
     //슬라이딩 패널 :: https://github.com/hannesa2/AndroidSlidingUpPanel
@@ -71,4 +71,7 @@ dependencies {
 
     //원형 뷰
     implementation 'de.hdodenhof:circleimageview:3.1.0'
+
+    //코루틴
+//    implementation 'oorg.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.6.3'
 }

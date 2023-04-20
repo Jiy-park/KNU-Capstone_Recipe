@@ -11,6 +11,7 @@ import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import com.example.capstone_recipe.data_class.FriendInfo
 import com.example.capstone_recipe.databinding.ActivityLoginBinding
 import com.example.capstone_recipe.data_class.User
 import com.example.capstone_recipe.data_class.UserLogInInfo
@@ -213,6 +214,7 @@ class Login : AppCompatActivity() {
         })
     }
 
+
     private fun signUp(id:String, pw:String, name:String){
         val usersRef = db.getReference("users")
         logInRef                                            // 유저 로그인 정보 db 업로드
@@ -229,18 +231,19 @@ class Login : AppCompatActivity() {
                         id = id,
                         name = name,
                         score = 0,
-                        profileImagePath = null,
-                        backgroundImagePath = null,
-                        recentRecipe = null,
-                        friends = listOf(),
-                        uploadRecipe = listOf(),
-                        recipeLocker = listOf()
+                        profileImagePath = "",
+                        backgroundImagePath = "",
+                        recentRecipe = "",
+                        friends = mutableListOf(),
+                        uploadRecipe = mutableListOf(),
+                        saveRecipe = mutableListOf()
                     ))
                     .addOnCompleteListener {
                         Toast.makeText(context, "환영해요!", Toast.LENGTH_SHORT).show()
                         signIn(id, pw)
                     }
             }
+//        TODO("위 코드에서 테스트로 넣은 값듯 지워야 함")
     }
 
     private fun moveToMain(id:String){ // 로그인

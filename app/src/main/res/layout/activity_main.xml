@@ -167,6 +167,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/ivSetting" />
         </androidx.constraintlayout.widget.ConstraintLayout>
         <TextView
+            android:id="@+id/tvRecentRecipe"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="최근 본 레시피"

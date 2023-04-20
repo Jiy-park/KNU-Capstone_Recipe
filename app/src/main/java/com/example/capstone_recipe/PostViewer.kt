@@ -3,6 +3,7 @@ package com.example.capstone_recipe
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
+import android.media.Image
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -12,9 +13,13 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
+import androidx.core.content.res.ResourcesCompat
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.request.RequestOptions
 import com.example.capstone_recipe.data_class.Ingredient
 import com.example.capstone_recipe.data_class.LEVEL
 import com.example.capstone_recipe.data_class.RecipeBasicInfo
@@ -22,14 +27,20 @@ import com.example.capstone_recipe.data_class.RecipeStep
 import com.example.capstone_recipe.databinding.ActivityPostViewerBinding
 import com.example.capstone_recipe.post_adapter.RecipeIngredientAdapter
 import com.example.capstone_recipe.post_adapter.RecipeStepAdapter
+import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.database.ktx.getValue
+import com.google.firebase.database.ktx.values
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withContext
 import java.util.logging.Level
 import kotlin.reflect.typeOf
 
@@ -43,20 +54,30 @@ class PostViewer : AppCompatActivity() {
     private var ingredientList = mutableListOf<Ingredient>()
     private var stepList = mutableListOf<RecipeStep>()
     private var recipeId: String? = null
+    private lateinit var userId: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
+        context = binding.root.context
+        userId = Preference(context).getUserId()
         recipeId = intent.getStringExtra("recipeId")!!
         intent.removeExtra("recipeId")
         if(recipeId == null) {
             Toast.makeText(context, "인텐트 안됨", Toast.LENGTH_SHORT).show()
             finish()
         }
-
-
+        lifecycleScope.launch(Dispatchers.IO) {
+            checkUserFavoriteThis(userId, recipeId!!)
+        }
+        setProgress()
         setRecipeById(recipeId!!)
-        context = binding.root.context
+        db.getReference("users")        // 유저의 최근 본 레시피에 레시피 아이디 저장
+            .child(Preference(context).getUserId())
+            .child("recentRecipe")
+            .setValue(recipeId)
+
+
         recipeIngredientAdapter = RecipeIngredientAdapter(ingredientList)
         recipeStepAdapter = RecipeStepAdapter(recipeId!!, stepList)
 
@@ -76,7 +97,95 @@ class PostViewer : AppCompatActivity() {
             startActivity(intent)
             finish()
         }
+
+//        TODO("유저 1이 유저 2의 레시피에 하트를 남겼다면, score 리스트에 유저 1의 아이디를 넣고, 스코어를 해당 리스트의 사이즈로 판단" +
+//                "그리고 해당 포스트에 다시 들어갔을 때 하트를 남긴 사람인지 체크하고, 남겼던 사람이면 하트를 빨갛게, 아니면 회색으로 표현하는 함수 구현할 것")
+        binding.layerPostTitle.ivSymbolFavoriteOff.setOnClickListener { // 좋아요 버튼 클릭
+            val recipeCreator = recipeId!!.split("_")[1]
+            val scoreRef = db.getReference("users")
+                .child(recipeCreator)
+                .child("score")
+
+            val favoriteRef = db.getReference("recipes")
+                .child(recipeId!!)
+                .child("favoritePeople")
+
+            scoreRef
+                .addListenerForSingleValueEvent(object: ValueEventListener{
+                    override fun onDataChange(snapshot: DataSnapshot) {
+                        if(snapshot.exists()){
+                            scoreRef.setValue(snapshot.value.toString().toInt() + 1)
+                            binding.layerPostTitle.ivSymbolFavoriteOff.visibility = View.GONE
+                            binding.layerPostTitle.ivSymbolFavoriteOn.visibility = View.VISIBLE
+                            favoriteRef
+                                .push()
+                                .setValue(userId)
+                        }
+                    }
+                    override fun onCancelled(error: DatabaseError) { Log.e("LOG_CHECK", "onCancelled: 뭐가 문제일까? $error", ) }
+                })
+        }
+
+        binding.layerPostTitle.ivSymbolFavoriteOn.setOnClickListener { // 졸아요 버튼 해제
+            val recipeCreator = recipeId!!.split("_")[1]
+            val scoreRef = db.getReference("users")
+                .child(recipeCreator)
+                .child("score")
+            scoreRef
+                .addListenerForSingleValueEvent(object: ValueEventListener{
+                    override fun onDataChange(snapshot: DataSnapshot) {
+                        if(snapshot.exists()){
+                            val score = snapshot.value.toString().toInt()
+                            if(score > 0){
+                                scoreRef.setValue(score - 1)
+                                binding.layerPostTitle.ivSymbolFavoriteOff.visibility = View.VISIBLE
+                                binding.layerPostTitle.ivSymbolFavoriteOn.visibility = View.GONE
+                            }
+                        }
+                    }
+                    override fun onCancelled(error: DatabaseError) { Log.e("LOG_CHECK", "onCancelled: 뭐가 문제일까? $error", ) }
+                })
+        }
     }
+
+     private suspend fun checkUserFavoriteThis(userId: String, recipeId: String){ // 유저가 레시피를 보관함에 넣었는지?
+         val list = db.getReference("recipes")
+             .child(recipeId)
+             .child("favoritePeople")
+             .get()
+             .await()
+             .children
+
+        Log.d("LOG_CHECK", "PostViewer :: checkUserFavoriteThis() -> list : $list")
+
+         withContext(Dispatchers.Main){
+             binding.layerPostTitle.ivSymbolFavoriteOn.visibility = View.GONE
+             binding.layerPostTitle.ivSymbolFavoriteOff.visibility = View.VISIBLE
+             for(i in list){
+                 if(i.value == userId){
+                     binding.layerPostTitle.ivSymbolFavoriteOn.visibility = View.VISIBLE
+                     binding.layerPostTitle.ivSymbolFavoriteOff.visibility = View.GONE
+                     break
+                 }
+             }
+         }
+     }
+
+    private fun addSavePeopleToList(recipeId: String, userId: String){ // 보관함에 추가함
+        db.getReference("recipes")
+            .child(recipeId)
+            .child("savePeople")
+            .push()
+            .setValue(userId)
+    }
+
+    private fun setProgress(){
+        Glide.with(this)
+            .asGif()
+            .load(R.drawable.test2222222)
+            .into(binding.ivProgressImage)
+    }
+
 
     private fun setRecipeById(recipeId: String){
         val recipesRef = db.getReference("recipes").child(recipeId)
@@ -92,10 +201,7 @@ class PostViewer : AppCompatActivity() {
     }
 
     private fun viewIsReady(){
-        binding.progressBar.visibility = View.GONE
-        binding.layerTopPanel.root.visibility = View.VISIBLE
-        binding.scrollView2.visibility = View.VISIBLE
-        binding.btnStartTalkingRecipe.visibility = View.VISIBLE
+        binding.linearProgress.visibility = View.GONE
     }
 
     private fun setBasicInfo(basicInfo: DatabaseReference){

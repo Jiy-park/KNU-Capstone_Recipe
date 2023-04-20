@@ -1,52 +1,106 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     tools:context=".recipe_locker.RecipeLocker">
-<!--    최상단 패널-->
-    <include layout="@layout/common_top_panel_sub"
-        android:id="@+id/layerTopPanel"/>
 
-<!--    보관함 이름-->
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/ivLockerBackImage"
+        android:layout_width="match_parent"
+        android:layout_height="210dp"
+        android:background="@color/main_color_start"
+        android:scaleType="centerCrop"
+        android:translationZ="-1dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/ivLockerUserImage"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:src="@drawable/head_default_image"
+        android:clipToOutline="true"
+        android:scaleType="centerCrop"
+        android:background="@drawable/style_circle"
+        app:layout_constraintBottom_toBottomOf="@+id/ivLockerBackImage"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/ivLockerBackImage" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="@+id/ivLockerBackImage"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/ivLockerUserImage">
+        <TextView
+            android:id="@+id/tvUserNameWithId"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingHorizontal="10dp"
+            android:text="닉네임 @아이디"
+            android:textColor="@color/main_text"
+            android:fontFamily="@font/kopup_d_medium"
+            android:textSize="15sp"/>
+        <TextView
+            android:id="@+id/tvUserScore"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingHorizontal="10dp"
+            android:text="추천 10"
+            android:textColor="@color/main_text"
+            android:fontFamily="@font/kopup_d_medium"
+            android:textSize="15sp"/>
+    </LinearLayout>
+
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/tabLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="15dp">
-        <TextView
-            android:id="@+id/tvLockerMaster"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:drawablePadding="5dp"
-            android:text="@string/test_locker_master"
-            android:textColor="@color/main_text"
-            android:fontFamily="@font/kopup_d_bold"
-            android:textSize="20sp"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toLeftOf="@id/btnEditLockerMaster"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"/>
+        app:tabRippleColor="@null"
+        app:tabIndicatorColor="@color/main_color_start"
+        app:tabSelectedTextColor="@color/main_color_start"
+        app:tabTextColor="@color/main_text"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/ivLockerBackImage"/>
 
-        <androidx.appcompat.widget.AppCompatImageButton
-            android:id="@+id/btnEditLockerMaster"
-            android:layout_width="wrap_content"
-            android:layout_height="0dp"
-            android:background="@color/white"
-            android:minWidth="48dp"
-            android:src="@drawable/ic_create"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:ignore="SpeakableTextPresentCheck,ImageContrastCheck,TouchTargetSizeCheck" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerviewRecipeHolder"
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/viewPager"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="0dp"
+        app:layout_constraintTop_toBottomOf="@+id/tabLayout"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"/>
 
-
-</LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white"
+        android:layout_marginTop="120dp"
+        android:translationZ="-1dp"
+        android:clickable="false"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"/>
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/progressDownload"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        android:background="@color/white">
+        <ProgressBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

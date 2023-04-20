@@ -49,11 +49,13 @@ class RecipeCreate : AppCompatActivity(), UpdateValue {
     private var recipeBasicInfo = RecipeBasicInfo(
         "",
         "",
+        "",
         null,
         "",
         "",
         LEVEL.EASY,
-        SHARE.ONLY_ME
+        SHARE.ONLY_ME,
+        0
     )
     private var ingredientList = mutableListOf<Ingredient>()
     private var stepExplanationList = mutableListOf<String>("")
@@ -172,6 +174,7 @@ class RecipeCreate : AppCompatActivity(), UpdateValue {
     }
 
     private fun makeUpRecipeInfo(){ // db에 올리기 전 모든 정보를 정리
+        recipeBasicInfo.id = recipeId
         recipeBasicInfo.mainImagePath = uriToPath(selectedMainImage) // 스토리지 경로로 변환
         uploadToUserDB()
     }
@@ -179,8 +182,7 @@ class RecipeCreate : AppCompatActivity(), UpdateValue {
     private fun uploadToUserDB(){ // 유저 정보 업데이트 -> 레시피 아이디 추가
         db.getReference("users") // 유저가 올린 레시피들
             .child(userId)
-            .child("recipes")   // root/users/$userid/recipes/...
-            .child("recipe_id")
+            .child("uploadRecipe")   // root/users/$userid/recipes/...
             .push()
             .setValue(recipeId)
             .addOnCompleteListener {     // 추가 후 처리 = 레시피 정보 등록
@@ -193,12 +195,14 @@ class RecipeCreate : AppCompatActivity(), UpdateValue {
 
     private fun uploadToRecipeDB(){ // 레시피 정보 업데이트
         val recipePath = db.getReference("recipes").child(recipeId)
-        val basicInfoPath = recipePath.child("basic_info")
+        val basicInfoPath = recipePath.child("basicInfo")
         val ingredientPath = recipePath.child("ingredient")
         val stepPath = recipePath.child("step")
+        val favoritePeople = recipePath.child("favoritePeople")
 
         basicInfoPath.setValue(recipeBasicInfo)
         ingredientPath.setValue(ingredientList)
+        favoritePeople.setValue("")
 
         val stepList = mutableListOf<RecipeStep>()
         for(i in 0 until stepExplanationList.size){ // 단계 설명 + 이미지 (null 가능)
@@ -218,6 +222,7 @@ class RecipeCreate : AppCompatActivity(), UpdateValue {
     @SuppressLint("SimpleDateFormat")
     fun uriToPath(uri: Uri?, step:Int = -1): String? { // 스텝 별 이미지
         if(uri == null) { return null }
+        Log.d("LOG_CHECK", "RecipeCreate :: uriToPath() -> uri : $uri")
         val mimeType = contentResolver?.getType(uri) ?: "/none" //마임타입 ex) images/jpeg
         val ext = mimeType.split("/")[1] //확장자 ex) jpeg
 

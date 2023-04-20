@@ -4,16 +4,6 @@ import android.content.Context
 import android.widget.EditText
 
 class Preference(context: Context) {
-    companion object KEYS{
-        const val PREFERENCE_NAME = "preference"
-
-        const val USER_ID = "userId"
-        const val USER_PW = "userPw"
-        const val USER_NAME = "userName"
-
-        const val USE_AUTO_LOG_IN = "useAutoLogIn"
-    }
-
     private val sharedPref = context.getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE)
 
     fun getUserId() = sharedPref.getString(USER_ID, "") ?: ""
@@ -54,5 +44,15 @@ class Preference(context: Context) {
             editId.setText(userId)
             editPw.setText(userPw)
         }
+    }
+
+    companion object KEYS{
+        const val PREFERENCE_NAME = "preference"
+
+        const val USER_ID = "userId"
+        const val USER_PW = "userPw"
+        const val USER_NAME = "userName"
+
+        const val USE_AUTO_LOG_IN = "useAutoLogIn"
     }
 }

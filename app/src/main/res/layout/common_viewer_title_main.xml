@@ -43,16 +43,26 @@
             android:layout_marginVertical="5dp"
             android:orientation="horizontal">
             <androidx.appcompat.widget.AppCompatImageButton
+                android:id="@+id/ivSymbolFavoriteOff"
                 android:layout_width="40dp"
                 android:layout_height="match_parent"
                 android:background="@color/white"
                 android:src="@drawable/ic_heart"/>
             <androidx.appcompat.widget.AppCompatImageButton
+                android:id="@+id/ivSymbolFavoriteOn"
+                android:layout_width="40dp"
+                android:layout_height="match_parent"
+                android:background="@color/white"
+                android:visibility="gone"
+                android:src="@drawable/ic_heart_red"/>
+            <androidx.appcompat.widget.AppCompatImageButton
+                android:id="@+id/ivSymbolShare"
                 android:layout_width="40dp"
                 android:layout_height="match_parent"
                 android:background="@color/white"
                 android:src="@drawable/ic_share"/>
             <androidx.appcompat.widget.AppCompatImageButton
+                android:id="@+id/ivSymbolSaveRecipe"
                 android:layout_width="40dp"
                 android:layout_height="match_parent"
                 android:background="@color/white"
