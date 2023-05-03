@@ -107,6 +107,4 @@
                 app:drawableLeftCompat="@drawable/ic_heart_white" />
         </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
-
-
 </LinearLayout>

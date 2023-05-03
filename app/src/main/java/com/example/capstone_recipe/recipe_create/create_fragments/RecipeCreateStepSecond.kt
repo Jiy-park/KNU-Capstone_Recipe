@@ -2,14 +2,11 @@ package com.example.capstone_recipe.recipe_create.create_fragments
 
 import android.Manifest
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.content.Context
 import android.content.pm.PackageManager
-import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -20,15 +17,12 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.core.content.ContextCompat
-import androidx.core.graphics.drawable.toBitmap
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.capstone_recipe.UpdateValue
+import com.example.capstone_recipe.recipe_create.UpdateValue
 import com.example.capstone_recipe.recipe_create.create_adapter.ExplanationAdapter
 import com.example.capstone_recipe.recipe_create.create_adapter.ItemTouchHelperCallback
-import com.example.capstone_recipe.data_class.RecipeStep
 import com.example.capstone_recipe.databinding.FragmentRecipeCreateStepSecondBinding
-import java.text.SimpleDateFormat
 
 class RecipeCreateStepSecond(ExplanationList: List<String>, ImageList: List<Uri?>) : Fragment() {
     private lateinit var storagePermission: ActivityResultLauncher<String>  // 저장소 권한

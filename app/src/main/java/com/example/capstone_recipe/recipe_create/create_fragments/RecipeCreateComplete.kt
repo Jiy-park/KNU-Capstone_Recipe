@@ -1,10 +1,7 @@
 package com.example.capstone_recipe.recipe_create.create_fragments
 
-import android.app.Activity
-import android.app.ProgressDialog
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -13,7 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.FragmentManager
-import com.example.capstone_recipe.RecipeCreate
+import com.example.capstone_recipe.recipe_create.RecipeCreate
 import com.example.capstone_recipe.PostViewer
 import com.example.capstone_recipe.data_class.RecipeBasicInfo
 import com.example.capstone_recipe.data_class.RecipeStep

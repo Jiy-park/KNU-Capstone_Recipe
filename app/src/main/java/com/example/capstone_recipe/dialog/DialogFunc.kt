@@ -1,5 +1,6 @@
 package com.example.capstone_recipe.dialog
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Context.VIBRATOR_SERVICE
 import android.content.Intent
@@ -11,6 +12,7 @@ import android.view.LayoutInflater
 import android.widget.NumberPicker
 import android.widget.TextView
 import androidx.annotation.RequiresApi
+import com.example.capstone_recipe.Login
 import com.example.capstone_recipe.R
 
 class DialogFunc {
@@ -23,6 +25,13 @@ class DialogFunc {
             view.findViewById<TextView>(R.id.tvDeveloperInfo).setOnClickListener {
                 dialog.dismiss()
                 val intent = Intent(context, DeveloperInfo::class.java)
+                context.startActivity(intent)
+            }
+
+            view.findViewById<TextView>(R.id.tvLogOut).setOnClickListener {
+                dialog.dismiss()
+                val intent = Intent(context, Login::class.java)
+                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                 context.startActivity(intent)
             }
 

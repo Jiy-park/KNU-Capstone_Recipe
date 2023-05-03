@@ -16,4 +16,5 @@
     <color name="main_color_start">#FF6D89</color>
     <color name="main_color_end">#FFB7A4</color>
     <color name="background_gray">#EEEEEE</color>
+    <color name="test_color_dark_green">#0B320D</color>
 </resources>

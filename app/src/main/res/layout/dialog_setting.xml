@@ -108,4 +108,13 @@
         android:text="개발자 정보"
         android:fontFamily="@font/kopup_d_medium"
         android:textColor="@color/main_text"/>
+    <TextView
+        android:id="@+id/tvLogOut"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingTop="10dp"
+        android:layout_gravity="end"
+        android:text="로그아웃"
+        android:fontFamily="@font/kopup_d_medium"
+        android:textColor="@color/main_text"/>
 </LinearLayout>

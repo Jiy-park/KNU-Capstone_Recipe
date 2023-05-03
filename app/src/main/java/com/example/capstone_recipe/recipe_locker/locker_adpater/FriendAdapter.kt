@@ -12,21 +12,21 @@ import com.example.capstone_recipe.data_class.FriendInfo
 import com.example.capstone_recipe.databinding.ItemFriendViewerBinding
 import com.example.capstone_recipe.recipe_locker.RecipeLocker
 
-class FriendAdapter(
-        private val context: Context,
-        private val friendList: List<FriendInfo>,
-        private val imageList: List<Uri>
-    ):RecyclerView.Adapter<FriendAdapter.Holder>() {
-
+class FriendAdapter:RecyclerView.Adapter<FriendAdapter.Holder>() {
     private lateinit var binding: ItemFriendViewerBinding
+    private lateinit var context: Context
+    var friendList = listOf<FriendInfo>()
+    var imageList = listOf<Uri>()
+
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): Holder {
         binding = ItemFriendViewerBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        context = binding.root.context
         return Holder(binding)
     }
 
     override fun onBindViewHolder(holder: Holder, position: Int) {
-        holder.bind(friendList[position], imageList[position])
+        if(friendList.isNotEmpty()){ holder.bind(friendList[position], imageList[position]) }
     }
 
     override fun getItemCount() = friendList.size

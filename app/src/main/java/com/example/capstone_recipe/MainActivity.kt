@@ -15,6 +15,7 @@ import com.bumptech.glide.Glide
 import com.example.capstone_recipe.data_class.RecipeBasicInfo
 import com.example.capstone_recipe.databinding.ActivityMainBinding
 import com.example.capstone_recipe.dialog.DialogFunc
+import com.example.capstone_recipe.recipe_create.RecipeCreate
 import com.example.capstone_recipe.recipe_locker.RecipeLocker
 import com.example.capstone_recipe.test_______.TestActivity
 import com.google.firebase.database.ktx.database
@@ -49,9 +50,9 @@ class MainActivity : AppCompatActivity() {
     override fun onStart() {
         super.onStart()
         lifecycleScope.launch(Dispatchers.IO) {
-            val recipeBasicInfo = getRecentRecipe(userId)
+            val recentRecipeBasicInfo = getRecentRecipe(userId)
             withContext(Dispatchers.Main){
-                setRecentRecipe(recipeBasicInfo)
+                setRecentRecipe(recentRecipeBasicInfo)
             }
         }
     }
@@ -65,7 +66,8 @@ class MainActivity : AppCompatActivity() {
         testFunction() // 테스트용
 
         binding.tvSearchTrigger.setOnClickListener {
-            Toast.makeText(context, "!!", Toast.LENGTH_SHORT).show()
+            val intent = Intent(context, Search::class.java)
+            startActivity(intent)
         }
 
         binding.ivRecipeLocker.setOnClickListener {
@@ -119,13 +121,11 @@ class MainActivity : AppCompatActivity() {
             .value
             .toString()
 
-        return if(recentRecipeId == "") {
-            null
-        }
+        return if(recentRecipeId == "") { null }
         else{
             db.getReference("recipes")
                 .child(recentRecipeId)
-                .child("basic_info")
+                .child("basicInfo")
                 .get()
                 .await()
                 .getValue(RecipeBasicInfo::class.java)!!
@@ -133,25 +133,25 @@ class MainActivity : AppCompatActivity() {
     }
 
     @SuppressLint("SetTextI18n")
-    private suspend fun setRecentRecipe(recipeBasicInfo: RecipeBasicInfo?){
+    private suspend fun setRecentRecipe(recentRecipeBasicInfo: RecipeBasicInfo?){
 //        TODO("recipeBasicInfo -> 사용자가 최근에 본 레시피가 없을 때 빈 인포가 들어와 널값을 참조할 수 없음")
-        if(recipeBasicInfo == null){
+        if(recentRecipeBasicInfo == null){
             binding.layerRecentRecipe.root.visibility = View.GONE
             binding.tvRecentRecipe.visibility = View.GONE
             return
         }
 
         var imageUri = Uri.parse("android.resource://$packageName/${R.drawable.ex_img}")
-        if(recipeBasicInfo.mainImagePath != ""){ // main 이미지가 디폴트 이미지일 경우 TODO("이미지 업로드 할 떄 이미지 경로 바꾸는 함수 고쳐야 할듯")
+        if(recentRecipeBasicInfo.mainImagePath != ""){ // main 이미지가 디폴트 이미지일 경우 TODO("이미지 업로드 할 떄 이미지 경로 바꾸는 함수 고쳐야 할듯")
             imageUri = storage.getReference("recipe_image")
-                .child(recipeBasicInfo.id)
+                .child(recentRecipeBasicInfo.id)
                 .child("main_image")
-                .child(recipeBasicInfo.mainImagePath!!)
+                .child(recentRecipeBasicInfo.mainImagePath!!)
                 .downloadUrl
                 .await()!!
         }
 
-        val userId = recipeBasicInfo.id.split("_")[1] //yyyyMMddHHmmss_유저아이디
+        val userId = recentRecipeBasicInfo.id.split("_")[1] //yyyyMMddHHmmss_유저아이디
         val userName = db.getReference("users")
             .child(userId)
             .child("name")
@@ -164,12 +164,12 @@ class MainActivity : AppCompatActivity() {
             .load(imageUri)
             .into(binding.layerRecentRecipe.ivRecipeMainImage)
         binding.layerRecentRecipe.run {
-            tvRecipeTitle.text = recipeBasicInfo.title
-            tvRecipeIntro.text = recipeBasicInfo.intro
+            tvRecipeTitle.text = recentRecipeBasicInfo.title
+            tvRecipeIntro.text = recentRecipeBasicInfo.intro
             tvRecipeCreator.text = "$userName @$userId"
-            recipeLike.text = recipeBasicInfo.score.toString() // TOOD("이거 구현해야 함")
-            recipeTime.text = recipeBasicInfo.time
-            recipeLevel.text = recipeBasicInfo.level.toKor
+            recipeLike.text = recentRecipeBasicInfo.score.toString() // TOOD("이거 구현해야 함")
+            recipeTime.text = recentRecipeBasicInfo.time
+            recipeLevel.text = recentRecipeBasicInfo.level.toKor
         }
 
         binding.layerRecentRecipe.root.visibility = View.VISIBLE

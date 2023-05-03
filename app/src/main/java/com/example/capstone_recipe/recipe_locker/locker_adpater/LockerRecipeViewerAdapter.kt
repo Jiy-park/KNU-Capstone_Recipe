@@ -1,6 +1,5 @@
 package com.example.capstone_recipe.recipe_locker.locker_adpater
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
@@ -11,11 +10,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.capstone_recipe.PostViewer
 import com.example.capstone_recipe.data_class.RecipeBasicInfo
-import com.example.capstone_recipe.databinding.CommonRecipeViewerBinding
-import com.example.capstone_recipe.recipe_locker.locker_fragment.RecipeLockerUploadList
+import com.example.capstone_recipe.databinding.ItemLockerRecipeViewerBinding
 
 class LockerRecipeViewerAdapter: RecyclerView.Adapter<LockerRecipeViewerAdapter.Holder>() {
-    private lateinit var binding: CommonRecipeViewerBinding
+    private lateinit var binding: ItemLockerRecipeViewerBinding
     private lateinit var context: Context
     var creatorIdNameList = listOf<String>()
     var recipeList = listOf<RecipeBasicInfo>()
@@ -23,7 +21,7 @@ class LockerRecipeViewerAdapter: RecyclerView.Adapter<LockerRecipeViewerAdapter.
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): Holder {
-        binding = CommonRecipeViewerBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        binding = ItemLockerRecipeViewerBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         context = binding.root.context
         return Holder(binding)
     }
@@ -34,10 +32,10 @@ class LockerRecipeViewerAdapter: RecyclerView.Adapter<LockerRecipeViewerAdapter.
 
     override fun getItemCount() = recipeList.size
 
-    inner class Holder(val binding: CommonRecipeViewerBinding) : RecyclerView.ViewHolder(binding.root) {
+    inner class Holder(val binding: ItemLockerRecipeViewerBinding) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(creator: String, recipe:RecipeBasicInfo, image: Uri){
-            binding.run {
+            binding.layerViewer.run {
                 tvRecipeTitle.text = recipe.title
                 tvRecipeCreator.text = creator
                 tvRecipeIntro.text = recipe.intro

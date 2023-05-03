@@ -37,10 +37,8 @@ import com.google.firebase.database.ktx.getValue
 import com.google.firebase.database.ktx.values
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import kotlinx.coroutines.tasks.await
-import kotlinx.coroutines.withContext
 import java.util.logging.Level
 import kotlin.reflect.typeOf
 
@@ -59,6 +57,7 @@ class PostViewer : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
+
         context = binding.root.context
         userId = Preference(context).getUserId()
         recipeId = intent.getStringExtra("recipeId")!!
@@ -67,11 +66,25 @@ class PostViewer : AppCompatActivity() {
             Toast.makeText(context, "인텐트 안됨", Toast.LENGTH_SHORT).show()
             finish()
         }
+
+
         lifecycleScope.launch(Dispatchers.IO) {
-            checkUserFavoriteThis(userId, recipeId!!)
+            if(checkRecipeOwner(userId, recipeId!!)){
+                binding.layerPostTitle.ivSymbolFavoriteOff.visibility = View.GONE
+                binding.layerPostTitle.ivSymbolSaveToLockerOff.visibility = View.GONE
+                binding.layerPostTitle.btnModifyRecipe.visibility = View.VISIBLE
+                binding.layerPostTitle.btnModifyRecipe.setOnClickListener {
+                    Toast.makeText(context, "수정 어떤식으로 해야하나...", Toast.LENGTH_SHORT).show()
+                }
+            }
+            else{
+                checkUserFavoriteThis(userId, recipeId!!)
+                checkUserSaveThis(userId, recipeId!!)
+            }
         }
         setProgress()
         setRecipeById(recipeId!!)
+
         db.getReference("users")        // 유저의 최근 본 레시피에 레시피 아이디 저장
             .child(Preference(context).getUserId())
             .child("recentRecipe")
@@ -85,10 +98,10 @@ class PostViewer : AppCompatActivity() {
             finish()
         }
 
-        binding.recyclerviewRecipeIngredients.adapter = recipeIngredientAdapter
+        binding.recyclerviewRecipeIngredients.adapter = recipeIngredientAdapter     // 재료 리스트
         binding.recyclerviewRecipeIngredients.layoutManager = GridLayoutManager(context, 2)
 
-        binding.recyclerviewRecipeStep.adapter = recipeStepAdapter
+        binding.recyclerviewRecipeStep.adapter = recipeStepAdapter                  // 단계 리스트
         binding.recyclerviewRecipeStep.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
 
         binding.btnStartTalkingRecipe.setOnClickListener {
@@ -98,8 +111,6 @@ class PostViewer : AppCompatActivity() {
             finish()
         }
 
-//        TODO("유저 1이 유저 2의 레시피에 하트를 남겼다면, score 리스트에 유저 1의 아이디를 넣고, 스코어를 해당 리스트의 사이즈로 판단" +
-//                "그리고 해당 포스트에 다시 들어갔을 때 하트를 남긴 사람인지 체크하고, 남겼던 사람이면 하트를 빨갛게, 아니면 회색으로 표현하는 함수 구현할 것")
         binding.layerPostTitle.ivSymbolFavoriteOff.setOnClickListener { // 좋아요 버튼 클릭
             val recipeCreator = recipeId!!.split("_")[1]
             val scoreRef = db.getReference("users")
@@ -146,6 +157,49 @@ class PostViewer : AppCompatActivity() {
                     override fun onCancelled(error: DatabaseError) { Log.e("LOG_CHECK", "onCancelled: 뭐가 문제일까? $error", ) }
                 })
         }
+
+        binding.layerPostTitle.ivSymbolSaveToLockerOff.setOnClickListener {
+            db.getReference("users")
+                .child(userId)
+                .child("saveRecipe")
+                .push()
+                .setValue(recipeId)
+                .addOnSuccessListener {
+                    binding.layerPostTitle.ivSymbolSaveToLockerOff.visibility = View.GONE
+                    binding.layerPostTitle.ivSymbolSaveToLockerOn.visibility = View.VISIBLE
+                    Log.d("LOG_CHECK", "PostViewer :: onCreate() -> add save list : user = $userId , recipe = $recipeId")
+                }
+        }
+
+        binding.layerPostTitle.ivSymbolSaveToLockerOn.setOnClickListener {
+            CoroutineScope(Dispatchers.IO).launch {
+                val userRef = db.getReference("users")
+                    .child(userId)
+                    .child("saveRecipe")
+
+                val userSaveList = userRef
+                        .get()
+                        .await()
+                        .children
+
+                val newSaveList = mutableListOf<String>()
+                for(data in userSaveList){
+                    if(data.value.toString() == recipeId){ continue }
+                    newSaveList.add(data.value.toString())
+                }
+                userRef.setValue(newSaveList)
+                withContext(Dispatchers.Main){
+                    binding.layerPostTitle.ivSymbolSaveToLockerOff.visibility = View.VISIBLE
+                    binding.layerPostTitle.ivSymbolSaveToLockerOn.visibility = View.GONE
+                }
+            }
+
+        }
+    }
+
+    private  fun checkRecipeOwner(userId: String, recipeId: String): Boolean{
+        val recipeOwner = recipeId.split("_")[1]
+        return userId == recipeOwner
     }
 
      private suspend fun checkUserFavoriteThis(userId: String, recipeId: String){ // 유저가 레시피를 보관함에 넣었는지?
@@ -171,12 +225,27 @@ class PostViewer : AppCompatActivity() {
          }
      }
 
-    private fun addSavePeopleToList(recipeId: String, userId: String){ // 보관함에 추가함
-        db.getReference("recipes")
-            .child(recipeId)
-            .child("savePeople")
-            .push()
-            .setValue(userId)
+    private suspend fun checkUserSaveThis(userId: String, recipeId: String){ // 유저가 레시피를 보관함에 넣었는지?
+        val list = db.getReference("users")
+            .child(userId)
+            .child("saveRecipe")
+            .get()
+            .await()
+            .children
+
+        Log.d("LOG_CHECK", "PostViewer :: checkUserSaveThis() -> list : $list")
+
+        withContext(Dispatchers.Main){
+            binding.layerPostTitle.ivSymbolSaveToLockerOn.visibility = View.GONE
+            binding.layerPostTitle.ivSymbolSaveToLockerOff.visibility = View.VISIBLE
+            for(i in list){
+                if(i.value.toString() == recipeId){
+                    binding.layerPostTitle.ivSymbolSaveToLockerOn.visibility = View.VISIBLE
+                    binding.layerPostTitle.ivSymbolSaveToLockerOff.visibility = View.GONE
+                    break
+                }
+            }
+        }
     }
 
     private fun setProgress(){
@@ -190,7 +259,7 @@ class PostViewer : AppCompatActivity() {
     private fun setRecipeById(recipeId: String){
         val recipesRef = db.getReference("recipes").child(recipeId)
 
-        val basicInfo = recipesRef.child("basic_info")
+        val basicInfo = recipesRef.child("basicInfo")
         setBasicInfo(basicInfo)
 
         val ingredient = recipesRef.child("ingredient")
@@ -234,6 +303,7 @@ class PostViewer : AppCompatActivity() {
         db.getReference("users")
             .child(userId)
             .addListenerForSingleValueEvent(object: ValueEventListener{
+                @SuppressLint("SetTextI18n")
                 override fun onDataChange(snapshot: DataSnapshot) {
                     if(snapshot.exists()){
                         val id = snapshot.child("id").value.toString()

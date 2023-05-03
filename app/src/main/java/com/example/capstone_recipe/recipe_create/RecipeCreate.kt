@@ -1,4 +1,4 @@
-package com.example.capstone_recipe
+package com.example.capstone_recipe.recipe_create
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -9,6 +9,8 @@ import android.util.Log
 import android.view.KeyEvent
 import android.view.View
 import androidx.fragment.app.Fragment
+import com.example.capstone_recipe.Preference
+import com.example.capstone_recipe.R
 import com.example.capstone_recipe.recipe_create.create_fragments.RecipeCreateComplete
 import com.example.capstone_recipe.recipe_create.create_fragments.RecipeCreateStepFirst
 import com.example.capstone_recipe.recipe_create.create_fragments.RecipeCreateStepSecond
@@ -64,6 +66,7 @@ class RecipeCreate : AppCompatActivity(), UpdateValue {
 
     private var currentStep = 1
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
@@ -72,13 +75,11 @@ class RecipeCreate : AppCompatActivity(), UpdateValue {
         recipeId = makeRecipeId()
 
         binding.topPanel.btnBack.setOnClickListener { finish() }
-
         supportFragmentManager
             .beginTransaction()
             .add(R.id.mainFrame, RecipeCreateStepFirst())
             .addToBackStack(null)
             .commit()
-
 
         binding.btnNext.setOnClickListener {
             currentStep++

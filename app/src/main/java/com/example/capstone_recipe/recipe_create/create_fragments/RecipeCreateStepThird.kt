@@ -11,10 +11,8 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.capstone_recipe.R
-import com.example.capstone_recipe.UpdateValue
+import com.example.capstone_recipe.recipe_create.UpdateValue
 import com.example.capstone_recipe.recipe_create.create_adapter.SelectMainImageAdapter
-import com.example.capstone_recipe.data_class.RecipeBasicInfo
-import com.example.capstone_recipe.data_class.RecipeStep
 import com.example.capstone_recipe.data_class.SHARE
 import com.example.capstone_recipe.databinding.FragmentRecipeCreateStepThirdBinding
 

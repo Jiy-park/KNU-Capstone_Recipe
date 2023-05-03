@@ -7,16 +7,30 @@ import com.example.capstone_recipe.data_class.User
 import com.example.capstone_recipe.recipe_locker.locker_fragment.RecipeLockerFriendList
 import com.example.capstone_recipe.recipe_locker.locker_fragment.RecipeLockerSaveList
 import com.example.capstone_recipe.recipe_locker.locker_fragment.RecipeLockerUploadList
+import com.google.firebase.database.DataSnapshot
 
-class LockerViewPagerAdapter(info: User, fragmentActivity: FragmentActivity): FragmentStateAdapter(fragmentActivity) {
-    private var userInfo = info
+//class LockerViewPagerAdapter(info: User, fragmentActivity: FragmentActivity): FragmentStateAdapter(fragmentActivity) {
+//    private var userInfo = info
+//    override fun createFragment(position: Int): Fragment {
+//        when (position) {
+//            0 -> return RecipeLockerUploadList(userInfo)
+//            1 -> return RecipeLockerFriendList(userInfo)
+//            2 -> return RecipeLockerSaveList(userInfo)
+//        }
+//        return RecipeLockerUploadList(userInfo)
+//    }
+//
+//    override fun getItemCount() = 3
+//}
+
+class LockerViewPagerAdapter(private val user: DataSnapshot?, fragmentActivity: FragmentActivity): FragmentStateAdapter(fragmentActivity) {
     override fun createFragment(position: Int): Fragment {
         when (position) {
-            0 -> return RecipeLockerUploadList(userInfo)
-            1 -> return RecipeLockerFriendList(userInfo)
-            2 -> return RecipeLockerSaveList(userInfo)
+            0 -> return RecipeLockerUploadList(user)
+            1 -> return RecipeLockerFriendList(user)
+            2 -> return RecipeLockerSaveList(user)
         }
-        return RecipeLockerUploadList(userInfo)
+        return RecipeLockerUploadList(user)
     }
 
     override fun getItemCount() = 3

@@ -15,18 +15,18 @@ import android.widget.ImageButton
 import android.widget.RadioButton
 import androidx.core.content.ContextCompat
 import com.example.capstone_recipe.R
-import com.example.capstone_recipe.UpdateValue
 import com.example.capstone_recipe.data_class.Ingredient
 import com.example.capstone_recipe.data_class.LEVEL
 import com.example.capstone_recipe.data_class.RecipeBasicInfo
 import com.example.capstone_recipe.databinding.FragmentRecipeCreateStepFirstBinding
+import com.example.capstone_recipe.recipe_create.UpdateValue
 
 class RecipeCreateStepFirst : Fragment() {
-    private lateinit var updateCollBack:UpdateValue
+    private lateinit var updateCollBack: UpdateValue
     private lateinit var binding:FragmentRecipeCreateStepFirstBinding
     private lateinit var context:Context
     private val ingredientIdList = mutableListOf<Int>() // 재료 추가 뷰 아이디 저장용 리스트
-    private val ingredientList = mutableListOf<Ingredient>()
+     val ingredientList = mutableListOf<Ingredient>()
     private var level = LEVEL.EASY
 
     override fun onAttach(context: Context) {
@@ -34,7 +34,18 @@ class RecipeCreateStepFirst : Fragment() {
         updateCollBack = context as UpdateValue
     }
 
+    override fun onResume() {
+        super.onResume()
+        Log.d("LOG_CHECK", "RecipeCreateStepFirst :: onResume() -> ")
+    }
+
+    override fun onPause() {
+        super.onPause()
+        Log.d("LOG_CHECK", "RecipeCreateStepFirst :: onPause() -> ")
+    }
+
     override fun onStop() {
+        Log.d("LOG_CHECK", "RecipeCreateStepFirst :: onStop() -> 레시피 타이틀 적용 안됨 체크용 ")
         super.onStop()
         val title = binding.editCreateTitle.text.toString()
         val intro = binding.editCreateIntro.text.toString()
