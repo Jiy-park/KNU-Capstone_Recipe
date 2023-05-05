@@ -240,6 +240,9 @@ class Login : AppCompatActivity() {
                     ))
                     .addOnCompleteListener {
                         Toast.makeText(context, "환영해요!", Toast.LENGTH_SHORT).show()
+                        pref.setUseTTS() // tts 사용
+                        pref.setUseSTT() // stt 사용
+                        pref.setUseCloudMsg()
                         signIn(id, pw)
                     }
             }

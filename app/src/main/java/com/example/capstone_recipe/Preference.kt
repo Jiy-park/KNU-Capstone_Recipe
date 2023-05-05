@@ -9,12 +9,34 @@ class Preference(context: Context) {
     fun getUserId() = sharedPref.getString(USER_ID, "") ?: ""
     fun getUserName() = sharedPref.getString(USER_NAME, "") ?: ""
     fun getUseAutoLogIn() = sharedPref.getBoolean(USE_AUTO_LOG_IN, true)
+    fun getUseTTS() = sharedPref.getBoolean(USE_TTS, true)
+    fun getUseSTT() = sharedPref.getBoolean(USE_STT, true)
+    fun getUseCloudMsg() = sharedPref.getBoolean(USE_CLOUD_MSG, true)
+
+    fun setUseTTS(use: Boolean = true){
+        val editor = sharedPref.edit()
+        editor.putBoolean(USE_TTS, use)
+        editor.apply()
+    }
+
+    fun setUseSTT(use: Boolean = true){
+        val editor = sharedPref.edit()
+        editor.putBoolean(USE_STT, use)
+        editor.apply()
+    }
+
+    fun setUseCloudMsg(use: Boolean = true){
+        val editor = sharedPref.edit()
+        editor.putBoolean(USE_CLOUD_MSG, use)
+        editor.apply()
+    }
 
     fun setUseAutoLogIn(use: Boolean = true){       // 자동 로그인 사용 여부
         val editor = sharedPref.edit()
         editor.putBoolean(USE_AUTO_LOG_IN, use)
         editor.apply()
     }
+
     fun checkSetAutoLogInInfo(): Boolean{       // 자동 로그인에 사용될 id, pw 체크
         val id = sharedPref.getString(USER_ID, null)
         val pw = sharedPref.getString(USER_PW, null)
@@ -54,5 +76,9 @@ class Preference(context: Context) {
         const val USER_NAME = "userName"
 
         const val USE_AUTO_LOG_IN = "useAutoLogIn"
+
+        const val USE_TTS = "useTTS"
+        const val USE_STT = "useSTT"
+        const val USE_CLOUD_MSG = "useCloudMsg"
     }
 }

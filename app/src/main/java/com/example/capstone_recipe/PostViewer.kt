@@ -73,8 +73,13 @@ class PostViewer : AppCompatActivity() {
                 binding.layerPostTitle.ivSymbolFavoriteOff.visibility = View.GONE
                 binding.layerPostTitle.ivSymbolSaveToLockerOff.visibility = View.GONE
                 binding.layerPostTitle.btnModifyRecipe.visibility = View.VISIBLE
+                binding.layerPostTitle.btnDeleteRecipe.visibility = View.VISIBLE
                 binding.layerPostTitle.btnModifyRecipe.setOnClickListener {
                     Toast.makeText(context, "수정 어떤식으로 해야하나...", Toast.LENGTH_SHORT).show()
+//                    TODO("이거 추가")
+                }
+                binding.layerPostTitle.btnDeleteRecipe.setOnClickListener {
+                    deleteRecipe(userId, recipeId!!)
                 }
             }
             else{
@@ -107,94 +112,140 @@ class PostViewer : AppCompatActivity() {
         binding.btnStartTalkingRecipe.setOnClickListener {
             val intent = Intent(context, TalkingRecipe::class.java)
 //            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            intent.putExtra("recipeId", recipeId)
             startActivity(intent)
             finish()
         }
 
         binding.layerPostTitle.ivSymbolFavoriteOff.setOnClickListener { // 좋아요 버튼 클릭
             val recipeCreator = recipeId!!.split("_")[1]
-            val scoreRef = db.getReference("users")
+
+            val userScoreRef = db.getReference("users") // 유저의 점수
                 .child(recipeCreator)
                 .child("score")
 
-            val favoriteRef = db.getReference("recipes")
+            val favoriteRef = db.getReference("recipes") // 레시피를 좋아하는 사람
                 .child(recipeId!!)
                 .child("favoritePeople")
 
-            scoreRef
-                .addListenerForSingleValueEvent(object: ValueEventListener{
-                    override fun onDataChange(snapshot: DataSnapshot) {
-                        if(snapshot.exists()){
-                            scoreRef.setValue(snapshot.value.toString().toInt() + 1)
-                            binding.layerPostTitle.ivSymbolFavoriteOff.visibility = View.GONE
-                            binding.layerPostTitle.ivSymbolFavoriteOn.visibility = View.VISIBLE
-                            favoriteRef
-                                .push()
-                                .setValue(userId)
-                        }
-                    }
-                    override fun onCancelled(error: DatabaseError) { Log.e("LOG_CHECK", "onCancelled: 뭐가 문제일까? $error", ) }
-                })
+            val recipeScoreRef = db.getReference("recipes") // 레시피의 점수
+                .child(recipeId!!)
+                .child("basicInfo")
+                .child("score")
+
+            lifecycleScope.launch(Dispatchers.IO) {
+                async {
+                    val userScore = userScoreRef.get().await().value.toString().toInt()
+                    userScoreRef.setValue(userScore+1)
+                }
+                async {
+                    favoriteRef.child(userId).setValue(userId)
+                }
+                async {
+                    val recipeScore = recipeScoreRef.get().await().value.toString().toInt()
+                    recipeScoreRef.setValue(recipeScore+1)
+                }
+                withContext(Dispatchers.Main){
+                    binding.layerPostTitle.ivSymbolFavoriteOff.visibility = View.GONE
+                    binding.layerPostTitle.ivSymbolFavoriteOn.visibility = View.VISIBLE
+                }
+            }
+
+
         }
 
-        binding.layerPostTitle.ivSymbolFavoriteOn.setOnClickListener { // 졸아요 버튼 해제
+        binding.layerPostTitle.ivSymbolFavoriteOn.setOnClickListener { // 좋아요 버튼 해제
             val recipeCreator = recipeId!!.split("_")[1]
-            val scoreRef = db.getReference("users")
+
+            val userScoreRef = db.getReference("users") // 유저의 점수
                 .child(recipeCreator)
                 .child("score")
-            scoreRef
-                .addListenerForSingleValueEvent(object: ValueEventListener{
-                    override fun onDataChange(snapshot: DataSnapshot) {
-                        if(snapshot.exists()){
-                            val score = snapshot.value.toString().toInt()
-                            if(score > 0){
-                                scoreRef.setValue(score - 1)
-                                binding.layerPostTitle.ivSymbolFavoriteOff.visibility = View.VISIBLE
-                                binding.layerPostTitle.ivSymbolFavoriteOn.visibility = View.GONE
-                            }
+
+            val favoriteRef = db.getReference("recipes") // 레시피를 좋아하는 사람
+                .child(recipeId!!)
+                .child("favoritePeople")
+
+            val recipeScoreRef = db.getReference("recipes") // 레시피의 점수
+                .child(recipeId!!)
+                .child("basicInfo")
+                .child("score")
+
+            lifecycleScope.launch(Dispatchers.IO) {
+                async {
+                    val userScore = userScoreRef.get().await().value.toString().toInt()
+                    userScoreRef.setValue(userScore-1)
+                }
+                async {
+                    favoriteRef.child(userId).removeValue()
+                        .addOnFailureListener {
+                            Log.e("ERROR", "PostViewer :: onCreate() -> 좋아요 리스트 업데이트 실패")
                         }
-                    }
-                    override fun onCancelled(error: DatabaseError) { Log.e("LOG_CHECK", "onCancelled: 뭐가 문제일까? $error", ) }
-                })
+                }
+                async {
+                    val recipeScore = recipeScoreRef.get().await().value.toString().toInt()
+                    recipeScoreRef.setValue(recipeScore-1)
+                }
+                withContext(Dispatchers.Main){
+                    binding.layerPostTitle.ivSymbolFavoriteOff.visibility = View.VISIBLE
+                    binding.layerPostTitle.ivSymbolFavoriteOn.visibility = View.GONE
+                }
+            }
         }
 
         binding.layerPostTitle.ivSymbolSaveToLockerOff.setOnClickListener {
             db.getReference("users")
                 .child(userId)
                 .child("saveRecipe")
-                .push()
+                .child(recipeId!!)
                 .setValue(recipeId)
                 .addOnSuccessListener {
                     binding.layerPostTitle.ivSymbolSaveToLockerOff.visibility = View.GONE
                     binding.layerPostTitle.ivSymbolSaveToLockerOn.visibility = View.VISIBLE
-                    Log.d("LOG_CHECK", "PostViewer :: onCreate() -> add save list : user = $userId , recipe = $recipeId")
                 }
         }
 
         binding.layerPostTitle.ivSymbolSaveToLockerOn.setOnClickListener {
-            CoroutineScope(Dispatchers.IO).launch {
-                val userRef = db.getReference("users")
-                    .child(userId)
-                    .child("saveRecipe")
-
-                val userSaveList = userRef
-                        .get()
-                        .await()
-                        .children
-
-                val newSaveList = mutableListOf<String>()
-                for(data in userSaveList){
-                    if(data.value.toString() == recipeId){ continue }
-                    newSaveList.add(data.value.toString())
-                }
-                userRef.setValue(newSaveList)
-                withContext(Dispatchers.Main){
+            db.getReference("users")
+                .child(userId)
+                .child("saveRecipe")
+                .child(recipeId!!)
+                .removeValue()
+                .addOnSuccessListener {
                     binding.layerPostTitle.ivSymbolSaveToLockerOff.visibility = View.VISIBLE
                     binding.layerPostTitle.ivSymbolSaveToLockerOn.visibility = View.GONE
                 }
+        }
+    }
+    private fun deleteRecipe(userId: String, recipeId: String){
+//        TODO("메인 화면에서 최근 본 레시피가 삭제됐을 경우 예외처리 할것")
+        db.getReference("users").child(userId).child("uploadRecipe").child(recipeId).removeValue()
+        db.getReference("recipes").child(recipeId).removeValue()
+        // 메인 이미지 삭제 과정
+        val mainImageRef = storage.getReference("recipe_image")
+            .child(recipeId)
+            .child("main_image")
+
+        mainImageRef.listAll()
+            .addOnSuccessListener {
+                val path = it.items[0].path.split("/")[4]
+                mainImageRef.child(path).delete()
+            }
+        // 메인 이미지 삭제 완료
+
+        // 단계 별 이미지 삭제 과정
+        val stepImageRef = storage.getReference("recipe_image")
+            .child(recipeId)
+            .child("step")
+        stepImageRef.listAll()
+            .addOnSuccessListener {
+                 for(i in it.items){
+                     val path = i.path.split("/")[4]
+                     stepImageRef.child(path).delete()
+                 }
             }
 
-        }
+        db.getReference("users").child(userId).child("recentRecipe").setValue("")
+        finish()
     }
 
     private  fun checkRecipeOwner(userId: String, recipeId: String): Boolean{
@@ -209,8 +260,6 @@ class PostViewer : AppCompatActivity() {
              .get()
              .await()
              .children
-
-        Log.d("LOG_CHECK", "PostViewer :: checkUserFavoriteThis() -> list : $list")
 
          withContext(Dispatchers.Main){
              binding.layerPostTitle.ivSymbolFavoriteOn.visibility = View.GONE
@@ -232,8 +281,6 @@ class PostViewer : AppCompatActivity() {
             .get()
             .await()
             .children
-
-        Log.d("LOG_CHECK", "PostViewer :: checkUserSaveThis() -> list : $list")
 
         withContext(Dispatchers.Main){
             binding.layerPostTitle.ivSymbolSaveToLockerOn.visibility = View.GONE
@@ -279,13 +326,11 @@ class PostViewer : AppCompatActivity() {
             override fun onDataChange(snapshot: DataSnapshot) {
                 if(snapshot.exists()){
                     //knu-capstone-f9f55.appspot.com/recipe_image/20230412105019_q/main_image/q_main.jpeg
-                    Log.d("LOG_CHECK", "PostViewer :: setBasicInfo() -> \n${snapshot.value}")
                     binding.layerPostTitle.tvPostTitle.text = snapshot.child("title").value.toString()  // 제목
                     binding.layerPostTitle.tvPostIntro.text = snapshot.child("intro").value.toString()  // 소개
                     binding.tvCreateTime.text = snapshot.child("time").value.toString()+"분"
                     binding.tvCreateServing.text = snapshot.child("amount").value.toString()+"인분"
                     binding.tvCreateLevel.text = snapshot.child("level").getValue(LEVEL::class.java)?.toKor
-                    Log.d("LOG_CHECK", "PostViewer :: onDataChange() -> mainImagePath : ${snapshot.child("mainImagePath").value}")
                     setImageByPath(recipeId!!, snapshot.child("mainImagePath").value.toString(), binding.ivMainImage)
                     setUserInfo(recipeId!!, binding.layerPostTitle.tvPostCreator)
                 }
@@ -293,7 +338,7 @@ class PostViewer : AppCompatActivity() {
 
             override fun onCancelled(error: DatabaseError) {
                 Toast.makeText(context, "ERROR 0 : 불러 오기에 실패 했습니다.", Toast.LENGTH_SHORT).show()
-                Log.d("LOG_CHECK", "PostViewer :: onCancelled() -> 레시피 기본 정보 실패")
+                Log.e("ERROR", "PostViewer :: onCancelled() -> 레시피 기본 정보 실패")
             }
         })
     }
@@ -308,13 +353,46 @@ class PostViewer : AppCompatActivity() {
                     if(snapshot.exists()){
                         val id = snapshot.child("id").value.toString()
                         val name = snapshot.child("name").value.toString()
+                        setProfileUri(userId)
                         targetView.text = "$name @$id"
                     }
                 }
 
                 override fun onCancelled(error: DatabaseError) {
-                    Log.e("LOG_CHECK", "PostViewer :: onCancelled() -> error $error")
+                    Log.e("ERROR", "PostViewer :: onCancelled() -> error $error")
                 }
+            })
+    }
+    /** *아이디에 해당하는 유저의 프로필 이미지 세팅 */
+    private fun setProfileUri(userId: String){
+        val defaultUri = Uri.parse("android.resource://$packageName/${R.drawable.default_user_profile_image}")!!
+        db.getReference("users")
+            .child(userId)
+            .child("profileImagePath")
+            .addListenerForSingleValueEvent(object: ValueEventListener{
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    if(snapshot.exists()){
+                        val imagePath = snapshot.value.toString()
+                        storage.getReference("user_image")
+                            .child(userId)
+                            .child("profile")
+                            .child(imagePath)
+                            .downloadUrl
+                            .addOnSuccessListener {
+                                Glide.with(context)
+                                    .load(it)
+                                    .fitCenter()
+                                    .into(binding.layerPostTitle.ivUserProfileImage)
+                            }
+                    }
+                    else{
+                        Glide.with(context)
+                            .load(defaultUri)
+                            .circleCrop()
+                            .into(binding.layerPostTitle.ivUserProfileImage)
+                    }
+                }
+                override fun onCancelled(error: DatabaseError) {}
             })
     }
 
@@ -322,7 +400,6 @@ class PostViewer : AppCompatActivity() {
         if(path == null){
             val defaultImage = Uri.parse("android.resource://$packageName/${R.drawable.ex_img}")
             targetView.setImageURI(defaultImage)
-            Log.d("LOG_CHECK", "PostViewer :: setImageByPath() -> success set Image : null")
         }
         else{
             storage
@@ -335,10 +412,9 @@ class PostViewer : AppCompatActivity() {
                     Glide.with(binding.root.context)
                         .load(uri)
                         .into(targetView)
-                    Log.d("LOG_CHECK", "PostViewer :: setImageByPath() -> success set Image")
                     viewIsReady()
                 }
-                .addOnFailureListener { Log.d("LOG_CHECK", "PostViewer :: setImageByPath() called :: 실패 :${it.message} 경로 $path") }
+                .addOnFailureListener { Log.e("ERROR", "PostViewer :: setImageByPath() called :: 실패 :${it.message} 경로 $path") }
         }
     }
 
@@ -347,13 +423,8 @@ class PostViewer : AppCompatActivity() {
             @SuppressLint("NotifyDataSetChanged")
             override fun onDataChange(snapshot: DataSnapshot) {
                 if(snapshot.exists()){
-                    Log.d("LOG_CHECK", "PostViewer :: setIngredient() -> \n${snapshot.value}")
-//                    ingredientList = (snapshot.getValue(Ingredient::class.java) as? MutableList<Ingredient>)!!
                     for(data in snapshot.children){
-                        Log.d("LOG_CHECK", "PostViewer :: setIngredient() -> data : $data")
                         data.getValue(Ingredient::class.java)?.let { ingredient->
-                            Log.d("LOG_CHECK", "PostViewer :: setIngredient() -> \n" +
-                                    "name : ${ingredient.name} amount : ${ingredient.amount}")
                             ingredientList.add(ingredient)
                             recipeIngredientAdapter.notifyDataSetChanged()
                         }
@@ -362,7 +433,7 @@ class PostViewer : AppCompatActivity() {
             }
             override fun onCancelled(error: DatabaseError) {
                 Toast.makeText(context, "ERROR 1 : 불러 오기에 실패 했습니다.", Toast.LENGTH_SHORT).show()
-                Log.d("LOG_CHECK", "PostViewer :: onCancelled() -> 레시피 재료 실패")
+                Log.e("ERROR", "PostViewer :: onCancelled() -> 레시피 재료 실패")
             }
         })
     }
@@ -372,12 +443,8 @@ class PostViewer : AppCompatActivity() {
             @SuppressLint("NotifyDataSetChanged")
             override fun onDataChange(snapshot: DataSnapshot) {
                 if(snapshot.exists()){
-                    Log.d("LOG_CHECK", "PostViewer :: setStep() -> \n${snapshot.value}")
                     for(data in snapshot.children){
-                        Log.d("LOG_CHECK", "PostViewer :: setStep() -> data : $data")
                         data.getValue( RecipeStep::class.java)?.let { step->
-                            Log.d("LOG_CHECK", "PostViewer :: setStep() -> \n" +
-                                    "name : ${step.explanation} amount : ${step.imagePath}")
                             stepList.add(step)
                             recipeStepAdapter.notifyDataSetChanged()
                         }
@@ -386,7 +453,7 @@ class PostViewer : AppCompatActivity() {
             }
             override fun onCancelled(error: DatabaseError) {
                 Toast.makeText(context, "ERROR 1 : 불러 오기에 실패 했습니다.", Toast.LENGTH_SHORT).show()
-                Log.d("LOG_CHECK", "PostViewer :: onCancelled() -> 레시피 재료 실패")
+                Log.e("ERROR", "PostViewer :: onCancelled() -> 레시피 재료 실패")
             }
         })
     }

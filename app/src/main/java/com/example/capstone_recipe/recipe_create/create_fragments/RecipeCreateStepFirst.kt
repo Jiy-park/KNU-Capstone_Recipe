@@ -19,20 +19,19 @@ import com.example.capstone_recipe.data_class.Ingredient
 import com.example.capstone_recipe.data_class.LEVEL
 import com.example.capstone_recipe.data_class.RecipeBasicInfo
 import com.example.capstone_recipe.databinding.FragmentRecipeCreateStepFirstBinding
-import com.example.capstone_recipe.recipe_create.UpdateValue
 
 class RecipeCreateStepFirst : Fragment() {
-    private lateinit var updateCollBack: UpdateValue
+//    private lateinit var updateCollBack: UpdateValue
     private lateinit var binding:FragmentRecipeCreateStepFirstBinding
     private lateinit var context:Context
-    private val ingredientIdList = mutableListOf<Int>() // 재료 추가 뷰 아이디 저장용 리스트
-     val ingredientList = mutableListOf<Ingredient>()
+    val ingredientIdList = mutableListOf<Int>() // 재료 추가 뷰 아이디 저장용 리스트
+    val ingredientList = mutableListOf<Ingredient>()
     private var level = LEVEL.EASY
 
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        updateCollBack = context as UpdateValue
-    }
+//    override fun onAttach(context: Context) {
+//        super.onAttach(context)
+//        updateCollBack = context as UpdateValue
+//    }
 
     override fun onResume() {
         super.onResume()
@@ -44,24 +43,32 @@ class RecipeCreateStepFirst : Fragment() {
         Log.d("LOG_CHECK", "RecipeCreateStepFirst :: onPause() -> ")
     }
 
-    override fun onStop() {
-        Log.d("LOG_CHECK", "RecipeCreateStepFirst :: onStop() -> 레시피 타이틀 적용 안됨 체크용 ")
-        super.onStop()
-        val title = binding.editCreateTitle.text.toString()
-        val intro = binding.editCreateIntro.text.toString()
-        val time = binding.layerQuestionTime.editAnswer.text.toString()
-        val amount = binding.layerQuestionAmount.editAnswer.text.toString()
-        updateCollBack.updateBasicInfo(
-            RecipeBasicInfo(
-                title = title,
-                intro = intro,
-                time = time,
-                amount = amount,
-                level = level,
-            )
-        )
-        updateCollBack.updateIngredientList(ingredientList)
+    fun getRecipeBasicInfo(): RecipeBasicInfo{
+        val recipeBasicInfo = RecipeBasicInfo()
+        recipeBasicInfo.title = binding.editCreateTitle.text.toString()
+        recipeBasicInfo.intro = binding.editCreateIntro.text.toString()
+        recipeBasicInfo.time = binding.layerQuestionTime.editAnswer.text.toString()
+        recipeBasicInfo.amount = binding.layerQuestionAmount.editAnswer.text.toString()
+        return recipeBasicInfo
     }
+//    override fun onStop() {
+//        Log.d("LOG_CHECK", "RecipeCreateStepFirst :: onStop() -> 레시피 타이틀 적용 안됨 체크용 ")
+//        super.onStop()
+//        val title = binding.editCreateTitle.text.toString()
+//        val intro = binding.editCreateIntro.text.toString()
+//        val time = binding.layerQuestionTime.editAnswer.text.toString()
+//        val amount = binding.layerQuestionAmount.editAnswer.text.toString()
+//        updateCollBack.updateBasicInfo(
+//            RecipeBasicInfo(
+//                title = title,
+//                intro = intro,
+//                time = time,
+//                amount = amount,
+//                level = level,
+//            )
+//        )
+//        updateCollBack.updateIngredientList(ingredientList)
+//    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = FragmentRecipeCreateStepFirstBinding.inflate(inflater, container, false)

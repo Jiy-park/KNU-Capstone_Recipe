@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".recipe_locker.ModifyRecipeLocker">
+
+    <ImageView
+        android:id="@+id/ivLockerBackImage"
+        android:layout_width="match_parent"
+        android:layout_height="120dp"
+        android:foreground="#88000000"
+        android:src="@drawable/default_user_back_image"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="ContentDescription" />
+
+    <androidx.appcompat.widget.AppCompatImageButton
+        android:id="@+id/btnGetBackImage"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:background="@android:color/transparent"
+        android:src="@drawable/ic_image_setting"
+        android:layout_marginEnd="40dp"
+        app:layout_constraintBottom_toBottomOf="@+id/ivLockerBackImage"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/ivLockerProfileImage"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_marginTop="55dp"
+        app:civ_border_color="#88000000"
+        app:civ_border_width="50dp"
+        app:civ_border_overlay="true"
+        android:src="@drawable/default_user_profile_image"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.appcompat.widget.AppCompatImageButton
+        android:id="@+id/btnGetProfileImage"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:background="@android:color/transparent"
+        android:src="@drawable/ic_image_setting"
+        app:layout_constraintBottom_toBottomOf="@+id/ivLockerProfileImage"
+        app:layout_constraintEnd_toEndOf="@+id/ivLockerProfileImage"
+        app:layout_constraintStart_toStartOf="@+id/ivLockerProfileImage"
+        app:layout_constraintTop_toTopOf="@+id/ivLockerProfileImage" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btnSave"
+        android:layout_width="63dp"
+        android:layout_height="36dp"
+        android:layout_marginEnd="16dp"
+        android:background="@drawable/style_stroke_round_button"
+        android:fontFamily="@font/kopup_d_medium"
+        android:text="저장"
+        android:textColor="@color/main_color_start"
+        android:textSize="15sp"
+        app:layout_constraintBottom_toBottomOf="@+id/editModifyUserName"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/ivLockerBackImage"
+        app:layout_constraintVertical_bias="0.24" />
+
+    <EditText
+        android:id="@+id/editModifyUserName"
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        android:drawableStart="@drawable/head_fill_main_color"
+        android:drawablePadding="15dp"
+        android:backgroundTint="@color/main_color_start"
+        android:singleLine="true"
+        android:fontFamily="@font/kopup_d_medium"
+        android:hint="닉네임"
+        android:textColor="@color/main_text"
+        android:textColorHint="@color/hint_text"
+        android:layout_marginTop="10dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/ivLockerProfileImage" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/kopup_d_medium"
+        android:gravity="center"
+        android:text="닉네임은 언제든지 변경할 수 있습니다."
+        android:textColor="@color/background_gray"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/editModifyUserName" />
+</androidx.constraintlayout.widget.ConstraintLayout>

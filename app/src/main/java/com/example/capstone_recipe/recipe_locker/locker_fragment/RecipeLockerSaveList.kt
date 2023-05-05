@@ -26,9 +26,8 @@ class RecipeLockerSaveList(private val user: DataSnapshot?) : Fragment() {
     private lateinit var binding: FragmentRecipeLockerSaveListBinding
     private lateinit var adapter: LockerRecipeViewerAdapter
     private lateinit var context: Context
-    private val recipeRef = Firebase.database("https://knu-capstone-f9f55-default-rtdb.asia-southeast1.firebasedatabase.app/")
-        .getReference("recipes")
-
+    private val db = Firebase.database("https://knu-capstone-f9f55-default-rtdb.asia-southeast1.firebasedatabase.app/")
+    private val recipeRef = db.getReference("recipes")
     private var creatorNameList = listOf<String>()
     private var saveList = listOf<RecipeBasicInfo>()
     private var imageList = listOf<Uri>()
@@ -80,13 +79,27 @@ class RecipeLockerSaveList(private val user: DataSnapshot?) : Fragment() {
         return uri
     }
 
-    /** * 어댑터 하나만 쓰려고 만듦. 굳이의 영역이긴 한데 */
-    private fun makeCreatorList(user: DataSnapshot): List<String>{
-        val size = user.child("uploadRecipe").childrenCount.toInt()
-        val name = user.child("name").value.toString()
-        val id = user.child("id").value.toString()
-        val creator = "$name @$id"
-        return List(size) { creator }
+    /** * 저장된 레시피의 아이디를 기반으로 제작자의 이름을 가져와 아이디와 합성 후 리스트로 반환 */
+    private suspend fun makeCreatorList(): List<String>{
+        val creatorList = MutableList<String>(saveList.size) { "" }
+        withContext(Dispatchers.IO){
+            saveList.mapIndexed { index, recipeBasicInfo ->
+                async {
+                    val creatorId = recipeBasicInfo.id.split("_")[1]
+                    val name = db.getReference("users")
+                        .child(creatorId)
+                        .child("name")
+                        .get()
+                        .await()
+                        .value
+                        .toString()
+                    val creator = "$name @$creatorId"
+                    creatorList[index] = creator
+                }
+            }.awaitAll()
+        }
+        Log.d("LOG_CHECK", "RecipeLockerSaveList :: makeCreatorList() -> creatorList : $creatorList")
+        return creatorList
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -101,7 +114,7 @@ class RecipeLockerSaveList(private val user: DataSnapshot?) : Fragment() {
             lifecycleScope.launch {
                 withContext(Dispatchers.IO){
                     updateUploadList() // 업로드 리스트, 이미지 리스트 업데이트
-                    creatorNameList = makeCreatorList(user)
+                    creatorNameList = makeCreatorList()
                 }
                 adapter.recipeList = saveList
                 adapter.creatorIdNameList = creatorNameList

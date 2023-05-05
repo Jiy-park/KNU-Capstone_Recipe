@@ -56,6 +56,7 @@
             <!--            게시글 타이틀-->
 
             <!--            게시글 메인 이미지-->
+
             <include
                 android:id="@+id/layerPostTitle"
                 layout="@layout/common_viewer_title_main" />

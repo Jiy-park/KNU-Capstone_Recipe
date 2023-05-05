@@ -2,11 +2,15 @@ package com.example.capstone_recipe.recipe_locker
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
+import com.bumptech.glide.Glide
+import com.example.capstone_recipe.Preference
 import com.example.capstone_recipe.R
 import com.example.capstone_recipe.databinding.ActivityRecipeLockerBinding
 import com.example.capstone_recipe.recipe_locker.locker_adpater.LockerViewPagerAdapter
@@ -24,9 +28,9 @@ class RecipeLocker: AppCompatActivity() {
     private lateinit var adpater: LockerViewPagerAdapter
     private val db = Firebase.database("https://knu-capstone-f9f55-default-rtdb.asia-southeast1.firebasedatabase.app/")
     private val userRef = db.getReference("users")
-    private val recipeRef = db.getReference("recipes")
     private var userId = ""
     private var user: DataSnapshot? = null
+    private lateinit var image: Pair<Uri, Uri>
 //    private var userInfo = User()
 
     private suspend fun getUser(userId: String) = userRef.child(userId).get().await()
@@ -37,16 +41,21 @@ class RecipeLocker: AppCompatActivity() {
         val score = user.child("score").value.toString()
         val profilePath = user.child("profileImagePath").value.toString()
         val backPath = user.child("backgroundImagePath").value.toString()
-        val image = getUserImage(userId, profilePath, backPath)
+        Log.d("LOG_CHECK", "RecipeLocker :: setUserView() -> profilePath : $profilePath\nbackPath : $backPath")
+        image = getUserImage(userId, profilePath, backPath)
         binding.tvUserNameWithId.text = "$name @$userId"
         binding.tvUserScore.text = score
-        binding.ivLockerUserImage.setImageURI(image.first)
-        binding.ivLockerBackImage.setImageURI(image.second)
+        Glide.with(context)
+            .load(image.first)
+            .into(binding.ivLockerUserImage)
+        Glide.with(context)
+            .load(image.second)
+            .into(binding.ivLockerBackImage)
     }
 
     /*** 유저의 아이디, 프로필 이미지 경로, 백그라운드 이미지 경로를 넣어주면, 해당 유저의 프로필, 백 이미지 순으로 반납 */
     private suspend fun getUserImage(userId: String, profilePath: String, backPath: String): Pair<Uri, Uri>{
-        val userImageRef = Firebase.storage.getReference("user_image")
+        val userImageRef = Firebase.storage.getReference("user_image").child(userId)
         val defaultProfile = Uri.parse("android.resource://$packageName/${R.drawable.default_user_profile_image}")!!
         val defaultBack = Uri.parse("android.resource://$packageName/${R.drawable.default_user_back_image}")!!
         Log.d("LOG_CHECK", "RecipeLocker :: getUserImage() -> profile : $profilePath, back : $backPath")
@@ -58,7 +67,7 @@ class RecipeLocker: AppCompatActivity() {
                     if (profilePath == "") {
                         defaultProfile
                     } else {
-                        userImageRef.child(userId)
+                        userImageRef
                             .child("profile")
                             .child(profilePath)
                             .downloadUrl
@@ -71,9 +80,8 @@ class RecipeLocker: AppCompatActivity() {
                         defaultBack
                     } else {
                         userImageRef
-                            .child(userId)
-                            .child("background")
-                            .child(profilePath)
+                            .child("back")
+                            .child(backPath)
                             .downloadUrl
                             .await()
                     }
@@ -83,43 +91,6 @@ class RecipeLocker: AppCompatActivity() {
         return Pair(profile, back)
     }
 
-//    private suspend fun getUserInfo(userId: String): User{
-//        val info = userRef.child(userId).get().await()
-//        val user = User()
-//        user.id = userId
-//        user.name = info.child("name").value.toString()
-//        user.score = info.child("score").value.toString().toInt()
-//        user.profileImagePath = (info.child("profileImagePath").value?:"").toString()
-//        user.backgroundImagePath = info.child("backgroundImagePath").value.toString()
-//        withContext(Dispatchers.IO){
-//            async {
-//                for(data in info.child("uploadRecipe").children){
-//                    user.uploadRecipe.add(data.value.toString())
-//                }
-//            }
-//            async {
-//                for(data in info.child("saveRecipe").children){
-//                    user.saveRecipe.add(data.value.toString())
-//                }
-//            }
-//            async {
-//                for(data in info.child("friends").children){
-//                    user.friends.add(data.getValue(FriendInfo::class.java)!!)
-//                }
-//            }
-//        }.await()
-//        return user
-//    }
-//
-//
-//    @SuppressLint("SetTextI18n")
-//    private fun setUserInfoView(){
-//        binding.tvUserNameWithId.text = "${userInfo.name} @${userInfo.id}"
-//        binding.tvUserScore.text = userInfo.score.toString()
-//        binding.tabLayout.getTabAt(0)?.text = "작성글 ${userInfo.uploadRecipe.size}"
-//        binding.tabLayout.getTabAt(1)?.text = "친구 ${userInfo.friends.size}"
-//        binding.tabLayout.getTabAt(2)?.text = "보관함 ${userInfo.saveRecipe.size}"
-//    }
 
     @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -137,6 +108,14 @@ class RecipeLocker: AppCompatActivity() {
         binding.viewPager.currentItem = intent.getIntExtra("page", 0)
         intent.removeExtra("page")
 
+        if(userId == Preference(context).getUserId()){
+            binding.ivModifyUserProfile.visibility = View.VISIBLE
+            binding.ivModifyUserProfile.setOnClickListener {
+                val intent = Intent(context, ModifyRecipeLocker::class.java)
+                startActivity(intent)
+            }
+        }
+
 
         // 탭 레이아웃에 탭 추가
         val uploadTab = binding.tabLayout.newTab()
@@ -152,6 +131,15 @@ class RecipeLocker: AppCompatActivity() {
                 setUserView(user!!)
                 adpater = LockerViewPagerAdapter(user, this@RecipeLocker)
                 binding.viewPager.adapter = adpater
+                if(userId == Preference(context).getUserId()){
+                    binding.ivModifyUserProfile.visibility = View.VISIBLE
+                    binding.ivModifyUserProfile.setOnClickListener {
+                        val intent = Intent(context, ModifyRecipeLocker::class.java)
+                        intent.putExtra("profileUri", image.first.toString())
+                        intent.putExtra("backUri", image.second.toString())
+                        startActivity(intent)
+                    }
+                }
             }
         }
 

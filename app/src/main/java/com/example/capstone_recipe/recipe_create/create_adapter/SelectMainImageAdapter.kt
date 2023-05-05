@@ -50,8 +50,8 @@ class SelectMainImageAdapter(private val parent: RecipeCreateStepThird, private 
                 checkedView = itemView
                 checkedId = frameId
                 binding.frameChecked.visibility = View.VISIBLE
-                if(imageUri == null) { parent.setUri(uri) }
-                else { parent.setUri(imageUri) }
+                if(imageUri == null) { parent.mainImageUri = uri }
+                else { parent.mainImageUri = imageUri }
             }
             binding.ivMainImage.setOnClickListener {
                 if(checkedId != frameId){ // 이미지 선택시 해당 이미지를 대표 이미지로 선정
@@ -61,8 +61,8 @@ class SelectMainImageAdapter(private val parent: RecipeCreateStepThird, private 
                     checkedId = frameId
                     binding.frameChecked.visibility = View.VISIBLE
                 }
-                if(imageUri == null) { parent.setUri(uri) }
-                else { parent.setUri(imageUri) }
+                if(imageUri == null) { parent.mainImageUri = uri }
+                else { parent.mainImageUri = imageUri }
             }
         }
         // 대표 이미지 : recipe_image/$recipeId/main/$userId_$recipeId_$yyyyMMdd_HHmm.jpeg

@@ -18,6 +18,9 @@ import com.example.capstone_recipe.dialog.DialogFunc
 import com.example.capstone_recipe.recipe_create.RecipeCreate
 import com.example.capstone_recipe.recipe_locker.RecipeLocker
 import com.example.capstone_recipe.test_______.TestActivity
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
@@ -37,8 +40,6 @@ class MainActivity : AppCompatActivity() {
 
     private fun testFunction(){ // 테스트 용
         binding.tvTop.setOnClickListener {
-//            val intent = Intent(context, PostViewer::class.java)
-//            intent.putExtra("recipeId", "20230414150044_q")
             val intent = Intent(context, TestActivity::class.java)
             startActivity(intent)
         }
@@ -121,15 +122,14 @@ class MainActivity : AppCompatActivity() {
             .value
             .toString()
 
-        return if(recentRecipeId == "") { null }
-        else{
-            db.getReference("recipes")
-                .child(recentRecipeId)
-                .child("basicInfo")
-                .get()
-                .await()
-                .getValue(RecipeBasicInfo::class.java)!!
-        }
+        if(recentRecipeId == "" ) { return null }
+        val recipeBasicInfo = db.getReference("recipes")
+            .child(recentRecipeId)
+            .child("basicInfo")
+            .get()
+            .await()
+        return if(recipeBasicInfo.exists()) { recipeBasicInfo.getValue(RecipeBasicInfo::class.java)!! }
+                else { null }
     }
 
     @SuppressLint("SetTextI18n")

@@ -19,34 +19,22 @@ import androidx.appcompat.widget.AppCompatImageView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.capstone_recipe.recipe_create.UpdateValue
 import com.example.capstone_recipe.recipe_create.create_adapter.ExplanationAdapter
 import com.example.capstone_recipe.recipe_create.create_adapter.ItemTouchHelperCallback
 import com.example.capstone_recipe.databinding.FragmentRecipeCreateStepSecondBinding
 
-class RecipeCreateStepSecond(ExplanationList: List<String>, ImageList: List<Uri?>) : Fragment() {
+class RecipeCreateStepSecond() : Fragment() {
     private lateinit var storagePermission: ActivityResultLauncher<String>  // 저장소 권한
     private lateinit var galleryLauncher: ActivityResultLauncher<String>    //갤러리
     private lateinit var binding: FragmentRecipeCreateStepSecondBinding
     private lateinit var context: Context
     private lateinit var adapter: ExplanationAdapter
-    private val stepExplanationList: MutableList<String> = ExplanationList.toMutableList()
-    private val stepImageList:MutableList<Uri?> = ImageList.toMutableList()
+    val stepExplanationList = mutableListOf<String>("")
+    val stepImageList = mutableListOf<Uri?>(null)
     private lateinit var itemTouchHelper : ItemTouchHelper  // 아이템 드래그 용
     private var recipeStepImageView: ImageView? = null      // 어댑터에서 galleryLauncher 호출하여 이미지를 바꾸기 위하여
     private var recipeStepImagePosition = 0                 // 이미지가 몇번째 단계의 이미지인지
     private var beforeImageUri: Uri? = null              // 이미지 변경 전 - 이미지 선택 취소 시 beforeImage 로 저장
-    private lateinit var updateCollBack: UpdateValue
-
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        updateCollBack = context as UpdateValue
-    }
-
-    override fun onStop() {
-        super.onStop()
-        updateCollBack.updateStepExplanationList(stepExplanationList)
-    }
 
     @SuppressLint("NotifyDataSetChanged")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -63,8 +51,8 @@ class RecipeCreateStepSecond(ExplanationList: List<String>, ImageList: List<Uri?
                 recipeStepImageView?.setImageURI(uri)
                 stepImageList[recipeStepImagePosition] = uri
             }
-            updateCollBack.updateStepImageList(stepImageList)
-            updateCollBack.updateStepExplanationList(stepExplanationList)
+//            updateCollBack.updateStepImageList(stepImageList)
+//            updateCollBack.updateStepExplanationList(stepExplanationList)
             adapter.notifyItemChanged(recipeStepImagePosition)
         }
     }

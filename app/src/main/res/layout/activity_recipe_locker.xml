@@ -26,10 +26,10 @@
         android:clipToOutline="true"
         android:scaleType="centerCrop"
         android:background="@drawable/style_circle"
-        app:layout_constraintBottom_toBottomOf="@+id/ivLockerBackImage"
+        android:layout_marginTop="55dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/ivLockerBackImage" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -87,9 +87,20 @@
         android:layout_marginTop="120dp"
         android:translationZ="-1dp"
         android:clickable="false"
+        android:gravity="right"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"/>
+        app:layout_constraintStart_toStartOf="parent">
+        <androidx.appcompat.widget.AppCompatImageButton
+            android:id="@+id/ivModifyUserProfile"
+            android:layout_width="35dp"
+            android:layout_height="30dp"
+            android:layout_margin="10dp"
+            android:visibility="gone"
+            android:background="@color/white"
+            android:scaleType="fitXY"
+            android:src="@drawable/ic_create"/>
+    </LinearLayout>
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/progressDownload"
         android:layout_width="match_parent"

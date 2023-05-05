@@ -2,37 +2,66 @@ package com.example.capstone_recipe.talking_recipe_fragment
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.SharedPreferences
+import android.net.Uri
 import android.os.Bundle
+import android.speech.tts.TextToSpeech
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import com.bumptech.glide.Glide
+import com.example.capstone_recipe.Preference
 import com.example.capstone_recipe.databinding.FragmentTalkingRecipeStepBinding
 
-class TalkingRecipeStep(step: Int) : Fragment() {
+class TalkingRecipeStep(
+        private val tts: TextToSpeech,
+        step: Int,
+        val stepExplanationList: List<String>,
+        private val stepImageUriList: List<Uri>
+    ): Fragment() {
+
     private lateinit var binding: FragmentTalkingRecipeStepBinding
     private lateinit var context: Context
+    private lateinit var pref: Preference
+    private var isToastShown = false
     var currentStep = step // 1 단계 = 0
-    var stepList = mutableListOf<String>( // 나중에 이미지도 포함해야 함
-        "1 단계",
-        "2 단계",
-        "3 단계",
-        "4 단계",
-        "5 단계",
-        "6 단계",
-        "7 단계",
-        "8 단계"
-    )
+
 
     @SuppressLint("SetTextI18n")
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding =  FragmentTalkingRecipeStepBinding.inflate(inflater, container, false)
         context = binding.root.context
-        binding.tvRecipeStep.text = "${currentStep+1}단계"
-        binding.tvRecipeStepExplanation.text = stepList[currentStep]
-//        binding.ivRecipeStepImage.setImageURI("") 나중에 추가해야함
+        pref = Preference(context)
 
+        if(stepExplanationList.isNotEmpty()) {
+            updateView(currentStep)
+            if(pref.getUseTTS()) { startTTS(currentStep) }
+            else{
+                if(currentStep == 0 && !isToastShown){
+                    Toast.makeText(context, "레시피를 읽어주길 원하신다면,\n환경설정에서 '읽어주기'를 허용해 주세요.", Toast.LENGTH_SHORT).show()
+                    isToastShown = true
+                }
+            }
+        }
         return binding.root
     }
+
+    @SuppressLint("SetTextI18n")
+    private fun updateView(step: Int){
+        binding.tvRecipeStep.text = "${step+1}단계"
+        binding.tvRecipeStepExplanation.text = stepExplanationList[step]
+        Glide.with(context)
+            .load(stepImageUriList[step])
+            .into(binding.ivRecipeStepImage)
+    }
+
+    private fun startTTS(step: Int){
+        val text = stepExplanationList[step]
+        tts.speak(text, TextToSpeech.QUEUE_FLUSH, null, null)
+    }
+
+
 }

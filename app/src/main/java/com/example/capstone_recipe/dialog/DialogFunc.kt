@@ -10,17 +10,34 @@ import android.os.Vibrator
 import android.os.VibratorManager
 import android.view.LayoutInflater
 import android.widget.NumberPicker
+import android.widget.RadioButton
+import android.widget.Switch
 import android.widget.TextView
 import androidx.annotation.RequiresApi
 import com.example.capstone_recipe.Login
+import com.example.capstone_recipe.Preference
 import com.example.capstone_recipe.R
 
 class DialogFunc {
     companion object{
+        @SuppressLint("UseSwitchCompatOrMaterialCode")
         fun settingDialog(context:Context){ // 환경설정
             val dialog = DialogInterface(context)
+            val pref = Preference(context)
             val view = LayoutInflater.from(context).inflate(R.layout.dialog_setting, null)
             dialog.title = "환경설정"
+
+            val switchTTS = view.findViewById<Switch>(R.id.switchSpeak)
+            switchTTS.isChecked = pref.getUseTTS()
+            switchTTS.setOnClickListener { pref.setUseTTS(switchTTS.isChecked) }
+
+            val switchSTT = view.findViewById<Switch>(R.id.switchListen)
+            switchSTT.isChecked = pref.getUseSTT()
+            switchSTT.setOnClickListener { pref.setUseSTT(switchSTT.isChecked) }
+
+            val switchMsg = view.findViewById<Switch>(R.id.switchMSG)
+            switchMsg.isChecked = pref.getUseCloudMsg()
+            switchMsg.setOnClickListener { pref.setUseCloudMsg(switchMsg.isChecked) }
 
             view.findViewById<TextView>(R.id.tvDeveloperInfo).setOnClickListener {
                 dialog.dismiss()

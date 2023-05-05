@@ -71,7 +71,4 @@ dependencies {
 
     //원형 뷰
     implementation 'de.hdodenhof:circleimageview:3.1.0'
-
-    //코루틴
-//    implementation 'oorg.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.6.3'
 }

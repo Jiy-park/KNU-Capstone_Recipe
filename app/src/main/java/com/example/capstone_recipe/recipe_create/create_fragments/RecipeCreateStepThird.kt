@@ -11,7 +11,6 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.capstone_recipe.R
-import com.example.capstone_recipe.recipe_create.UpdateValue
 import com.example.capstone_recipe.recipe_create.create_adapter.SelectMainImageAdapter
 import com.example.capstone_recipe.data_class.SHARE
 import com.example.capstone_recipe.databinding.FragmentRecipeCreateStepThirdBinding
@@ -20,16 +19,18 @@ class RecipeCreateStepThird(private val stepImageList: MutableList<Uri?>) : Frag
     private lateinit var binding: FragmentRecipeCreateStepThirdBinding
     private lateinit var context: Context
     private lateinit var adapter: SelectMainImageAdapter
-    private lateinit var updateCallBack: UpdateValue
+    var shareOption = SHARE.ONLY_ME
+    var mainImageUri = Uri.EMPTY
+//    private lateinit var updateCallBack: UpdateValue
 
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        updateCallBack = context as UpdateValue
-    }
+//    override fun onAttach(context: Context) {
+//        super.onAttach(context)
+//        updateCallBack = context as UpdateValue
+//    }
 
-    fun setUri(uri:Uri?){
-        updateCallBack.updateMainImage(uri)
-    }
+//    fun setUri(uri:Uri?){
+//        updateCallBack.updateMainImage(uri)
+//    }
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -44,7 +45,7 @@ class RecipeCreateStepThird(private val stepImageList: MutableList<Uri?>) : Frag
         binding.recyclerviewSelectMainImage.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
 
         binding.rgLevelSelection.setOnCheckedChangeListener { _, checkedId ->
-            updateCallBack.updateShareOption(
+            shareOption =
                 when(checkedId){
                     R.id.radioShareOnlyMe -> SHARE.ONLY_ME
                     R.id.radioShareOnlyFriends -> SHARE.ONLY_FRIENDS
@@ -54,7 +55,6 @@ class RecipeCreateStepThird(private val stepImageList: MutableList<Uri?>) : Frag
                         SHARE.ONLY_ME
                     }
                 }
-            )
         }
 
         return binding.root

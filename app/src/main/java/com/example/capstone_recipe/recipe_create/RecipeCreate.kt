@@ -8,7 +8,9 @@ import android.os.Bundle
 import android.util.Log
 import android.view.KeyEvent
 import android.view.View
+import android.view.inputmethod.InputMethodManager
 import androidx.fragment.app.Fragment
+import com.bumptech.glide.Glide
 import com.example.capstone_recipe.Preference
 import com.example.capstone_recipe.R
 import com.example.capstone_recipe.recipe_create.create_fragments.RecipeCreateComplete
@@ -22,22 +24,7 @@ import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import java.text.SimpleDateFormat
 
-interface UpdateValue{
-    fun updateBasicInfo(newBasicInfo:RecipeBasicInfo)           // 레시피 기본 정보
-    fun updateIngredientList(newList:MutableList<Ingredient>)   // 레시피 재료
-    fun updateStepExplanationList(newList:MutableList<String>)  // 레시피 단계 설명
-    fun updateStepImageList(newList:MutableList<Uri?>)          // 레시피 단계 이미지
-    fun updateShareOption(newOption:SHARE)                      // 레시피 공유 옵션
-    fun updateMainImage(newImage: Uri?)                         // 레시피 메인 이미지
-}
-
-class RecipeCreate : AppCompatActivity(), UpdateValue {
-    override fun updateBasicInfo(newBasicInfo: RecipeBasicInfo) { recipeBasicInfo = newBasicInfo }          // 레시피 기본 정보
-    override fun updateIngredientList(newList: MutableList<Ingredient>) { ingredientList = newList }        // 레시피 재료
-    override fun updateStepExplanationList(newList: MutableList<String>) { stepExplanationList = newList }  // 레시피 단계 설명
-    override fun updateStepImageList(newList: MutableList<Uri?>) { stepImageList = newList }                // 레시피 단계 이미지
-    override fun updateShareOption(newOption: SHARE) { recipeBasicInfo.shareOption = newOption }            // 레시피 공유 옵션
-    override fun updateMainImage(newImage: Uri?) { selectedMainImage = newImage }
+class RecipeCreate : AppCompatActivity(){
 
     private val binding by lazy { ActivityRecipeCreateBinding.inflate(layoutInflater) }
     private val storage = FirebaseStorage.getInstance()
@@ -60,7 +47,7 @@ class RecipeCreate : AppCompatActivity(), UpdateValue {
         0
     )
     private var ingredientList = mutableListOf<Ingredient>()
-    private var stepExplanationList = mutableListOf<String>("")
+    private var stepExplanationList = mutableListOf<String>()
     private var stepImageList = mutableListOf<Uri?>(null)
     private var selectedMainImage: Uri? = null
 
@@ -96,7 +83,10 @@ class RecipeCreate : AppCompatActivity(), UpdateValue {
             Log.d("LOG_CHECK", "RecipeCreate :: onCreate() -> $recipeBasicInfo\n$selectedMainImage")
         }
 
-
+        Glide.with(this)
+            .asGif()
+            .load(R.drawable.test2222222)
+            .into(binding.progressUpload)
     }
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
@@ -137,14 +127,29 @@ class RecipeCreate : AppCompatActivity(), UpdateValue {
             2 -> {
                 binding.btnPrev.visibility = View.VISIBLE
                 binding.btnNext.visibility = View.VISIBLE
-                replaceFragment(RecipeCreateStepSecond(stepExplanationList, stepImageList))
+
+                val recipeCreateStepFirst = (supportFragmentManager.findFragmentById(R.id.mainFrame)!!) as RecipeCreateStepFirst
+                ingredientList = recipeCreateStepFirst.ingredientList
+                recipeBasicInfo = recipeCreateStepFirst.getRecipeBasicInfo()
+
+                replaceFragment(RecipeCreateStepSecond())
             }
             3 -> {
                 binding.btnPrev.visibility = View.VISIBLE
                 binding.btnNext.visibility = View.VISIBLE
+
+                val recipeCreateStepSecond = (supportFragmentManager.findFragmentById(R.id.mainFrame)!!) as RecipeCreateStepSecond
+                stepExplanationList =  recipeCreateStepSecond.stepExplanationList
+                stepImageList = recipeCreateStepSecond.stepImageList
+
                 replaceFragment(RecipeCreateStepThird(stepImageList))
             }
             4 -> {
+                val recipeCreateStepThird = (supportFragmentManager.findFragmentById(R.id.mainFrame)!!) as RecipeCreateStepThird
+                recipeBasicInfo.shareOption = recipeCreateStepThird.shareOption
+                selectedMainImage= recipeCreateStepThird.mainImageUri
+
+                hideKeyboard()
                 startUpload()
                 makeUpRecipeInfo()
                 Log.d("LOG_CHECK", "RecipeCreate :: checkCurrentStep() ->\nbasic : $recipeBasicInfo\ningredient : $ingredientList" +
@@ -184,7 +189,7 @@ class RecipeCreate : AppCompatActivity(), UpdateValue {
         db.getReference("users") // 유저가 올린 레시피들
             .child(userId)
             .child("uploadRecipe")   // root/users/$userid/recipes/...
-            .push()
+            .child(recipeId)
             .setValue(recipeId)
             .addOnCompleteListener {     // 추가 후 처리 = 레시피 정보 등록
                 uploadToRecipeDB()
@@ -255,5 +260,12 @@ class RecipeCreate : AppCompatActivity(), UpdateValue {
                 }
                 .addOnFailureListener { Log.d("LOG_CHECK", "RecipeCreate :: uploadToStorage() -> fail $it") }
         }
+    }
+
+
+    /** *현재 키보드가 올라와 있는 상태면 강제로 내림 */
+    private fun hideKeyboard() {
+        val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        if (currentFocus != null) { imm.hideSoftInputFromWindow(currentFocus!!.windowToken, 0) }
     }
 }
