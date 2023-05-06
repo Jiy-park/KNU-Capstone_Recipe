@@ -40,6 +40,8 @@ class ModifyRecipeLocker : AppCompatActivity() {
     private lateinit var newName: String
     private var newProfile: Uri? = null
     private var newBack: Uri? = null
+    private var isBackChange = false
+    private var isProfileChange = false
 
     private lateinit var profile: Uri
     private lateinit var back: Uri
@@ -57,16 +59,20 @@ class ModifyRecipeLocker : AppCompatActivity() {
         }
 
         galleryLauncher = registerForActivityResult(ActivityResultContracts.GetContent()){ uri-> // 갤러리 열기
+            val defaultProfile = Uri.parse("android.resource://$packageName/${R.drawable.default_user_profile_image}")!!
+            val defaultBack = Uri.parse("android.resource://$packageName/${R.drawable.default_user_back_image}")!!
             when(imageView.id){
                 binding.ivLockerProfileImage.id -> {
-                    if(uri == null) { binding.ivLockerProfileImage.setImageURI(profile) }
+                    isProfileChange = true
+                    if(uri == null) { binding.ivLockerProfileImage.setImageURI(defaultProfile) }
                     else {
                         newProfile = uri
                         binding.ivLockerProfileImage.setImageURI(newProfile)
                     }
                 }
                 binding.ivLockerBackImage.id -> {
-                    if(uri == null) { binding.ivLockerBackImage.setImageURI(back) }
+                    isBackChange = true
+                    if(uri == null) { binding.ivLockerBackImage.setImageURI(defaultBack) }
                     else{
                         newBack = uri
                         binding.ivLockerBackImage.setImageURI(newBack)
@@ -85,6 +91,7 @@ class ModifyRecipeLocker : AppCompatActivity() {
     private fun initView(){
         profile = Uri.parse(intent.getStringExtra("profileUri")!!)
         back = Uri.parse(intent.getStringExtra("backUri")!!)
+
         db.getReference("users")
             .child(userId)
             .child("name")
@@ -132,8 +139,6 @@ class ModifyRecipeLocker : AppCompatActivity() {
             return false
         }
         newName = binding.editModifyUserName.text.toString()
-        if(newProfile == null){ newProfile = profile }
-        if (newBack == null) { newBack = back }
         hideKeyboard()
         return true
     }
@@ -151,48 +156,56 @@ class ModifyRecipeLocker : AppCompatActivity() {
                         Log.d("LOG_CHECK", "ModifyRecipeLocker :: uploadModifiedInfo() -> 1$it")
                     }
             }
-            async {// 프로필 사진 등록 (유저 정보, 스토리지)
-                val profilePath = uriToPath(newProfile, isProfile = true)
-                if(profilePath != null){
+            /** * 1,2의 경우에만 업로드 실행
+             * 1. 유저가 갤러리로부터 사진을 선택했을 때 ->        isProfileChange: true, newProfile: 선택된 사진, profilePath: null 아님
+             * 2. 유저가 사진 선택을 취소했을 때 ->              isProfileChange: true, newProfile: default 이미지로 변경, profilePath: null
+             * 3. 유저가 닉네임만 바꿨을 때 : 갤러리를 열지 않음 ->isProfileChange: false, newProfile: null, profilePath: null */
+            if(isProfileChange){
+                async {// 프로필 사진 등록 (유저 정보, 스토리지)
+                    val profilePath = uriToPath(newProfile, isProfile = true)
                     userRef
                         .child("profileImagePath")
                         .setValue(profilePath)
                         .addOnSuccessListener {
                             Log.d("LOG_CHECK", "ModifyRecipeLocker :: uploadModifiedInfo() -> 2$it")
                         }
-                    imageRef
-                        .child("profile")
-                        .child(profilePath)
-                        .putFile(newProfile!!)
-                        .addOnSuccessListener {
-                            Log.d("LOG_CHECK", "ModifyRecipeLocker :: uploadModifiedInfo() -> 3$it")
-                        }
+                    if(profilePath.isNotEmpty()){
+                        imageRef
+                            .child("profile")
+                            .child(profilePath)
+                            .putFile(newProfile!!)
+                            .addOnSuccessListener {
+                                Log.d("LOG_CHECK", "ModifyRecipeLocker :: uploadModifiedInfo() -> 3$it")
+                            }
+                    }
                 }
             }
-            async {// 백그라운드 사진 등록 (유저 정보, 스토리지)
-                val backPath = uriToPath(newBack, isProfile = false)
-                if(backPath != null){
+            if(isBackChange){
+                async {// 백그라운드 사진 등록 (유저 정보, 스토리지)
+                    val backPath = uriToPath(newBack, isProfile = false)
                     userRef
                         .child("backgroundImagePath")
                         .setValue(backPath)
                         .addOnSuccessListener {
                             Log.d("LOG_CHECK", "ModifyRecipeLocker :: uploadModifiedInfo() -> 4$it")
                         }
-                    imageRef
-                        .child("back")
-                        .child(backPath)
-                        .putFile(newBack!!)
-                        .addOnSuccessListener {
-                            Log.d("LOG_CHECK", "ModifyRecipeLocker :: uploadModifiedInfo() -> 5$it")
-                        }
+                    if(backPath.isNotEmpty()){
+                        imageRef
+                            .child("back")
+                            .child(backPath)
+                            .putFile(newBack!!)
+                            .addOnSuccessListener {
+                                Log.d("LOG_CHECK", "ModifyRecipeLocker :: uploadModifiedInfo() -> 5$it")
+                            }
+                    }
                 }
             }
         }
     }
 
     /** *Uri를 받아 path로 변경 */
-    private fun uriToPath(uri: Uri?, isProfile: Boolean): String? {
-        if(uri == null) { return null }
+    private fun uriToPath(uri: Uri?, isProfile: Boolean): String {
+        if(uri == null) { return "" }
         val mimeType = contentResolver?.getType(uri) ?: "/none" //마임타입 ex) images/jpeg
         val ext = mimeType.split("/")[1] //확장자 ex) jpeg
 

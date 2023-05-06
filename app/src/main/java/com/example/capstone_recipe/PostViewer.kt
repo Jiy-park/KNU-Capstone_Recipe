@@ -371,8 +371,9 @@ class PostViewer : AppCompatActivity() {
             .child("profileImagePath")
             .addListenerForSingleValueEvent(object: ValueEventListener{
                 override fun onDataChange(snapshot: DataSnapshot) {
-                    if(snapshot.exists()){
-                        val imagePath = snapshot.value.toString()
+                    val imagePath = snapshot.value.toString()
+                    if(imagePath.isNotEmpty()){
+                        Log.d("LOG_CHECK", "PostViewer :: onDataChange() -> image path : $imagePath")
                         storage.getReference("user_image")
                             .child(userId)
                             .child("profile")
