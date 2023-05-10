@@ -2,6 +2,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:layout_marginTop="15dp"
     xmlns:tools="http://schemas.android.com/tools">
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/ivFriendProfileImage"
@@ -21,5 +23,20 @@
         android:textSize="15sp"
         android:gravity="center"
         android:layout_marginHorizontal="10dp"/>
+
+    <TextView
+        android:id="@+id/tvIsFriend"
+        android:layout_width="50dp"
+        android:layout_height="30dp"
+        android:text="친구"
+        android:textColor="@color/white"
+        android:fontFamily="@font/kopup_d_medium"
+        android:background="@drawable/style_round_10"
+        android:backgroundTint="@color/main_color_start_a30"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:visibility="gone"/>
+
+
 
 </LinearLayout>

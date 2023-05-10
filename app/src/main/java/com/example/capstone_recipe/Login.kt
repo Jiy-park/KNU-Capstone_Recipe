@@ -11,7 +11,6 @@ import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
-import com.example.capstone_recipe.data_class.FriendInfo
 import com.example.capstone_recipe.databinding.ActivityLoginBinding
 import com.example.capstone_recipe.data_class.User
 import com.example.capstone_recipe.data_class.UserLogInInfo

@@ -24,7 +24,7 @@
         android:text="1단계"
         android:textColor="@color/main_color_start"
         android:fontFamily="@font/kopup_d_medium"
-        android:background="@drawable/style_stroke_round_button"/>
+        android:background="@drawable/style_round_30_stroke_main_start"/>
     <TextView
         android:id="@+id/tvRecipeStepExplanation"
         android:layout_width="match_parent"

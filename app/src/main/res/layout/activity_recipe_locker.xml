@@ -100,6 +100,26 @@
             android:background="@color/white"
             android:scaleType="fitXY"
             android:src="@drawable/ic_create"/>
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnAddFriend"
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:layout_margin="10dp"
+            android:visibility="gone"
+            android:text="친구 추가"
+            android:textColor="@color/main_color_start"
+            android:fontFamily="@font/kopup_d_medium"
+            android:background="@drawable/style_round_30_stroke_main_start"/>
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnRemoveFriend"
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:layout_margin="10dp"
+            android:visibility="gone"
+            android:text="친구 삭제"
+            android:textColor="@color/main_color_start"
+            android:fontFamily="@font/kopup_d_medium"
+            android:background="@drawable/style_round_30_stroke_main_start"/>
     </LinearLayout>
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/progressDownload"

@@ -21,16 +21,6 @@ class RecipeCreateStepThird(private val stepImageList: MutableList<Uri?>) : Frag
     private lateinit var adapter: SelectMainImageAdapter
     var shareOption = SHARE.ONLY_ME
     var mainImageUri = Uri.EMPTY
-//    private lateinit var updateCallBack: UpdateValue
-
-//    override fun onAttach(context: Context) {
-//        super.onAttach(context)
-//        updateCallBack = context as UpdateValue
-//    }
-
-//    fun setUri(uri:Uri?){
-//        updateCallBack.updateMainImage(uri)
-//    }
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {

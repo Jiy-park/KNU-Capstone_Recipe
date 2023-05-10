@@ -12,13 +12,17 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.capstone_recipe.R
-import com.example.capstone_recipe.data_class.FriendInfo
+import com.example.capstone_recipe.data_class.UserInfo
 import com.example.capstone_recipe.databinding.FragmentRecipeLockerFriendListBinding
 import com.example.capstone_recipe.recipe_locker.locker_adpater.FriendAdapter
 import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.ktx.database
+import com.google.firebase.database.ktx.getValue
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 import kotlinx.coroutines.*
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.tasks.await
 import kotlin.system.measureTimeMillis
 
@@ -26,76 +30,46 @@ class RecipeLockerFriendList(private val user: DataSnapshot?) : Fragment() {
     private lateinit var binding: FragmentRecipeLockerFriendListBinding
     private lateinit var context: Context
     private lateinit var friendListAdapter: FriendAdapter
-
-    private var friendList = listOf<FriendInfo>()
-    private var imageList = listOf<Uri>()
+    private val db = Firebase.database("https://knu-capstone-f9f55-default-rtdb.asia-southeast1.firebasedatabase.app/")
+    private val userImageRef = Firebase.storage.getReference("user_image")
+    private var friendList = mutableListOf<UserInfo>()
 
     private val defaultImageUri by lazy { Uri.parse("android.resource://${context.packageName}/${R.drawable.default_user_profile_image}")!! }
 
     /** * 유저의 친구 목록 참조하여 해당  유저의 친구 프로필 이미지, 이름, 아이디 가져와서 업데이트*/
     private suspend fun updateFriendList(){
-        Log.d("LOG_CHECK", "RecipeLockerFriendList :: updateFriendList() -> user : $user")
-        val friendIdList = user!!.child("friends")
-        val size = friendIdList.childrenCount.toInt()
-        val newFriendList = MutableList(size) { FriendInfo() } // 업로드 리스트
-        val newImageList = MutableList<Uri>(size) { Uri.EMPTY }         // 이미지 리스트
+        val mutex = Mutex()
+        val friendIdList = user!!.child("friends").children.toList()
+        val userRef = db.getReference("users")
 
-        val time = measureTimeMillis{
-            withContext(Dispatchers.IO){
-                friendIdList.children.mapIndexed{ index, item ->
-                    async {
-                        val friend = item.getValue(FriendInfo::class.java)!!
-                        val friendId = friend.id
-                        val friendProfilePath = friend.profileImagePath
-                        newFriendList[index] = friend
-                        newImageList[index] = getProfileImage(friendId, friendProfilePath)
+//        val d = friendIdList.children.toList()
+//        Log.d("LOG_CHECK", "RecipeLockerFriendList :: updateFriendList() -> friendList : ${d[0].value.toString()}")
+
+        withContext(Dispatchers.IO){
+            friendIdList.map{
+                async {
+                    val friendId = it.value.toString()
+                    Log.d("LOG_CHECK", "RecipeLockerFriendList :: updateFriendList() -> friendId : $friendId")
+                    val friendName = userRef.child(friendId).child("name").get().await().value.toString()
+                    val friendProfilePath = userRef.child(friendId).child("profileImagePath").get().await().value.toString()
+                    val profileUri = getFriendImageByPath(friendId, friendProfilePath)
+                    mutex.withLock {
+                        friendList.add(UserInfo(friendId, friendName, profileUri))
                     }
-                }.awaitAll()
-                friendList = newFriendList
-                imageList = newImageList
-            }
+                }
+            }.awaitAll()
         }
-        Log.d("LOG_CHECK", "RecipeLockerFriendList :: updateFriendList() -> time : $time")
+        Log.d("LOG_CHECK", "RecipeLockerFriendList :: updateFriendList() -> 완료 : $friendList")
     }
 
-    /** * 유저 아이디에 해당하는 유저의 프로필 이미지 uri 반납*/
-    private suspend fun getProfileImage(userId: String, profilePath: String): Uri{
-        Log.d("LOG_CHECK", "222222222222222")
-        val defaultImageUri = Uri.parse("android.resource://${context.packageName}/${R.drawable.default_user_profile_image}")!!
-        val uri =
-            if(profilePath == ""){ defaultImageUri }
-            else{
-                Firebase.storage.getReference("user_image")
-                    .child(userId)
-                    .child("profile")
-                    .child(profilePath)
-                    .downloadUrl
-                    .await()
-            }
-        Log.d("LOG_CHECK", "1111111111111111111111")
-        return uri
-    }
-
-    private fun getFriendImageByPath(): MutableList<Uri>{
-        val userImageRef= Firebase.storage.getReference("user_image")
-        val imageList = mutableListOf<Uri>()
-        if(friendList.isEmpty()) { return mutableListOf() }
-        for(friend in friendList){
-            if(friend.profileImagePath.isEmpty()){ imageList.add(defaultImageUri) }
-            else{
-                userImageRef
-                    .child(friend.id)
-                    .child(friend.profileImagePath)
-                    .downloadUrl
-                    .addOnSuccessListener { uri ->
-                        imageList.add(uri)
-                    }
-                    .addOnFailureListener {
-                        Log.e("LOG_CHECK", "RecipeLockerFriendList :: getFriendImageByPath() -> $it")
-                    }
-            }
+    /** *유저의 아이디와 프로필 이미지 경로를 받아 해당 이미지를 반납 */
+    private suspend fun getFriendImageByPath(userId: String, imagePath: String): Uri{
+        return if(imagePath.isNotEmpty()){
+            userImageRef.child(userId).child("profile").child(imagePath).downloadUrl.await()
         }
-        return imageList
+        else {
+            defaultImageUri
+        }
     }
 
     @SuppressLint("NotifyDataSetChanged")
@@ -110,7 +84,6 @@ class RecipeLockerFriendList(private val user: DataSnapshot?) : Fragment() {
                 updateFriendList()
                 withContext(Dispatchers.Main){
                     friendListAdapter.friendList = friendList
-                    friendListAdapter.imageList = imageList
                     friendListAdapter.notifyDataSetChanged()
                 }
             }
@@ -126,36 +99,3 @@ class RecipeLockerFriendList(private val user: DataSnapshot?) : Fragment() {
         return binding.root
     }
 }
-//
-//class RecipeLockerFriendList(private val user: DataSnapshot) : Fragment() {
-//    private lateinit var binding: FragmentRecipeLockerFriendListBinding
-//    private lateinit var context: Context
-//    private lateinit var friendListAdapter: FriendAdapter
-//
-//    private val userRef = Firebase.database.getReference("users")
-//    private val friendList = user.child("friends")
-//    private var imageList = listOf<Uri>()
-//
-//    private val defaultImageUri by lazy { Uri.parse("android.resource://${context.packageName}/${R.drawable.head_default_image}")!! }
-//
-//    private suspend fun getUserFriendProfileList(user: DataSnapshot): MutableList<Uri>{
-//        val friendRef = user.child("friend")
-//        val imageList = MutableList(friendRef.childrenCount.toInt()) { Uri() }
-//    }
-//
-//    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-//        binding = FragmentRecipeLockerFriendListBinding.inflate(inflater, container, false)
-//        context = binding.root.context
-//        imageList = getFriendImageByPath()
-//
-//        friendListAdapter = FriendAdapter(context, friendList, imageList)
-//
-//        binding.recyclerviewFriendList.layoutManager = LinearLayoutManager(context)
-//        binding.recyclerviewFriendList.adapter = friendListAdapter
-//
-//
-//        return binding.root
-//    }
-//
-//
-//}

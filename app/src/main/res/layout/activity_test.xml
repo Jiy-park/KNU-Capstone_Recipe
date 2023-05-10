@@ -7,29 +7,8 @@
     android:orientation="vertical"
     tools:context=".MainActivity">
 
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="match_parent"
-        android:layout_height="300dp"
-        android:text="짜글이 레시피!
-    김치 어 좀 많나? 할 정도. 대충 놨을때 냄비 바닥 아슬아슬하게 안보일정도.
-    설탕 한숟갈 넣어줘 그럼 김치의 신맛이 사라져. "
-        tools:ignore="HardcodedText" />
-
     <Button
-        android:id="@+id/btnStop"
+        android:id="@+id/btn"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="정지"/>
-
-    <Button
-        android:id="@+id/btnRestart"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="다시"/>
-    <Button
-        android:id="@+id/btnStart"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="시작"/>
+        android:layout_height="wrap_content"/>
 </LinearLayout>

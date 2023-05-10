@@ -17,9 +17,13 @@ import com.example.capstone_recipe.recipe_locker.locker_adpater.LockerViewPagerA
 import com.google.android.material.tabs.TabLayoutMediator
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.ktx.database
+import com.google.firebase.database.ktx.getValue
+import com.google.firebase.database.ktx.values
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.toList
+import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.tasks.await
 
 class RecipeLocker: AppCompatActivity() {
@@ -28,8 +32,9 @@ class RecipeLocker: AppCompatActivity() {
     private lateinit var adpater: LockerViewPagerAdapter
     private val db = Firebase.database("https://knu-capstone-f9f55-default-rtdb.asia-southeast1.firebasedatabase.app/")
     private val userRef = db.getReference("users")
-    private var userId = ""
-    private var user: DataSnapshot? = null
+    private var lockerOwnerId = ""
+    private var lockerOwner: DataSnapshot? = null
+    private var userId: String = ""
     private lateinit var image: Pair<Uri, Uri>
 //    private var userInfo = User()
 
@@ -42,8 +47,8 @@ class RecipeLocker: AppCompatActivity() {
         val profilePath = user.child("profileImagePath").value.toString()
         val backPath = user.child("backgroundImagePath").value.toString()
         Log.d("LOG_CHECK", "RecipeLocker :: setUserView() -> profilePath : $profilePath\nbackPath : $backPath")
-        image = getUserImage(userId, profilePath, backPath)
-        binding.tvUserNameWithId.text = "$name @$userId"
+        image = getUserImage(lockerOwnerId, profilePath, backPath)
+        binding.tvUserNameWithId.text = "$name @$lockerOwnerId"
         binding.tvUserScore.text = score
         Glide.with(context)
             .load(image.first)
@@ -91,24 +96,38 @@ class RecipeLocker: AppCompatActivity() {
         return Pair(profile, back)
     }
 
+    /** *유저 아이디에 해당하는 유저의 친구 목록을 리스트 형태로 반납 */
+    private suspend fun getUserFriendList(userId: String): List<String> {
+        val beforeList = db.getReference("users").child(userId).child("friends").get().await().children.toList()
+        var afterList = listOf<String>()
+        withContext(Dispatchers.Default){
+            afterList = beforeList.map {
+                async {
+                    it.value.toString()
+                }
+            }.awaitAll()
+        }
+        return afterList
+    }
 
     @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
         context = binding.root.context
+        userId = Preference(context).getUserId()
 
         adpater = LockerViewPagerAdapter(null, this@RecipeLocker)
 
-        userId = intent.getStringExtra("userId")!!
-        intent.removeExtra("userId")
+        lockerOwnerId = intent.getStringExtra("lockerOwnerId")!!
+        intent.removeExtra("lockerOwnerId")
 
         binding.viewPager.adapter = adpater
 
-        binding.viewPager.currentItem = intent.getIntExtra("page", 0)
-        intent.removeExtra("page")
+//        binding.viewPager.currentItem = intent.getIntExtra("page", 0)
+//        intent.removeExtra("page")
 
-        if(userId == Preference(context).getUserId()){
+        if(lockerOwnerId == Preference(context).getUserId()){
             binding.ivModifyUserProfile.visibility = View.VISIBLE
             binding.ivModifyUserProfile.setOnClickListener {
                 val intent = Intent(context, ModifyRecipeLocker::class.java)
@@ -116,6 +135,9 @@ class RecipeLocker: AppCompatActivity() {
             }
         }
 
+        binding.btnAddFriend.setOnClickListener {
+            binding.btnAddFriend.visibility = View.GONE
+        }
 
         // 탭 레이아웃에 탭 추가
         val uploadTab = binding.tabLayout.newTab()
@@ -126,12 +148,12 @@ class RecipeLocker: AppCompatActivity() {
         binding.tabLayout.addTab(saveTab, 2)
 
         lifecycleScope.launch(Dispatchers.IO) {
-            user = getUser(userId)
+            lockerOwner = getUser(lockerOwnerId)
             launch(Dispatchers.Main) {
-                setUserView(user!!)
-                adpater = LockerViewPagerAdapter(user, this@RecipeLocker)
+                setUserView(lockerOwner!!)
+                adpater = LockerViewPagerAdapter(lockerOwner, this@RecipeLocker)
                 binding.viewPager.adapter = adpater
-                if(userId == Preference(context).getUserId()){
+                if(lockerOwnerId == userId){
                     binding.ivModifyUserProfile.visibility = View.VISIBLE
                     binding.ivModifyUserProfile.setOnClickListener {
                         val intent = Intent(context, ModifyRecipeLocker::class.java)
@@ -140,9 +162,39 @@ class RecipeLocker: AppCompatActivity() {
                         startActivity(intent)
                     }
                 }
+                else{ // 현재 보여지는 RecipeLocker의 주인이 현재 앱 사용자와 다름 -> 친구 추가/삭제 가능
+                    val userFriendList = getUserFriendList(userId)
+                    Log.d("LOG_CHECK", "RecipeLocker :: onCreate() -> \nlockerOwnerId : $lockerOwnerId\nuserFriendList : $userFriendList")
+                    if(userFriendList.contains(lockerOwnerId)) { binding.btnRemoveFriend.visibility = View.VISIBLE }
+                    else { binding.btnAddFriend.visibility = View.VISIBLE }
+                }
+                binding.viewPager.currentItem = intent.getIntExtra("page", 0)
+                intent.removeExtra("page")
             }
         }
 
+        binding.btnAddFriend.setOnClickListener {
+            db.getReference("users")
+                .child(userId)
+                .child("friends")
+                .child(lockerOwnerId)
+                .setValue(lockerOwnerId)
+                .addOnSuccessListener {
+                    binding.btnAddFriend.visibility = View.GONE
+                    binding.btnRemoveFriend.visibility = View.VISIBLE
+                }
+        }
+        binding.btnRemoveFriend.setOnClickListener {
+            db.getReference("users")
+                .child(userId)
+                .child("friends")
+                .child(lockerOwnerId)
+                .removeValue()
+                .addOnSuccessListener {
+                    binding.btnAddFriend.visibility = View.VISIBLE
+                    binding.btnRemoveFriend.visibility = View.GONE
+                }
+        }
 
         // ViewPager2와 TabLayout 연결
         TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->

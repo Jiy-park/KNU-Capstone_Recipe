@@ -57,7 +57,7 @@
         android:layout_width="63dp"
         android:layout_height="36dp"
         android:layout_marginEnd="16dp"
-        android:background="@drawable/style_stroke_round_button"
+        android:background="@drawable/style_round_30_stroke_main_start"
         android:fontFamily="@font/kopup_d_medium"
         android:text="저장"
         android:textColor="@color/main_color_start"

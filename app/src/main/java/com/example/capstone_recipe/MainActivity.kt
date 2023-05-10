@@ -17,10 +17,8 @@ import com.example.capstone_recipe.databinding.ActivityMainBinding
 import com.example.capstone_recipe.dialog.DialogFunc
 import com.example.capstone_recipe.recipe_create.RecipeCreate
 import com.example.capstone_recipe.recipe_locker.RecipeLocker
+import com.example.capstone_recipe.search.Search
 import com.example.capstone_recipe.test_______.TestActivity
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
@@ -73,7 +71,7 @@ class MainActivity : AppCompatActivity() {
 
         binding.ivRecipeLocker.setOnClickListener {
             val intent = Intent(context, RecipeLocker::class.java)
-            intent.putExtra("userId", userId)
+            intent.putExtra("lockerOwnerId", userId)
             intent.putExtra("page", 2)
             startActivity(intent)
         }
@@ -85,7 +83,7 @@ class MainActivity : AppCompatActivity() {
 
         binding.ivUserInfo.setOnClickListener {
             val intent = Intent(context, RecipeLocker::class.java)
-            intent.putExtra("userId", userId)
+            intent.putExtra("lockerOwnerId", userId)
             intent.putExtra("page", 0)
             startActivity(intent)
         }
