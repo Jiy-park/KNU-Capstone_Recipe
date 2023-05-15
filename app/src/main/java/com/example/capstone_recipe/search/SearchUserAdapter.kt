@@ -15,7 +15,7 @@ import com.example.capstone_recipe.recipe_locker.RecipeLocker
 class SearchUserAdapter:RecyclerView.Adapter<SearchUserAdapter.Holder>() {
     private lateinit var binding: ItemUserSimpleViewerBinding
     private lateinit var context: Context
-    var userIdList = listOf<UserInfo>()
+    var userList = listOf<UserInfo>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): Holder {
         binding = ItemUserSimpleViewerBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -25,15 +25,15 @@ class SearchUserAdapter:RecyclerView.Adapter<SearchUserAdapter.Holder>() {
 
     override fun onBindViewHolder(holder: Holder, position: Int) {
         Log.d("LOG_CHECK", "SearchUserAdapter :: onBindViewHolder() -> position : $position")
-        holder.bind(userIdList[position])
+        holder.bind(userList[position])
     }
 
-    override fun getItemCount() = userIdList.size
+    override fun getItemCount() = userList.size
 
     fun updateUserList(newList: List<UserInfo>){
-        userIdList = newList
+        userList = newList
         notifyDataSetChanged()
-        Log.d("LOG_CHECK", "SearchUserAdapter :: updateUserList() -> userIdList : $userIdList")
+        Log.d("LOG_CHECK", "SearchUserAdapter :: updateUserList() -> userIdList : $userList")
     }
 
     inner class Holder(val binding: ItemUserSimpleViewerBinding):RecyclerView.ViewHolder(binding.root){

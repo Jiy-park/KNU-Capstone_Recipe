@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".search.SetFilter">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+        <include
+            android:id="@+id/topPanel"
+            layout="@layout/common_top_panel_sub" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:background="?android:attr/listDivider" />
+
+        <CheckBox
+            android:id="@+id/checkInclude"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="15dp"
+            android:layout_marginTop="15dp"
+            android:buttonTint="@color/main_color_start"
+            android:fontFamily="@font/kopup_d_medium"
+            android:text="포함 재료"
+            android:textColor="@color/main_text"
+            tools:checked="true" />
+
+        <LinearLayout
+            android:id="@+id/linearIncludeIngredient"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="40dp"
+            android:orientation="vertical" />
+
+        <CheckBox
+            android:id="@+id/checkExclude"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="15dp"
+            android:layout_marginTop="15dp"
+            android:buttonTint="@color/main_color_start"
+            android:fontFamily="@font/kopup_d_medium"
+            android:text="불포함 재료"
+            android:textColor="@color/main_text"
+            tools:checked="true" />
+
+        <LinearLayout
+            android:id="@+id/linearExcludeIngredient"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="40dp"
+            android:orientation="vertical" />
+
+        <CheckBox
+            android:id="@+id/checkTime"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="15dp"
+            android:layout_marginTop="15dp"
+            android:buttonTint="@color/main_color_start"
+            android:fontFamily="@font/kopup_d_medium"
+            android:text="소요 시간"
+            android:textColor="@color/main_text"
+            tools:checked="true" />
+
+        <LinearLayout
+            android:id="@+id/linearQuestionTime"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="20dp"
+            android:visibility="gone"
+            tools:visibility="visible"
+            android:background="@drawable/style_round_10"
+            android:orientation="horizontal">
+            <EditText
+                android:id="@+id/editAnswerTime"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="8"
+                android:backgroundTint="@color/background_gray"
+                android:importantForAutofill="no"
+                android:inputType="number"
+                android:paddingStart="8dp"
+                android:fontFamily="@font/kopup_d_medium"
+                android:textColor="@color/main_text"
+                tools:ignore="RtlSymmetry" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="2"
+                android:gravity="center"
+                android:text="@string/min"
+                android:fontFamily="@font/kopup_d_medium"
+                android:textColor="@color/main_text"/>
+        </LinearLayout>
+
+        <CheckBox
+            android:id="@+id/checkCalorie"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="15dp"
+            android:layout_marginTop="15dp"
+            android:buttonTint="@color/main_color_start"
+            android:fontFamily="@font/kopup_d_medium"
+            android:text="제한 칼로리"
+            android:textColor="@color/main_text"
+            tools:checked="true" />
+        <LinearLayout
+            android:id="@+id/linearQuestionCalorie"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="20dp"
+            android:visibility="gone"
+            tools:visibility="visible"
+            android:background="@drawable/style_round_10"
+            android:orientation="horizontal">
+            <EditText
+                android:id="@+id/editAnswerCalorie"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="8"
+                android:backgroundTint="@color/background_gray"
+                android:importantForAutofill="no"
+                android:inputType="number"
+                android:paddingStart="8dp"
+                android:fontFamily="@font/kopup_d_medium"
+                android:textColor="@color/main_text"
+                tools:ignore="RtlSymmetry" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="2"
+                android:gravity="center"
+                android:text="kcal"
+                android:fontFamily="@font/kopup_d_medium"
+                android:textColor="@color/main_text"/>
+        </LinearLayout>
+
+
+
+        <CheckBox
+            android:id="@+id/checkLevel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="15dp"
+            android:layout_marginTop="15dp"
+            android:buttonTint="@color/main_color_start"
+            android:fontFamily="@font/kopup_d_medium"
+            android:text="난이도"
+            android:textColor="@color/main_text"
+            tools:checked="true" />
+        <RadioGroup
+            android:id="@+id/rgLevelSelection"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            tools:visibility="visible"
+            android:paddingHorizontal="7.5dp">
+            <RadioButton
+                android:id="@+id/radioLevelEasy"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:paddingHorizontal="7.5dp"
+                android:drawablePadding="5dp"
+                android:text="쉬움"
+                android:textColor="@color/main_color_start"
+                android:fontFamily="@font/kopup_d_medium"
+                android:textAlignment="center"
+                android:drawableTop="@drawable/style_radio_level_easy"
+                android:button="@null"
+                android:checked="true"
+                android:background="@null"/>
+            <RadioButton
+                android:id="@+id/radioLevelNormal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:paddingHorizontal="7.5dp"
+                android:drawablePadding="5dp"
+                android:text="보통"
+                android:textColor="@color/main_text"
+                android:fontFamily="@font/kopup_d_medium"
+                android:textAlignment="center"
+                android:drawableTop="@drawable/style_radio_level_normal"
+                android:button="@null"
+                android:background="@null"/>
+            <RadioButton
+                android:id="@+id/radioLevelHard"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:paddingHorizontal="7.5dp"
+                android:drawablePadding="5dp"
+                android:text="어려움"
+                android:textColor="@color/main_text"
+                android:fontFamily="@font/kopup_d_medium"
+                android:textAlignment="center"
+                android:drawableTop="@drawable/style_radio_level_hard"
+                android:button="@null"
+                android:background="@null"/>
+        </RadioGroup>
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnDone"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/style_main_color"
+            android:text="적용"
+            android:textColor="@color/white"
+            android:fontFamily="@font/kopup_d_medium"/>
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>

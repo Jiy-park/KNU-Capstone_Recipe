@@ -28,11 +28,6 @@ class RecipeCreateStepFirst : Fragment() {
     val ingredientList = mutableListOf<Ingredient>()
     private var level = LEVEL.EASY
 
-//    override fun onAttach(context: Context) {
-//        super.onAttach(context)
-//        updateCollBack = context as UpdateValue
-//    }
-
     override fun onResume() {
         super.onResume()
         Log.d("LOG_CHECK", "RecipeCreateStepFirst :: onResume() -> ")
@@ -51,24 +46,6 @@ class RecipeCreateStepFirst : Fragment() {
         recipeBasicInfo.amount = binding.layerQuestionAmount.editAnswer.text.toString()
         return recipeBasicInfo
     }
-//    override fun onStop() {
-//        Log.d("LOG_CHECK", "RecipeCreateStepFirst :: onStop() -> 레시피 타이틀 적용 안됨 체크용 ")
-//        super.onStop()
-//        val title = binding.editCreateTitle.text.toString()
-//        val intro = binding.editCreateIntro.text.toString()
-//        val time = binding.layerQuestionTime.editAnswer.text.toString()
-//        val amount = binding.layerQuestionAmount.editAnswer.text.toString()
-//        updateCollBack.updateBasicInfo(
-//            RecipeBasicInfo(
-//                title = title,
-//                intro = intro,
-//                time = time,
-//                amount = amount,
-//                level = level,
-//            )
-//        )
-//        updateCollBack.updateIngredientList(ingredientList)
-//    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = FragmentRecipeCreateStepFirstBinding.inflate(inflater, container, false)
