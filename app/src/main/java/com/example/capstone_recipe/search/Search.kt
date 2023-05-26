@@ -8,10 +8,10 @@ import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.annotation.RequiresApi
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.capstone_recipe.Preference
@@ -41,16 +41,16 @@ class Search : AppCompatActivity() {
     private lateinit var searchFilterAdapter: SearchFilterAdapter
     private var searchFilter = Filter()
 
-    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     private var resultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){ result->
         if(result.resultCode == Activity.RESULT_OK){
-            searchFilter = result.data?.getSerializableExtra("filter", Filter::class.java)!!
-//            searchFilterAdapter.filterOptionList = makeFilterOptionList(searchFilter)
+            searchFilter = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) { result.data?.getSerializableExtra("filter", Filter::class.java)!! }
+            else{ result.data?.getSerializableExtra("filter") as Filter }
+            searchFilterAdapter.updateList(makeFilterOptionList(searchFilter))
+            searchFilterAdapter.filter = searchFilter
             Log.d("LOG_CHECK", "Search :: onCreate() -> after searchFilter : $searchFilter")
         }
     }
 
-    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
@@ -64,7 +64,8 @@ class Search : AppCompatActivity() {
         binding.recyclerviewRecipeResult.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
         binding.recyclerviewRecipeResult.adapter = searchRecipeAdapter
 
-        searchFilterAdapter = SearchFilterAdapter(searchFilter)
+        searchFilterAdapter = SearchFilterAdapter()
+        searchFilterAdapter.filter = searchFilter
         binding.recyclerviewFilters.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
         binding.recyclerviewFilters.adapter = searchFilterAdapter
 
@@ -84,21 +85,19 @@ class Search : AppCompatActivity() {
                             val userInfoList = getUsersInfo(userIdList)
                             Log.d("LOG_CHECK", "Search :: onCreate() -> \nuserIdList : $userIdList\nuserInfoList : $userInfoList")
                             withContext(Dispatchers.Main){
+                                if(userInfoList.isNotEmpty()){ binding.linearUserSearch.visibility = View.VISIBLE }
+                                else { binding.linearUserSearch.visibility = View.GONE }
                                 searchUserAdapter.updateUserList(userInfoList)
                             }
                         }
                         async {// 레시피 검색
                             val recipeIdList = searchRecipeIdByTitleWithFilter(searchTarget, searchFilter)
-    //                        TODO("아래 리스트 두개 구하는 함수 제작할 것")
                             val recipeBasicInfoList = getRecipesBasicInfo(recipeIdList)
                             val creatorList = getCreatorList(recipeBasicInfoList)
                             val mainImageUriList = getRecipeMainImage(recipeBasicInfoList)
-                            Log.d("LOG_CHECK", "Search :: onCreate() -> \n" +
-                                    "recipeIdList : $recipeIdList\n" +
-                                    "recipeBasicInfoList : $recipeBasicInfoList\n" +
-                                    "creatorList : $creatorList\n" +
-                                    "mainImageUriList : $mainImageUriList")
                             withContext(Dispatchers.Main){
+                                if(recipeBasicInfoList.isNotEmpty()){ binding.recyclerviewRecipeResult.visibility = View.VISIBLE }
+                                else { binding.recyclerviewRecipeResult.visibility = View.GONE }
                                 searchRecipeAdapter.updateAdapterList(recipeBasicInfoList, creatorList, mainImageUriList)
                             }
                         }
@@ -109,6 +108,21 @@ class Search : AppCompatActivity() {
             }
             return@setOnEditorActionListener false
         }
+    }
+
+    /** * 필터 옵션을 상단에 띄움*/
+    private fun makeFilterOptionList(filter: Filter): MutableList<String>{
+        val filterOptionList = mutableListOf<String>()
+        filter.includeIngredient?.let { list ->
+            list.forEach { filterOptionList.add("$it 포함") }
+        }
+        filter.excludeIngredient?.let { list ->
+            list.forEach { filterOptionList.add("$it 제외") }
+        }
+        filter.time?.let { filterOptionList.add("$it 분") }
+        filter.calorie?.let { filterOptionList.add("$it kcal이하") }
+        filter.level?.let { filterOptionList.add("${it.toKor} 난이도") }
+        return filterOptionList
     }
 
     /** * 입력받은 name을 갖는 유저의 아이디를 리스트 형태로 반환*/
@@ -167,15 +181,8 @@ class Search : AppCompatActivity() {
                  else { defaultImageUri }
     }
 
-
-    /** * 테스트용 필터*/
-    val textFilter = Filter(
-        includeIngredient = mutableListOf("아침햇살"),
-        excludeIngredient = mutableListOf("닥터페퍼"),
-    )
-
     /** * 입력받은 타이틀 필터 옵션에 맞는 레시피의 아이디를 리스트 형태로 반납*/
-//    TODO: 타이틀 검색이 우선인가??? 재료 검색이 우선인가?? 툴이 동시에 비교 해봐야할듯??
+//    TODO: basicInfoFilterCheck() 구현해야 함
     private suspend fun searchRecipeIdByTitleWithFilter(searchTitle: String, filter: Filter): List<String>{
         mutex = Mutex()
         val recipeIdList = mutableListOf<String>()
@@ -188,10 +195,9 @@ class Search : AppCompatActivity() {
                         Log.d("LOG_CHECK", "Search :: searchRecipeIdByTitleWithFilter() -> title : $recipeTitle")
                         val ingredient = recipe.child("ingredient").getValue<List<Ingredient>>()!!
                         val ingredientPass = ingredientFilterCheck(ingredient, filter)
-//                        val basicInfoPass = basicInfoFilterCheck(recipeBasicInfo, filter)
                         Log.d("LOG_CHECK", "Search :: searchRecipeByTitleWithIngredient() -> ingredientPass : $ingredientPass")
-    //                    val basicInfoPass = basicInfoFilterCheck(recipeBasicInfo, filter)
-                        if(ingredientPass){
+                        val basicInfoPass = basicInfoFilterCheck(recipeBasicInfo, filter)
+                        if(ingredientPass && basicInfoPass){
                             mutex.withLock {
                                 recipeIdList.add(recipeBasicInfo.id)
                             }
@@ -240,12 +246,26 @@ class Search : AppCompatActivity() {
     }
 
     /** * 레시피 정보가 필터 옵션에 맞는지 체크, 맞다면 true, 맞지 않으면 false 반납*/
-    private suspend fun basicInfoFilterCheck(recipeBasicInfo: RecipeBasicInfo, filter:Filter): Boolean{
-        var isOk = false
-        withContext(Dispatchers.Default){
+    private fun basicInfoFilterCheck(recipeBasicInfo: RecipeBasicInfo, filter:Filter): Boolean{
+        var timeOk = (filter.time == null)
+        var calorieOk = (filter.calorie == null)
+        var levelOk = (filter.level == null)
 
+        filter.time?.let {
+            timeOk = (it.toInt() >= recipeBasicInfo.time.toInt())
         }
-        return isOk
+
+        filter.calorie?.let {
+//            TODO("RecipeBasicInfo 에 칼로리 변수 추가 해야함")
+//            calorieOk = (it.toInt() > recipeBasicInfo.)
+            calorieOk = true
+        }
+
+        filter.level?.let {
+            levelOk = (it == recipeBasicInfo.level)
+        }
+
+        return (timeOk && calorieOk && levelOk)
     }
 
     private suspend fun getRecipesBasicInfo(recipeIdsList: List<String>): List<RecipeBasicInfo>{
@@ -276,7 +296,7 @@ class Search : AppCompatActivity() {
             recipeBasicInfoList.mapIndexed { index, recipeBasicInfo ->
                 async {
                     val imagePath = recipeBasicInfo.mainImagePath
-                    if(imagePath != null){
+                    if(imagePath.isNotEmpty()){
                         val recipeId = recipeBasicInfo.id
                         val imageUri = recipeImageRef
                             .child(recipeId)

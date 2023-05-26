@@ -12,20 +12,26 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:visibility="invisible"
-        android:background="@drawable/style_main_image_selected_frame"/>
-    <TextView
-        android:layout_width="60dp"
-        android:layout_height="30dp"
-        android:text="대표"
-        android:textColor="@color/white"
-        android:fontFamily="@font/kopup_d_medium"
-        android:textSize="13sp"
-        android:gravity="center"/>
-
+        tools:visibility="visible"
+        android:background="@drawable/style_main_image_selected_frame">
+        <TextView
+            android:layout_width="60dp"
+            android:layout_height="30dp"
+            android:text="대표"
+            android:textColor="@color/white"
+            android:fontFamily="@font/kopup_d_medium"
+            android:textSize="13sp"
+            android:gravity="center"/>
+    </FrameLayout>
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/ivMainImage"
         android:layout_width="120dp"
         android:layout_height="120dp"
+        android:translationZ="-1dp"
         android:padding="2dp"
-        android:src="@drawable/ex_img_profile" />
+        android:clipToOutline="true"
+        android:background="@drawable/style_round_10"
+        android:src="@drawable/default_recipe_main_image" />
+
+
 </FrameLayout>

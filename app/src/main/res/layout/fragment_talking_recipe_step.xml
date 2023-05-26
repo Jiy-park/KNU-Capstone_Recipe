@@ -13,7 +13,7 @@
         android:layout_height="0dp"
         android:layout_weight="3"
         android:layout_marginBottom="15dp"
-        android:src="@drawable/ex_img"/>
+        android:src="@drawable/default_recipe_main_image"/>
     <TextView
         android:id="@+id/tvRecipeStep"
         android:layout_width="70dp"

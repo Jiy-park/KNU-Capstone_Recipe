@@ -9,8 +9,6 @@ import android.view.View
 import android.widget.Toast
 import com.example.capstone_recipe.databinding.DialogFrameBinding
 
-
-
 class DialogInterface(context: Context): Dialog(context){
     private val binding by lazy { DialogFrameBinding.inflate(layoutInflater) }
     var title:String = "TEST"
@@ -23,10 +21,8 @@ class DialogInterface(context: Context): Dialog(context){
         binding.tvDialogTitle.text = title
         binding.ivDialogTopClose.visibility = if(topCloseVisible) View.VISIBLE else View.INVISIBLE
         binding.layerDialogMainContent.addView(view)
-        setDialogDefaultListener()
         show()
     }
-
 
     fun setDialogSize(fixedSize: SIZE?, variableSize: Int?){
         fixedSize?.run {
@@ -38,18 +34,6 @@ class DialogInterface(context: Context): Dialog(context){
                     binding.layerDialogMainContent.layoutParams.height = 250.dpToPx()
                 }
             }
-        }
-    }
-
-    private fun setDialogDefaultListener(){
-        binding.ivDialogTopClose.setOnClickListener { dismiss() }
-        binding.btnDialogOK.setOnClickListener {
-            Toast.makeText(context, "click OK", Toast.LENGTH_SHORT).show()
-            dismiss()
-        }
-        binding.btnDialogCancel.setOnClickListener {
-            Toast.makeText(context, "click Cancel", Toast.LENGTH_SHORT).show()
-            dismiss()
         }
     }
 

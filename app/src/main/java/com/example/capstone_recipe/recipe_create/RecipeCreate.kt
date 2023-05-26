@@ -10,6 +10,7 @@ import android.view.KeyEvent
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
 import com.example.capstone_recipe.Preference
 import com.example.capstone_recipe.R
@@ -20,46 +21,71 @@ import com.example.capstone_recipe.recipe_create.create_fragments.RecipeCreateSt
 import com.example.capstone_recipe.data_class.*
 import com.example.capstone_recipe.databinding.ActivityRecipeCreateBinding
 import com.google.firebase.database.ktx.database
+import com.google.firebase.database.ktx.getValue
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
 import java.text.SimpleDateFormat
 
-class RecipeCreate : AppCompatActivity(){
-
+/** *modifyMode -> 레시피 수정 모드 : 레시피 아이디 받아서 해당 레시피 를 수정함 */
+class RecipeCreate() : AppCompatActivity(){
     private val binding by lazy { ActivityRecipeCreateBinding.inflate(layoutInflater) }
     private val storage = FirebaseStorage.getInstance()
     private val db = Firebase.database("https://knu-capstone-f9f55-default-rtdb.asia-southeast1.firebasedatabase.app/")
+    private val defaultImageUri by lazy { Uri.parse("android.resource://$packageName/${R.drawable.default_recipe_main_image}") }  // 이미지 선택 안할 시 나오는 기본 이미지
     private val pref by lazy { Preference(context) }
     private lateinit var context:Context
-
+    private var modifyMode = false
     private var recipeId = ""
     private var userId = ""
 
-    private var recipeBasicInfo = RecipeBasicInfo(
-        "",
-        "",
-        "",
-        null,
-        "",
-        "",
-        LEVEL.EASY,
-        SHARE.ONLY_ME,
-        0
-    )
+    private var recipeBasicInfo = RecipeBasicInfo()
     private var ingredientList = mutableListOf<Ingredient>()
-    private var stepExplanationList = mutableListOf<String>()
+    private var stepExplanationList = mutableListOf<String>("")
     private var stepImageList = mutableListOf<Uri?>(null)
     private var selectedMainImage: Uri? = null
 
-    private var currentStep = 1
+    private var currentStep = STEP_FIRST
 
-
+    private companion object{
+        const val STEP_FIRST = 0
+        const val STEP_SECOND = 1
+        const val STEP_THIRD = 2
+        const val STEP_COMPLETE = 3
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
         context = binding.root.context
         userId = pref.getUserId()
-        recipeId = makeRecipeId()
+
+        modifyMode = intent.getBooleanExtra("modifyMode", false)
+        intent.removeExtra("modifyMode")
+        Log.d("LOG_CHECK", "RecipeCreate :: onCreate() -> modifyMode : $modifyMode")
+        if(modifyMode){
+            recipeId = intent.getStringExtra("recipeId")!!
+            lifecycleScope.launch(Dispatchers.IO) {
+                val recipe = db.getReference("recipes").child(recipeId).get().await()
+                recipeBasicInfo = recipe.child("basicInfo").getValue(RecipeBasicInfo::class.java)!!
+                ingredientList = recipe.child("ingredient").getValue<MutableList<Ingredient>>()!!
+                val recipeStepList = recipe.child("step").getValue<List<RecipeStep>>()!!
+                val newExplanationList = MutableList<String>(recipeStepList.size) {""}
+                val newImageList = MutableList<Uri?>(recipeStepList.size) { Uri.EMPTY }
+                recipeStepList.mapIndexed { index, recipeStep ->
+                    async {
+                        newExplanationList[index] = recipeStep.explanation
+                        newImageList[index] = getImageByPath(recipeStep.imagePath, "step")
+                    }
+                }.awaitAll()
+                stepExplanationList = newExplanationList
+                stepImageList = newImageList
+                selectedMainImage = getImageByPath(recipeBasicInfo.mainImagePath, "main_image")
+            }
+        }
 
         binding.topPanel.btnBack.setOnClickListener { finish() }
         supportFragmentManager
@@ -75,24 +101,32 @@ class RecipeCreate : AppCompatActivity(){
 
         binding.btnPrev.setOnClickListener {
             currentStep--
-            if(currentStep == 1) { binding.btnPrev.visibility = View.GONE }
+            if(currentStep == STEP_FIRST) { binding.btnPrev.visibility = View.GONE }
             supportFragmentManager.popBackStack()
         }
 
         binding.topPanel.btnBack.setOnClickListener {// test
-            Log.d("LOG_CHECK", "RecipeCreate :: onCreate() -> $recipeBasicInfo\n$selectedMainImage")
+            finish()
         }
 
         Glide.with(this)
             .asGif()
-            .load(R.drawable.test2222222)
-            .into(binding.progressUpload)
+            .load(R.drawable.progress)
+            .into(binding.ivProgressImage)
     }
+
+    /** * imagePath 값이 있으면 해당 이미지 가져옴. detailPath --> step || main_image 중 하나 택*/
+    private suspend fun getImageByPath(imagePath: String, detailPath: String): Uri{
+        val imageRef = storage.getReference("recipe_image").child(recipeId).child(detailPath)
+        return if(imagePath.isNotEmpty()){ imageRef.child(imagePath).downloadUrl.await() }
+                else { defaultImageUri }
+    }
+
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
-            return if (supportFragmentManager.backStackEntryCount > 1) {
+            return if (supportFragmentManager.backStackEntryCount in 2..3) {
                 currentStep--
-                if(currentStep == 1) { binding.btnPrev.visibility = View.GONE }
+                if(currentStep == STEP_FIRST) { binding.btnPrev.visibility = View.GONE }
                 supportFragmentManager.popBackStack()
                 true
             }
@@ -120,11 +154,11 @@ class RecipeCreate : AppCompatActivity(){
 
     private fun checkCurrentStep(currentStep:Int){
         when(currentStep){
-            1 -> {
+            STEP_FIRST -> {
                 binding.btnPrev.visibility = View.GONE
                 replaceFragment(RecipeCreateStepFirst())
             }
-            2 -> {
+            STEP_SECOND -> {
                 binding.btnPrev.visibility = View.VISIBLE
                 binding.btnNext.visibility = View.VISIBLE
 
@@ -132,11 +166,10 @@ class RecipeCreate : AppCompatActivity(){
                 ingredientList = recipeCreateStepFirst.ingredientList
                 recipeBasicInfo = recipeCreateStepFirst.getRecipeBasicInfo()
 
-                replaceFragment(RecipeCreateStepSecond())
+                replaceFragment(RecipeCreateStepSecond(stepExplanationList, stepImageList))
             }
-            3 -> {
+            STEP_THIRD -> {
                 binding.btnPrev.visibility = View.VISIBLE
-                binding.btnNext.visibility = View.VISIBLE
 
                 val recipeCreateStepSecond = (supportFragmentManager.findFragmentById(R.id.mainFrame)!!) as RecipeCreateStepSecond
                 stepExplanationList =  recipeCreateStepSecond.stepExplanationList
@@ -144,7 +177,7 @@ class RecipeCreate : AppCompatActivity(){
 
                 replaceFragment(RecipeCreateStepThird(stepImageList))
             }
-            4 -> {
+            STEP_COMPLETE -> {
                 val recipeCreateStepThird = (supportFragmentManager.findFragmentById(R.id.mainFrame)!!) as RecipeCreateStepThird
                 recipeBasicInfo.shareOption = recipeCreateStepThird.shareOption
                 selectedMainImage= recipeCreateStepThird.mainImageUri
@@ -162,12 +195,12 @@ class RecipeCreate : AppCompatActivity(){
         binding.topPanel.root.visibility = View.GONE
         binding.mainFrame.visibility = View.GONE
         binding.bottomPanel.visibility = View.GONE
-        binding.progressUpload.visibility = View.VISIBLE
+        binding.progress.visibility = View.VISIBLE
     }
 
     private fun endUpload(){
         Log.d("LOG_CHECK", "RecipeCreate :: endUpload() -> ")
-        binding.progressUpload.visibility = View.GONE
+        binding.progress.visibility = View.GONE
         binding.mainFrame.visibility = View.VISIBLE
         replaceFragment(RecipeCreateComplete(recipeId))
     }
@@ -176,11 +209,15 @@ class RecipeCreate : AppCompatActivity(){
     private fun makeRecipeId(): String{
         val currentTime = SimpleDateFormat("yyyyMMddHHmmss")
             .format(System.currentTimeMillis()) // 2023 04 09 22 48  형식으로 변경
-        return currentTime + "_" + userId
+        return currentTime + "_" + userId + "_" + recipeBasicInfo.title
     }
 
     private fun makeUpRecipeInfo(){ // db에 올리기 전 모든 정보를 정리
+        recipeId =
+            if(modifyMode) { recipeId }
+            else { makeRecipeId() }
         recipeBasicInfo.id = recipeId
+        Log.d("LOG_CHECK", "RecipeCreate :: makeUpRecipeInfo() -> recipeBasicInfo.id : ${recipeBasicInfo.id}")
         recipeBasicInfo.mainImagePath = uriToPath(selectedMainImage) // 스토리지 경로로 변환
         uploadToUserDB()
     }
@@ -226,8 +263,8 @@ class RecipeCreate : AppCompatActivity(){
     }
 
     @SuppressLint("SimpleDateFormat")
-    fun uriToPath(uri: Uri?, step:Int = -1): String? { // 스텝 별 이미지
-        if(uri == null) { return null }
+    fun uriToPath(uri: Uri?, step:Int = -1): String { // 스텝 별 이미지
+        if(uri == null) { return "" }
         Log.d("LOG_CHECK", "RecipeCreate :: uriToPath() -> uri : $uri")
         val mimeType = contentResolver?.getType(uri) ?: "/none" //마임타입 ex) images/jpeg
         val ext = mimeType.split("/")[1] //확장자 ex) jpeg
@@ -243,7 +280,7 @@ class RecipeCreate : AppCompatActivity(){
         for(i in 0 until stepImageList.size){
             if(stepImageList[i] != null){
                 stepRef
-                    .child(stepList[i].imagePath!!)
+                    .child(stepList[i].imagePath)
                     .putFile(stepImageList[i]!!)
                     .addOnSuccessListener { Log.d("LOG_CHECK", "RecipeCreate :: uploadToStorage() -> complete step $i upload") }
                     .addOnFailureListener { Log.d("LOG_CHECK", "RecipeCreate :: uploadToStorage() -> fail $it") }
@@ -260,6 +297,7 @@ class RecipeCreate : AppCompatActivity(){
                 }
                 .addOnFailureListener { Log.d("LOG_CHECK", "RecipeCreate :: uploadToStorage() -> fail $it") }
         }
+        else{ endUpload() }
     }
 
 

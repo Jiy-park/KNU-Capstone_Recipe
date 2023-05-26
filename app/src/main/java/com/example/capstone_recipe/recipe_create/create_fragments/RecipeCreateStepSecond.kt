@@ -23,14 +23,17 @@ import com.example.capstone_recipe.recipe_create.create_adapter.ExplanationAdapt
 import com.example.capstone_recipe.recipe_create.create_adapter.ItemTouchHelperCallback
 import com.example.capstone_recipe.databinding.FragmentRecipeCreateStepSecondBinding
 
-class RecipeCreateStepSecond() : Fragment() {
+class RecipeCreateStepSecond(_stepExplanationList: MutableList<String>, _stepImageList: MutableList<Uri?>) : Fragment() {
     private lateinit var storagePermission: ActivityResultLauncher<String>  // 저장소 권한
     private lateinit var galleryLauncher: ActivityResultLauncher<String>    //갤러리
     private lateinit var binding: FragmentRecipeCreateStepSecondBinding
     private lateinit var context: Context
     private lateinit var adapter: ExplanationAdapter
-    val stepExplanationList = mutableListOf<String>("")
-    val stepImageList = mutableListOf<Uri?>(null)
+    val stepExplanationList = _stepExplanationList
+    val stepImageList = _stepImageList
+
+//    val stepExplanationList = mutableListOf<String>("")
+//    val stepImageList = mutableListOf<Uri?>(null)
     private lateinit var itemTouchHelper : ItemTouchHelper  // 아이템 드래그 용
     private var recipeStepImageView: ImageView? = null      // 어댑터에서 galleryLauncher 호출하여 이미지를 바꾸기 위하여
     private var recipeStepImagePosition = 0                 // 이미지가 몇번째 단계의 이미지인지
@@ -39,7 +42,7 @@ class RecipeCreateStepSecond() : Fragment() {
     @SuppressLint("NotifyDataSetChanged")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        storagePermission = registerForActivityResult(ActivityResultContracts.RequestPermission()){ isGranted-> // 갤러리 권한 요청
+        storagePermission = this.registerForActivityResult(ActivityResultContracts.RequestPermission()){ isGranted-> // 갤러리 권한 요청
             if(isGranted == false) { Toast.makeText(context, "권한을 승인해야 레시피 제작 시 이미지를 첨부할 수 있습니다.", Toast.LENGTH_SHORT).show() }
         }
 

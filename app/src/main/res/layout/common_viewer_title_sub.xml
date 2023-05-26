@@ -43,6 +43,6 @@
             android:layout_gravity="top|right"
             android:background="@drawable/style_circle"
             android:backgroundTint="@color/background_gray"
-            android:src="@drawable/ex_img_profile"/>
+            android:src="@drawable/default_user_profile_image"/>
     </FrameLayout>
 </LinearLayout>

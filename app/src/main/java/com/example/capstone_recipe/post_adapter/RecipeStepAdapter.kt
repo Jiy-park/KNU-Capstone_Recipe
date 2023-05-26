@@ -34,8 +34,8 @@ class RecipeStepAdapter(private val recipeId: String, private val stepList:List<
 
     inner class Holder(val binding: ItemRecipeStepBinding):RecyclerView.ViewHolder(binding.root){
         @SuppressLint("SetTextI18n")
-        fun setting(explanation:String, imagePath:String?){
-            if(imagePath != null){
+        fun setting(explanation:String, imagePath:String){
+            if(imagePath.isNotEmpty()){
                 storage
                     .getReference("recipe_image")
                     .child(recipeId)
@@ -51,7 +51,7 @@ class RecipeStepAdapter(private val recipeId: String, private val stepList:List<
             }
             else{
                 val packageName = "com.example.capstone_recipe"
-                val uri = Uri.parse("android.resource://$packageName/${R.drawable.ex_img}")
+                val uri = Uri.parse("android.resource://$packageName/${R.drawable.default_recipe_main_image}")
                 binding.ivStepImage.setImageURI(uri)
             }
             val order = bindingAdapterPosition + 1

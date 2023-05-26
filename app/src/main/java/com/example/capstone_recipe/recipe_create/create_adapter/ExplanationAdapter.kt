@@ -9,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.example.capstone_recipe.R
 import com.example.capstone_recipe.recipe_create.create_fragments.RecipeCreateStepSecond
 import com.example.capstone_recipe.databinding.ItemCreateExplainationBinding
@@ -47,11 +48,12 @@ class ExplanationAdapter(
 
         fun bind(explanation:String, image: Uri?) {
             val packageName = "com.example.capstone_recipe"
-            var uri = Uri.parse("android.resource://$packageName/${R.drawable.ex_img}") // 이미지 선택 안할 시 나오는 기본 이미지
+            var defaultImageUri = Uri.parse("android.resource://$packageName/${R.drawable.default_recipe_main_image}") // 이미지 선택 안할 시 나오는 기본 이미지
 
             binding.editExplanation.setText(explanation)   // 설명
-            if (image != null) { uri = image } // 유저가 선택한 이미지로 세팅
-            binding.ivExplanationImage.setImageURI(uri)
+            if (image != null) { defaultImageUri = image } // 유저가 선택한 이미지로 세팅
+//            binding.ivExplanationImage.setImageURI(defaultImageUri)
+            Glide.with(context).load(defaultImageUri).into(binding.ivExplanationImage)
             setEvent()
         }
 

@@ -12,7 +12,7 @@
         android:background="@drawable/style_circle"
         tools:backgroundTint="#10554F"
         android:clipToOutline="true"
-        android:src="@drawable/ex_img_profile"/>
+        android:src="@drawable/default_user_profile_image"/>
     <TextView
         android:id="@+id/tvFriendNameWithId"
         android:layout_width="wrap_content"

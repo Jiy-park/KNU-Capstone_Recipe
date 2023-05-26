@@ -1,22 +1,15 @@
 package com.example.capstone_recipe.recipe_create.create_adapter
 
-import android.annotation.SuppressLint
-import android.app.Activity
 import android.content.Context
 import android.net.Uri
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
-import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.capstone_recipe.R
 import com.example.capstone_recipe.recipe_create.create_fragments.RecipeCreateStepThird
-import com.example.capstone_recipe.data_class.RecipeBasicInfo
-import com.example.capstone_recipe.data_class.RecipeStep
 import com.example.capstone_recipe.databinding.ItemSelectMainImageBinding
-import java.text.SimpleDateFormat
 
 class SelectMainImageAdapter(private val parent: RecipeCreateStepThird, private val stepImageList: List<Uri?>):RecyclerView.Adapter<SelectMainImageAdapter.Holder>() {
 
@@ -41,16 +34,16 @@ class SelectMainImageAdapter(private val parent: RecipeCreateStepThird, private 
         fun settingClick(imageUri: Uri?){
             val frameId = View.generateViewId()
             val packageName = "com.example.capstone_recipe"                                         //사용자가 선택한 이미지가
-            val uri = Uri.parse("android.resource://$packageName/${R.drawable.ex_img}")     // 없는 경우 기본 이미지로 대체
+            val defaultMainImage = Uri.parse("android.resource://$packageName/${R.drawable.default_recipe_main_image}")     // 없는 경우 기본 이미지로 대체
             binding.frameChecked.id = frameId
-            if(imageUri == null) { binding.ivMainImage.setImageURI(uri) }
+            if(imageUri == null) { binding.ivMainImage.setImageURI(defaultMainImage) }
             else { binding.ivMainImage.setImageURI(imageUri) }
 
             if(checkedId == -1){ // 처음 실행 시 첫번째 사진을 대표 이미지로 선정
                 checkedView = itemView
                 checkedId = frameId
                 binding.frameChecked.visibility = View.VISIBLE
-                if(imageUri == null) { parent.mainImageUri = uri }
+                if(imageUri == null) { parent.mainImageUri = null }
                 else { parent.mainImageUri = imageUri }
             }
             binding.ivMainImage.setOnClickListener {
@@ -61,7 +54,7 @@ class SelectMainImageAdapter(private val parent: RecipeCreateStepThird, private 
                     checkedId = frameId
                     binding.frameChecked.visibility = View.VISIBLE
                 }
-                if(imageUri == null) { parent.mainImageUri = uri }
+                if(imageUri == null) { parent.mainImageUri = null }
                 else { parent.mainImageUri = imageUri }
             }
         }

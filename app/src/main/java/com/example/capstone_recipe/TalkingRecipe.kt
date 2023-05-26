@@ -154,8 +154,8 @@ class TalkingRecipe : AppCompatActivity() {
                 async {
                     val step = dataSnapShot.getValue(RecipeStep::class.java)!!
                     newExplanationList[index] = step.explanation
-                    if(step.imagePath == null) { newImageList[index] = defaultImageUri }
-                    else { newImageList[index] = stepImageRef.child(step.imagePath!!).downloadUrl.await() }
+                    if(step.imagePath.isEmpty()) { newImageList[index] = defaultImageUri }
+                    else { newImageList[index] = stepImageRef.child(step.imagePath).downloadUrl.await() }
                 }
             }.awaitAll()
             stepExplanationList = newExplanationList

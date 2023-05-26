@@ -1,9 +1,9 @@
 package com.example.capstone_recipe.recipe_locker.locker_adpater
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -34,12 +34,13 @@ class LockerRecipeViewerAdapter: RecyclerView.Adapter<LockerRecipeViewerAdapter.
 
     inner class Holder(val binding: ItemLockerRecipeViewerBinding) : RecyclerView.ViewHolder(binding.root) {
 
+        @SuppressLint("SetTextI18n")
         fun bind(creator: String, recipe:RecipeBasicInfo, image: Uri){
             binding.layerViewer.run {
                 tvRecipeTitle.text = recipe.title
                 tvRecipeCreator.text = creator
                 tvRecipeIntro.text = recipe.intro
-                recipeTime.text = recipe.time
+                recipeTime.text = recipe.time + "분"
                 recipeLevel.text = recipe.level.toKor
                 recipeLike.text = recipe.score.toString()
                 Glide.with(binding.root.context)

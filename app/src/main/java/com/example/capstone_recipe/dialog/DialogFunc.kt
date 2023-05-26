@@ -9,10 +9,7 @@ import android.os.VibrationEffect
 import android.os.Vibrator
 import android.os.VibratorManager
 import android.view.LayoutInflater
-import android.widget.NumberPicker
-import android.widget.RadioButton
-import android.widget.Switch
-import android.widget.TextView
+import android.widget.*
 import androidx.annotation.RequiresApi
 import com.example.capstone_recipe.Login
 import com.example.capstone_recipe.Preference
@@ -29,15 +26,12 @@ class DialogFunc {
 
             val switchTTS = view.findViewById<Switch>(R.id.switchSpeak)
             switchTTS.isChecked = pref.getUseTTS()
-            switchTTS.setOnClickListener { pref.setUseTTS(switchTTS.isChecked) }
 
             val switchSTT = view.findViewById<Switch>(R.id.switchListen)
             switchSTT.isChecked = pref.getUseSTT()
-            switchSTT.setOnClickListener { pref.setUseSTT(switchSTT.isChecked) }
 
             val switchMsg = view.findViewById<Switch>(R.id.switchMSG)
             switchMsg.isChecked = pref.getUseCloudMsg()
-            switchMsg.setOnClickListener { pref.setUseCloudMsg(switchMsg.isChecked) }
 
             view.findViewById<TextView>(R.id.tvDeveloperInfo).setOnClickListener {
                 dialog.dismiss()
@@ -50,6 +44,17 @@ class DialogFunc {
                 val intent = Intent(context, Login::class.java)
                 intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                 context.startActivity(intent)
+            }
+
+            view.findViewById<Button>(R.id.btnDialogOK).setOnClickListener {
+                dialog.dismiss()
+                pref.setUseTTS(switchTTS.isChecked)
+                pref.setUseSTT(switchSTT.isChecked)
+                pref.setUseCloudMsg(switchMsg.isChecked)
+            }
+
+            view.findViewById<Button>(R.id.btnDialogCancel).setOnClickListener {
+                dialog.dismiss()
             }
 
             dialog.view = view
@@ -72,7 +77,6 @@ class DialogFunc {
                     @Suppress("DEPRECATION")
                     context.getSystemService(VIBRATOR_SERVICE) as Vibrator
                 }
-
 
             val hourPicker = view.findViewById<NumberPicker>(R.id.numberPickerHour) // 시간
             hourPicker.setFormatter { value ->
@@ -108,6 +112,24 @@ class DialogFunc {
 
             dialog.view = view
             dialog.setDialogSize(DialogInterface.SIZE.NORMAL, null)
+            dialog.initDialog()
+        }
+
+        @SuppressLint("MissingInflatedId", "SetTextI18n")
+        fun deleteRecipeDialog(context: Context,  userId: String, recipeId: String, okClick: (String, String)->Unit){
+            val dialog = DialogInterface(context)
+            val view = LayoutInflater.from(context).inflate(R.layout.dialog_delete_recipe, null)
+            dialog.title = "레시피 삭제"
+            view.findViewById<TextView>(R.id.tvWarningText).text = "레시피를 \n삭제하실 건가요?"
+            view.findViewById<Button>(R.id.btnDialogOK).setOnClickListener {
+                dialog.dismiss()
+                okClick(userId, recipeId)
+            }
+            view.findViewById<Button>(R.id.btnDialogCancel).setOnClickListener {
+                dialog.dismiss()
+            }
+            dialog.view = view
+            dialog.setDialogSize(DialogInterface.SIZE.SMALL, null)
             dialog.initDialog()
         }
     }

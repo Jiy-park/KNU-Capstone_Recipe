@@ -9,8 +9,8 @@
                 android:color="@color/main_color_start"
                 android:width="2dp"/>
             <size
-                android:width="50dp"
-                android:height="30dp" />
+                android:width="40dp"
+                android:height="10dp" />
         </shape>
     </item>
     <item
@@ -22,8 +22,8 @@
                 android:color="@color/hint_text"
                 android:width="2dp"/>
             <size
-                android:width="50dp"
-                android:height="30dp" />
+                android:width="40dp"
+                android:height="10dp"  />
         </shape>
     </item>
 </selector>

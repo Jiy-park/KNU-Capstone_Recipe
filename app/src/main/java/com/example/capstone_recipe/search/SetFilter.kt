@@ -3,6 +3,7 @@ package com.example.capstone_recipe.search
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Editable
@@ -29,12 +30,13 @@ class SetFilter() : AppCompatActivity() {
     private val excludeViewList = mutableListOf<View>() // 새로 생성된 뷰들을 관리
     private var level = LEVEL.EASY
 
-    @SuppressLint("ResourceType", "NewApi")
+    @SuppressLint("ResourceType")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
         context = binding.root.context
-        filter = intent.getSerializableExtra("filter", Filter::class.java)!!
+        filter = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) { intent.getSerializableExtra("filter", Filter::class.java)!! }
+        else{ intent.getSerializableExtra("filter") as Filter }
 
 
         binding.topPanel.btnBack.setOnClickListener { finish() }
@@ -151,7 +153,7 @@ class SetFilter() : AppCompatActivity() {
             includeIngredient = if(binding.checkInclude.isChecked) { includeIngredient } else { null },
             excludeIngredient = if(binding.checkExclude.isChecked) { excludeIngredient } else { null },
             time = if(binding.checkTime.isChecked) { binding.editAnswerTime.text.toString() } else { null },
-            calorie = if(binding.checkCalorie.isChecked) { binding.editAnswerCalorie.text.toString().toInt() } else { null },
+            calorie = if(binding.checkCalorie.isChecked) { binding.editAnswerCalorie.text.toString() } else { null },
             level = if(binding.checkLevel.isChecked) { level } else { null }
         )
     }
@@ -209,6 +211,7 @@ class SetFilter() : AppCompatActivity() {
             if(excludeViewList.size == 0) { binding.checkExclude.isChecked = false }
         }
     }
+
     /** * */
     private fun setRadioTextColor(targetId:Int, context:Context){ // 라디오 버튼 텍스트 색 변경 함수
         val radioLevel = listOf<Int>(

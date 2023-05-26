@@ -21,6 +21,6 @@
         android:background="@drawable/style_round_10"
         android:clipToOutline="true"
         android:backgroundTint="@color/white"
-        android:src="@drawable/ex_img"
+        android:src="@drawable/default_recipe_main_image"
         android:scaleType="fitXY"/>
 </LinearLayout>

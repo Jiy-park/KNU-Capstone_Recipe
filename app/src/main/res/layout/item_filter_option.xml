@@ -1,15 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginEnd="15dp"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btnFilterOption"
-        android:layout_width="70dp"
+        android:layout_width="wrap_content"
         android:layout_height="35dp"
         android:background="@drawable/style_round_30_stroke_main_start"
         android:fontFamily="@font/kopup_d_medium"
-        tools:text="재료"
+        tools:text="사과 포함"
+        android:minWidth="70dp"
+        android:paddingHorizontal="10dp"
+        android:drawablePadding="5dp"
+        android:drawableEnd="@drawable/ic_close_main_start"
         android:textColor="@color/main_color_start" />
 </LinearLayout>

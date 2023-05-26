@@ -20,7 +20,7 @@ class RecipeCreateStepThird(private val stepImageList: MutableList<Uri?>) : Frag
     private lateinit var context: Context
     private lateinit var adapter: SelectMainImageAdapter
     var shareOption = SHARE.ONLY_ME
-    var mainImageUri = Uri.EMPTY
+    var mainImageUri: Uri? = Uri.EMPTY
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {

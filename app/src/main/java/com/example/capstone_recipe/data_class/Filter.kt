@@ -7,7 +7,7 @@ data class Filter(
     var includeIngredient: MutableList<String>? = null,
     var excludeIngredient: MutableList<String>? = null,
     var time: String? = null,
-    var calorie: Int? = null,
+    var calorie: String? = null,
     var level: LEVEL? = null
 ): Serializable
 

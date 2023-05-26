@@ -1,19 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
     tools:context=".test_______.TestActivity2">
 
-    <TextView
-        android:id="@+id/tvResult"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="test"
-        android:textSize="50sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-</androidx.constraintlayout.widget.ConstraintLayout>
+        android:padding="16dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="음식 재료를 입력하세요." />
+
+        <EditText
+            android:id="@+id/food_edit_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="16dp"
+            android:text="감자 2개, 두부 3개" />
+
+        <Button
+            android:id="@+id/search_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="검색" />
+
+        <TextView
+            android:id="@+id/allergy_text_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="검색 결과가 여기에 표시됩니다." />
+
+        <TextView
+            android:id="@+id/nutrition_text_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="영양 정보가 여기에 표시됩니다." />
+
+    </LinearLayout>
+
+</ScrollView>

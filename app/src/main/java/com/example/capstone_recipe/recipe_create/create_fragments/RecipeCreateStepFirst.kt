@@ -20,8 +20,7 @@ import com.example.capstone_recipe.data_class.LEVEL
 import com.example.capstone_recipe.data_class.RecipeBasicInfo
 import com.example.capstone_recipe.databinding.FragmentRecipeCreateStepFirstBinding
 
-class RecipeCreateStepFirst : Fragment() {
-//    private lateinit var updateCollBack: UpdateValue
+class RecipeCreateStepFirst() : Fragment() {
     private lateinit var binding:FragmentRecipeCreateStepFirstBinding
     private lateinit var context:Context
     val ingredientIdList = mutableListOf<Int>() // 재료 추가 뷰 아이디 저장용 리스트

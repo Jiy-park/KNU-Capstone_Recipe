@@ -39,7 +39,7 @@
                 android:background="@drawable/style_round_10"
                 android:clipToOutline="true"
                 android:scaleType="fitXY"
-                android:src="@drawable/ex_img" />
+                android:src="@drawable/default_recipe_main_image" />
 
         </LinearLayout>
         <LinearLayout

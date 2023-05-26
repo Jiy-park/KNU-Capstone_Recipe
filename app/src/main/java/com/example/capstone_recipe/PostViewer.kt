@@ -3,7 +3,6 @@ package com.example.capstone_recipe
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
-import android.media.Image
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -12,35 +11,27 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
-import androidx.core.content.ContextCompat
-import androidx.core.content.res.ResourcesCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
-import com.bumptech.glide.load.engine.DiskCacheStrategy
-import com.bumptech.glide.request.RequestOptions
+import com.example.capstone_recipe.create_test.RecipeCreateT
 import com.example.capstone_recipe.data_class.Ingredient
 import com.example.capstone_recipe.data_class.LEVEL
-import com.example.capstone_recipe.data_class.RecipeBasicInfo
 import com.example.capstone_recipe.data_class.RecipeStep
 import com.example.capstone_recipe.databinding.ActivityPostViewerBinding
+import com.example.capstone_recipe.dialog.DialogFunc
 import com.example.capstone_recipe.post_adapter.RecipeIngredientAdapter
 import com.example.capstone_recipe.post_adapter.RecipeStepAdapter
-import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
-import com.google.firebase.database.ktx.getValue
-import com.google.firebase.database.ktx.values
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.*
 import kotlinx.coroutines.tasks.await
-import java.util.logging.Level
-import kotlin.reflect.typeOf
 
 class PostViewer : AppCompatActivity() {
     private val binding by lazy { ActivityPostViewerBinding.inflate(layoutInflater) }
@@ -75,11 +66,15 @@ class PostViewer : AppCompatActivity() {
                 binding.layerPostTitle.btnModifyRecipe.visibility = View.VISIBLE
                 binding.layerPostTitle.btnDeleteRecipe.visibility = View.VISIBLE
                 binding.layerPostTitle.btnModifyRecipe.setOnClickListener {
-                    Toast.makeText(context, "수정 어떤식으로 해야하나...", Toast.LENGTH_SHORT).show()
-//                    TODO("이거 추가")
+                    val intent = Intent(context, RecipeCreateT::class.java)
+                    intent.putExtra("modifyMode", true)
+                    intent.putExtra("recipeId", recipeId)
+                    startActivity(intent)
                 }
                 binding.layerPostTitle.btnDeleteRecipe.setOnClickListener {
-                    deleteRecipe(userId, recipeId!!)
+                    DialogFunc.deleteRecipeDialog(context, userId, recipeId!!) { userId, recipeId ->
+                        deleteRecipe(userId, recipeId)
+                    }
                 }
             }
             else{
@@ -217,7 +212,6 @@ class PostViewer : AppCompatActivity() {
         }
     }
     private fun deleteRecipe(userId: String, recipeId: String){
-//        TODO("메인 화면에서 최근 본 레시피가 삭제됐을 경우 예외처리 할것")
         db.getReference("users").child(userId).child("uploadRecipe").child(recipeId).removeValue()
         db.getReference("recipes").child(recipeId).removeValue()
         // 메인 이미지 삭제 과정
@@ -225,10 +219,13 @@ class PostViewer : AppCompatActivity() {
             .child(recipeId)
             .child("main_image")
 
+
         mainImageRef.listAll()
             .addOnSuccessListener {
-                val path = it.items[0].path.split("/")[4]
-                mainImageRef.child(path).delete()
+                if(it.items.isNotEmpty()){
+                    val path = it.items[0].path.split("/")[4]
+                    mainImageRef.child(path).delete()
+                }
             }
         // 메인 이미지 삭제 완료
 
@@ -238,17 +235,19 @@ class PostViewer : AppCompatActivity() {
             .child("step")
         stepImageRef.listAll()
             .addOnSuccessListener {
-                 for(i in it.items){
-                     val path = i.path.split("/")[4]
-                     stepImageRef.child(path).delete()
-                 }
+                if(it.items.isNotEmpty()){
+                     for(i in it.items){
+                         val path = i.path.split("/")[4]
+                         stepImageRef.child(path).delete()
+                     }
+                }
             }
 
         db.getReference("users").child(userId).child("recentRecipe").setValue("")
         finish()
     }
 
-    private  fun checkRecipeOwner(userId: String, recipeId: String): Boolean{
+    private fun checkRecipeOwner(userId: String, recipeId: String): Boolean{
         val recipeOwner = recipeId.split("_")[1]
         return userId == recipeOwner
     }
@@ -298,7 +297,7 @@ class PostViewer : AppCompatActivity() {
     private fun setProgress(){
         Glide.with(this)
             .asGif()
-            .load(R.drawable.test2222222)
+            .load(R.drawable.progress)
             .into(binding.ivProgressImage)
     }
 
@@ -397,10 +396,11 @@ class PostViewer : AppCompatActivity() {
             })
     }
 
-    private fun setImageByPath(recipeId: String, path: String?, targetView: ImageView){
-        if(path == null){
-            val defaultImage = Uri.parse("android.resource://$packageName/${R.drawable.ex_img}")
+    private fun setImageByPath(recipeId: String, path: String, targetView: ImageView){
+        if(path.isEmpty()){
+            val defaultImage = Uri.parse("android.resource://$packageName/${R.drawable.default_recipe_main_image}")
             targetView.setImageURI(defaultImage)
+            viewIsReady()
         }
         else{
             storage

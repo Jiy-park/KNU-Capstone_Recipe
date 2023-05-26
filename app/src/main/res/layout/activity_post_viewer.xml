@@ -66,8 +66,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:maxHeight="250dp"
+                android:minHeight="200dp"
                 android:scaleType="centerCrop"
-                android:src="@drawable/ex_img" />
+                android:src="@drawable/default_recipe_main_image" />
             <!--            레시피 정보-->
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"

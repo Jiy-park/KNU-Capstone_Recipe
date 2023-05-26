@@ -7,6 +7,7 @@ import android.net.Uri
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.example.capstone_recipe.PostViewer
 import com.example.capstone_recipe.data_class.RecipeBasicInfo
 import com.example.capstone_recipe.databinding.ItemLockerRecipeViewerBinding
@@ -47,7 +48,7 @@ class SearchRecipeAdapter: RecyclerView.Adapter<SearchRecipeAdapter.Holder>() {
             binding.layerViewer.recipeTime.text = recipe.time + "분"
             binding.layerViewer.recipeLevel.text = recipe.level.toKor
             binding.layerViewer.recipeLike.text = recipe.score.toString()
-            binding.layerViewer.ivRecipeMainImage.setImageURI(mainImageUri)
+            Glide.with(context).load(mainImageUri).into(binding.layerViewer.ivRecipeMainImage)
             setClickEvent(recipe.id)
         }
         private fun setClickEvent(recipeId: String){

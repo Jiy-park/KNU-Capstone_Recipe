@@ -12,13 +12,14 @@ import android.view.View
 import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
+import com.example.capstone_recipe.create_test.RecipeCreateT
 import com.example.capstone_recipe.data_class.RecipeBasicInfo
 import com.example.capstone_recipe.databinding.ActivityMainBinding
 import com.example.capstone_recipe.dialog.DialogFunc
 import com.example.capstone_recipe.recipe_create.RecipeCreate
 import com.example.capstone_recipe.recipe_locker.RecipeLocker
 import com.example.capstone_recipe.search.Search
-import com.example.capstone_recipe.test_______.TestActivity
+import com.example.capstone_recipe.test_______.TestActivity3
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
@@ -38,7 +39,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun testFunction(){ // 테스트 용
         binding.tvTop.setOnClickListener {
-            val intent = Intent(context, TestActivity::class.java)
+            val intent = Intent(context, TestActivity3::class.java)
             startActivity(intent)
         }
     }
@@ -139,7 +140,7 @@ class MainActivity : AppCompatActivity() {
             return
         }
 
-        var imageUri = Uri.parse("android.resource://$packageName/${R.drawable.ex_img}")
+        var imageUri = Uri.parse("android.resource://$packageName/${R.drawable.default_recipe_main_image}")
         if(recentRecipeBasicInfo.mainImagePath != ""){ // main 이미지가 디폴트 이미지일 경우 TODO("이미지 업로드 할 떄 이미지 경로 바꾸는 함수 고쳐야 할듯")
             imageUri = storage.getReference("recipe_image")
                 .child(recentRecipeBasicInfo.id)
@@ -165,8 +166,8 @@ class MainActivity : AppCompatActivity() {
             tvRecipeTitle.text = recentRecipeBasicInfo.title
             tvRecipeIntro.text = recentRecipeBasicInfo.intro
             tvRecipeCreator.text = "$userName @$userId"
-            recipeLike.text = recentRecipeBasicInfo.score.toString() // TOOD("이거 구현해야 함")
-            recipeTime.text = recentRecipeBasicInfo.time
+            recipeLike.text = recentRecipeBasicInfo.score.toString()
+            recipeTime.text = recentRecipeBasicInfo.time + "분"
             recipeLevel.text = recentRecipeBasicInfo.level.toKor
         }
 
