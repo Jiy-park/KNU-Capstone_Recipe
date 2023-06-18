@@ -7,12 +7,13 @@
     android:orientation="vertical"
     android:background="@color/white"
     tools:context=".talking_recipe_fragment.TalkingRecipeStep">
-    <ImageView
+    <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/ivRecipeStepImage"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="3"
         android:layout_marginBottom="15dp"
+        android:scaleType="centerCrop"
         android:src="@drawable/default_recipe_main_image"/>
     <TextView
         android:id="@+id/tvRecipeStep"
@@ -21,7 +22,7 @@
         android:layout_weight="0.5"
         android:layout_marginHorizontal="15dp"
         android:gravity="center"
-        android:text="1단계"
+        tools:text="1단계"
         android:textColor="@color/main_color_start"
         android:fontFamily="@font/kopup_d_medium"
         android:background="@drawable/style_round_30_stroke_main_start"/>
@@ -32,7 +33,7 @@
         android:layout_weight="3.5"
         android:layout_marginTop="15dp"
         android:padding="15dp"
-        android:text="1단계 어쩌구~~"
+        tools:text="1단계 어쩌구~~"
         android:textColor="@color/main_text"
         android:fontFamily="@font/kopup_d_medium"
         android:textSize="20sp"/>

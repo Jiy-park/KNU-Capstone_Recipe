@@ -117,31 +117,26 @@ class SetFilter() : AppCompatActivity() {
             }
         }
 
-        filter.time?.let { time ->
+        filter.timeLimit?.let { time ->
             binding.linearQuestionTime.visibility = View.VISIBLE
             binding.checkTime.isChecked = true
             binding.editAnswerTime.setText(time)
         }
 
-        filter.calorie?.let {
+        filter.calorieLimit?.let {
             binding.linearQuestionCalorie.visibility = View.VISIBLE
             binding.checkCalorie.isChecked = true
             binding.editAnswerCalorie.setText(it.toString())
         }
 
-        filter.level?.let { checkedLevel ->
+        filter.levelLimit?.let { checkedLevel ->
             binding.rgLevelSelection.visibility = View.VISIBLE
             binding.checkLevel.isChecked = true
             when(checkedLevel){
-                LEVEL.EASY -> {
-                    binding.radioLevelEasy.isChecked = true
-                }
-                LEVEL.NORMAL-> {
-                    binding.radioLevelNormal.isChecked = true
-                }
-                LEVEL.HARD -> {
-                    binding.radioLevelHard.isChecked = true
-                }
+                LEVEL.EASY -> binding.radioLevelEasy.isChecked = true
+                LEVEL.NORMAL-> binding.radioLevelNormal.isChecked = true
+                LEVEL.HARD -> binding.radioLevelHard.isChecked = true
+                else -> binding.rgLevelSelection.clearCheck()
             }
         }
     }
@@ -152,9 +147,9 @@ class SetFilter() : AppCompatActivity() {
         return Filter(
             includeIngredient = if(binding.checkInclude.isChecked) { includeIngredient } else { null },
             excludeIngredient = if(binding.checkExclude.isChecked) { excludeIngredient } else { null },
-            time = if(binding.checkTime.isChecked) { binding.editAnswerTime.text.toString() } else { null },
-            calorie = if(binding.checkCalorie.isChecked) { binding.editAnswerCalorie.text.toString() } else { null },
-            level = if(binding.checkLevel.isChecked) { level } else { null }
+            timeLimit = if(binding.checkTime.isChecked) { binding.editAnswerTime.text.toString() } else { null },
+            calorieLimit = if(binding.checkCalorie.isChecked) { binding.editAnswerCalorie.text.toString() } else { null },
+            levelLimit = if(binding.checkLevel.isChecked) { level } else { null }
         )
     }
 

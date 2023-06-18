@@ -60,6 +60,7 @@ class RecipeCreateStepFirst(_recipeBasicInfo: RecipeBasicInfo, _recipeIngredient
             LEVEL.EASY -> binding.radioLevelEasy.isChecked = true
             LEVEL.HARD -> binding.radioLevelHard.isChecked = true
             LEVEL.NORMAL -> binding.radioLevelHard.isChecked = true
+            else -> binding.rgLevelSelection.clearCheck()
         }
 
         binding.linearForIngredient.removeAllViews() // 재료 뷰를 추가하기 전에 기존 뷰들을 전부 지워줌

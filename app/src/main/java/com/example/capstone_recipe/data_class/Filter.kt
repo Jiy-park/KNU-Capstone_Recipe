@@ -6,8 +6,8 @@ import java.io.Serializable
 data class Filter(
     var includeIngredient: MutableList<String>? = null,
     var excludeIngredient: MutableList<String>? = null,
-    var time: String? = null,
-    var calorie: String? = null,
-    var level: LEVEL? = null
+    var timeLimit: String? = null,
+    var calorieLimit: String? = null,
+    var levelLimit: LEVEL? = null
 ): Serializable
 

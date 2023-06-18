@@ -1,6 +1,7 @@
 package com.example.capstone_recipe.recipe_locker
 
 import android.content.Context
+import android.content.Intent
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -115,7 +116,18 @@ class ModifyRecipeLocker : AppCompatActivity() {
             if(checkUpdate()){
                 lifecycleScope.launch {
                     uploadModifiedInfo()
-                    withContext(Dispatchers.Main){ finish() }
+                    withContext(Dispatchers.Main){
+                        val intent = Intent(context, RecipeLocker::class.java).apply {
+                            Log.d("LOG_CHECK", "ModifyRecipeLocker :: initViewEvent() -> isProfileChange : $isProfileChange" +
+                                    " isBackChange : $isBackChange")
+                            if(isProfileChange) { putExtra("profile", newProfile.toString()) }
+                            else { putExtra("profile", profile.toString()) }
+                            if(isBackChange) { putExtra("back", newBack.toString()) }
+                            else { putExtra("back", back.toString()) }
+                        }
+                        setResult(RESULT_OK, intent)
+                        finish()
+                    }
                 }
             }
         }

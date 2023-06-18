@@ -7,7 +7,10 @@ import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.Toast
+import androidx.activity.result.ActivityResultCallback
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import com.example.capstone_recipe.databinding.ActivityTestBinding
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
@@ -17,13 +20,14 @@ import com.google.android.gms.common.SignInButton
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.*
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 
-
+/** * 구글 로그인 */
+private const val RHA1 = "123187997955-3muqj5hg18m1lu5kbg6sv4ouodhe5ev6.apps.googleusercontent.com"
 class TestActivity : AppCompatActivity() {
 
     private val binding by lazy { ActivityTestBinding.inflate(layoutInflater) }
-    private val RHA_1 = "39:a0:d0:27:d5:a3:a2:51:4e:26:52:f9:42:cb:64:b3:60:9b:6a:fa"
-    private val RHA_1_2 = "123187997955-3muqj5hg18m1lu5kbg6sv4ouodhe5ev6.apps.googleusercontent.com"
     // 구글api클라이언트
     private var mGoogleSignInClient: GoogleSignInClient? = null
 
@@ -33,9 +37,21 @@ class TestActivity : AppCompatActivity() {
     // 파이어베이스 인증 객체 생성
     private var mAuth: FirebaseAuth? = null
 
+    val d = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
+        if(it.resultCode == RESULT_OK) {
+            Log.d("LOG_CHECK", "TestActivity :: signIn() -> data : ${it.data}")
+            val task = GoogleSignIn.getSignedInAccountFromIntent(it.data)
+            handleSignInResult(task)
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
+
+        val 한글변수 = "이게 되네????"
+        Toast.makeText(binding.root.context, "$한글변수", Toast.LENGTH_SHORT).show()
+        Firebase.auth
 
         // 파이어베이스 인증 객체 선언
         mAuth = FirebaseAuth.getInstance()
@@ -43,7 +59,7 @@ class TestActivity : AppCompatActivity() {
         // Google 로그인을 앱에 통합
         // GoogleSignInOptions 개체를 구성할 때 requestIdToken을 호출
         val googleSignInOptions = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            .requestIdToken(RHA_1_2)
+            .requestIdToken(RHA1)
             .requestEmail()
             .build()
         mGoogleSignInClient = GoogleSignIn.getClient(this, googleSignInOptions)
@@ -52,7 +68,8 @@ class TestActivity : AppCompatActivity() {
             gsa = GoogleSignIn.getLastSignedInAccount(binding.root.context)
             if (gsa != null) // 로그인 되있는 경우
                 Toast.makeText(binding.root.context, "이미 로그인", Toast.LENGTH_SHORT)
-                    .show() else signIn()
+                    .show()
+            else signIn()
         })
         binding.btnlogoutgoogle.setOnClickListener(View.OnClickListener { view: View? ->
             signOut() //로그아웃
@@ -61,19 +78,27 @@ class TestActivity : AppCompatActivity() {
 
     private fun signIn() {
         val signInIntent = mGoogleSignInClient!!.signInIntent
+//        registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
+//            if(it.resultCode == RESULT_OK) {
+//                Log.d("LOG_CHECK", "TestActivity :: signIn() -> data : ${it.data}")
+//            }
+//        }
+
+
+        d.launch(signInIntent)
         startActivityForResult(signInIntent, RC_SIGN_IN)
     }
 
-    public override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-
-        // Result returned from launching the Intent from GoogleSignInClient.getSignInIntent(...);
-        if (requestCode == RC_SIGN_IN) {
-            // The Task returned from this call is always completed, no need to attach a listener.
-            val task = GoogleSignIn.getSignedInAccountFromIntent(data)
-            handleSignInResult(task)
-        }
-    }
+//    public override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+//        super.onActivityResult(requestCode, resultCode, data)
+//
+//        // Result returned from launching the Intent from GoogleSignInClient.getSignInIntent(...);
+//        if (requestCode == RC_SIGN_IN) {
+//            // The Task returned from this call is always completed, no need to attach a listener.
+//            val task = GoogleSignIn.getSignedInAccountFromIntent(data)
+//            handleSignInResult(task)
+//        }
+//    }
 
     /* 사용자 정보 가져오기 */
     private fun handleSignInResult(completedTask: Task<GoogleSignInAccount>) {

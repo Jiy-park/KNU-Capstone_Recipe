@@ -9,20 +9,38 @@ import android.util.Log
 import android.view.KeyEvent
 import android.view.View
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.lifecycleScope
 import com.example.capstone_recipe.databinding.ActivityLoginBinding
 import com.example.capstone_recipe.data_class.User
 import com.example.capstone_recipe.data_class.UserLogInInfo
+import com.example.capstone_recipe.test_______.TestActivity
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount
+import com.google.android.gms.auth.api.signin.GoogleSignInClient
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.common.api.ApiException
+import com.google.android.gms.tasks.Task
+import com.google.firebase.auth.AuthResult
+import com.google.firebase.auth.GoogleAuthProvider
+import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.*
 import com.google.firebase.database.ktx.database
+import com.google.firebase.database.ktx.getValue
 import com.google.firebase.ktx.Firebase
 import com.sothree.slidinguppanel.PanelSlideListener
 import com.sothree.slidinguppanel.PanelState
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withContext
 
-
+private const val RHA1 = "123187997955-3muqj5hg18m1lu5kbg6sv4ouodhe5ev6.apps.googleusercontent.com"
 class Login : AppCompatActivity() {
     private val db by lazy { Firebase.database("https://knu-capstone-f9f55-default-rtdb.asia-southeast1.firebasedatabase.app/") }
+    private val auth by lazy { Firebase.auth }
     private val binding by lazy { ActivityLoginBinding.inflate(layoutInflater) }
     private val logInRef by lazy { db.getReference("logIn") }
     private val pref by lazy{ Preference(context) }
@@ -32,6 +50,19 @@ class Login : AppCompatActivity() {
 
     private var idCheck = false
     private var pwCheck = false
+
+    private lateinit var googleSignInOptions: GoogleSignInOptions
+    private lateinit var googleSignInClient: GoogleSignInClient
+    private var gsa: GoogleSignInAccount? = null
+
+    private var isSnsSignUp = false
+
+    private val googleSignInContracts = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
+        if(it.resultCode == RESULT_OK) {
+            val task = GoogleSignIn.getSignedInAccountFromIntent(it.data)
+            lifecycleScope.launch(Dispatchers.IO) { handleSignInResult(task) }
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -78,6 +109,18 @@ class Login : AppCompatActivity() {
             }, 400)
         }
 
+        binding.btnSignUpWithGoogle.setOnClickListener {
+            googleSignInOptions = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(RHA1)
+                .requestEmail()
+                .build()
+            googleSignInClient = GoogleSignIn.getClient(context, googleSignInOptions)
+            gsa = GoogleSignIn.getLastSignedInAccount(context)
+            if(gsa == null) {
+                val intent = googleSignInClient.signInIntent
+                googleSignInContracts.launch(intent)
+            }
+        }
 
         binding.btnSlideSignIn.setOnClickListener {// 로그인 패널 내 로그인 버튼
             val id = binding.editSignInID.text.toString()
@@ -96,6 +139,60 @@ class Login : AppCompatActivity() {
         binding.tvSignInPanel.setOnClickListener { binding.slidingLayout.panelState = PanelState.COLLAPSED }
         binding.tvSignUpPanel.setOnClickListener { binding.slidingLayout.panelState = PanelState.COLLAPSED  }
     }
+
+    private suspend fun handleSignInResult(completedTask: Task<GoogleSignInAccount>) {
+        try {
+            val acct = completedTask.getResult(ApiException::class.java)
+            acct?.let {
+//                firebaseAuthWithGoogle(acct.idToken)
+                val personGivenName = acct.givenName?: ""
+                val personId = acct.id
+
+                // 현재 구글 로그인한 아이디가 이미 등록된 아이디인지 체크
+                val d = db.getReference("googleLogIn").child(personId!!).get().await()
+                if(d.value.toString().isEmpty()){
+                    Toast.makeText(context, "이미 등록된 아이디 입니다.", Toast.LENGTH_SHORT).show()
+                }
+                withContext(Dispatchers.Main) { signUpWithSns(personId, personGivenName) }
+
+            }
+        } catch (e: ApiException) {
+            Log.e("ERROR", "Login :: handleSignInResult() -> 구글 로그인 에러 ${e.statusCode}")
+        }
+    }
+
+    private fun signUpWithSns(realId: String, defaultName: String){
+        isSnsSignUp = true
+        binding.signUpWithSns.editSignUpName.setText(defaultName)
+        binding.signUpWithSns.editSignUpID.setText(realId)
+
+        binding.slidingLayout.panelState = PanelState.COLLAPSED
+        binding.signIn.visibility = View.GONE
+        binding.signUp.visibility = View.GONE
+        binding.signUpWithSns.root.visibility = View.VISIBLE
+        Handler(Looper.getMainLooper()).postDelayed({
+            binding.slidingLayout.panelState = PanelState.EXPANDED
+        }, 400)
+
+        binding.signUpWithSns.btnSnsSignUpSlide.setOnClickListener {
+            val fakeId = binding.signUpWithSns.editSignUpID.text.toString()
+            val name = binding.signUpWithSns.editSignUpName.text.toString()
+            signUp(fakeId, realId, name, isSnsSignUp = true)
+        }
+    }
+
+//    private fun firebaseAuthWithGoogle(idToken: String?) {
+//        val credential = GoogleAuthProvider.getCredential(idToken, null)
+//        auth.signInWithCredential(credential)
+//            .addOnCompleteListener(this@Login) { task ->
+//                if (task.isSuccessful) {
+//                    val user = auth.currentUser
+//                    Log.d("LOG_CHECK", "Login :: firebaseAuthWithGoogle() -> user : $user")
+//                } else {
+//                    Log.e("ERROR", "Login :: firebaseAuthWithGoogle() -> 구글 로그인 실패 : ${task.exception}")
+//                }
+//            }
+//    }
 
     private fun setupFocusChangeListeners() {
         val editSignUpID = binding.editSignUpID
@@ -186,66 +283,76 @@ class Login : AppCompatActivity() {
         return super.onKeyDown(keyCode, event)
     }
 
-    private  fun signIn(id:String, pw:String){
-        val idRef = logInRef.child(id)
-        idRef.addListenerForSingleValueEvent(object : ValueEventListener {
-            override fun onDataChange(dataSnapshot: DataSnapshot) {
-                if (dataSnapshot.exists()) {
-                    if(pw == dataSnapshot.child("pw").value){ // 로그인 성공
-                        if(pref.getUseAutoLogIn()){ pref.saveAutoLogInInfo(id,pw) }
-                        moveToMain(id)
+    private  fun signIn(id:String, pw:String, isSns: Boolean = false){
+        if(isSns){
+            db.getReference("googleLogIn").child(pw).get().addOnSuccessListener {
+                val fakeId = it.value.toString()
+                if(pref.getUseAutoLogIn()){ pref.saveAutoLogInInfo(id,pw) }
+                moveToMain(fakeId)
+            }
+        }
+        else{
+            val idRef = logInRef.child(id)
+            idRef.addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(dataSnapshot: DataSnapshot) {
+                    if (dataSnapshot.exists()) {
+                        if(pw == dataSnapshot.child("pw").value){ // 로그인 성공
+                            if(pref.getUseAutoLogIn()){ pref.saveAutoLogInInfo(id,"") }
+                            moveToMain(id)
+                        }
+                        else{ // 비밀번호 틀림
+                            binding.tvCheckerIDPW.visibility = View.VISIBLE
+                            binding.editSignInID.backgroundTintList = ContextCompat.getColorStateList(context, R.color.main_color_start)
+                            binding.editSignInPW.backgroundTintList = ContextCompat.getColorStateList(context, R.color.main_color_start)
+                        }
                     }
-                    else{ // 비밀번호 틀림
+                    else{ // 아이디 없음
                         binding.tvCheckerIDPW.visibility = View.VISIBLE
                         binding.editSignInID.backgroundTintList = ContextCompat.getColorStateList(context, R.color.main_color_start)
                         binding.editSignInPW.backgroundTintList = ContextCompat.getColorStateList(context, R.color.main_color_start)
                     }
                 }
-                else{ // 아이디 없음
-                    binding.tvCheckerIDPW.visibility = View.VISIBLE
-                    binding.editSignInID.backgroundTintList = ContextCompat.getColorStateList(context, R.color.main_color_start)
-                    binding.editSignInPW.backgroundTintList = ContextCompat.getColorStateList(context, R.color.main_color_start)
+                override fun onCancelled(error: DatabaseError) {
+                    Log.d("LOG_CHECK", "Login :: onCancelled() called $error 2")
                 }
-            }
-            override fun onCancelled(error: DatabaseError) {
-                Log.d("LOG_CHECK", "Login :: onCancelled() called $error 2")
-            }
-        })
+            })
+        }
     }
 
 
-    private fun signUp(id:String, pw:String, name:String){
-        val usersRef = db.getReference("users")
-        logInRef                                            // 유저 로그인 정보 db 업로드
-            .child(id)
-            .setValue(
-                UserLogInInfo(
-                    id = id,
-                    pw = pw
-                ))
+    private fun signUp(id:String, pw:String, name:String, isSnsSignUp: Boolean = false){
+        if(isSnsSignUp) {
+            db.getReference("googleLogIn").child(pw).setValue(id)
+            // googleLogIn
+            //       |- realId(pw) : fakeId(id)
+        }
+        else {
+            db.getReference("logIn").child(id).setValue(UserLogInInfo(id, pw))
+        }
+        db.getReference("users")
+            .child(id)                              // 로그인 정보 업로드 성공 시 유저 기본 정보 db 업로드
+            .setValue(User(
+                id = id,
+                name = name,
+                score = 0,
+                profileImagePath = "",
+                backgroundImagePath = "",
+                recentRecipe = "",
+                friends = mutableListOf(),
+                uploadRecipe = mutableListOf(),
+                saveRecipe = mutableListOf()
+            ))
             .addOnCompleteListener {
-                usersRef
-                    .child(id)                              // 로그인 정보 업로드 성공 시 유저 기본 정보 db 업로드
-                    .setValue(User(
-                        id = id,
-                        name = name,
-                        score = 0,
-                        profileImagePath = "",
-                        backgroundImagePath = "",
-                        recentRecipe = "",
-                        friends = mutableListOf(),
-                        uploadRecipe = mutableListOf(),
-                        saveRecipe = mutableListOf()
-                    ))
-                    .addOnCompleteListener {
-                        Toast.makeText(context, "환영해요!", Toast.LENGTH_SHORT).show()
-                        pref.setUseTTS() // tts 사용
-                        pref.setUseSTT() // stt 사용
-                        pref.setUseCloudMsg()
-                        signIn(id, pw)
-                    }
+                Toast.makeText(context, "환영해요!", Toast.LENGTH_SHORT).show()
+                pref.setUseTTS() // tts 사용
+                pref.setUseSTT() // stt 사용
+                pref.setUseCloudMsg()
+                pref.setResponsiveness(8)
+                pref.setSpeakSpeed(2)
+                pref.setVoiceTone(2)
+                if(isSnsSignUp) { signIn(id, pw, isSns = true) }
+                else { signIn(id, pw) }
             }
-//        TODO("위 코드에서 테스트로 넣은 값듯 지워야 함")
     }
 
     private fun moveToMain(id:String){ // 로그인

@@ -347,11 +347,12 @@
                 app:layout_constraintTop_toBottomOf="@id/editSignUpName"
                 app:layout_constraintBottom_toBottomOf="parent"/>
             <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/btnSignUpSlideWithSNS"
+                android:id="@+id/btnSignUpWithGoogle"
                 android:layout_width="250dp"
                 android:layout_height="wrap_content"
                 android:background="@drawable/style_round_30_stroke_main_start"
-                android:text="@string/login_with_SNS"
+                android:text="Google로 회원가입"
+                android:textAllCaps="false"
                 android:textSize="15sp"
                 android:textColor="@color/main_color_start"
                 android:layout_marginTop="5dp"
@@ -359,5 +360,7 @@
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/btnSignUpSlide"/>
         </androidx.constraintlayout.widget.ConstraintLayout>
+        <include layout="@layout/common_sign_up_with_sns"
+            android:id="@+id/signUpWithSns"/>
     </LinearLayout>
 </com.sothree.slidinguppanel.SlidingUpPanelLayout>

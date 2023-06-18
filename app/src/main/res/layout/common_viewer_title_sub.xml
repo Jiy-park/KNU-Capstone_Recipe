@@ -36,11 +36,11 @@
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="2">
-        <androidx.appcompat.widget.AppCompatImageView
+        <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/ivUserProfileImage"
             android:layout_width="60dp"
             android:layout_height="60dp"
-            android:layout_gravity="top|right"
+            android:layout_gravity="center|right"
             android:background="@drawable/style_circle"
             android:backgroundTint="@color/background_gray"
             android:src="@drawable/default_user_profile_image"/>

@@ -7,7 +7,10 @@ import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.net.toUri
 import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
 import com.example.capstone_recipe.Preference
@@ -15,7 +18,10 @@ import com.example.capstone_recipe.R
 import com.example.capstone_recipe.databinding.ActivityRecipeLockerBinding
 import com.example.capstone_recipe.recipe_locker.locker_adpater.LockerViewPagerAdapter
 import com.google.android.material.tabs.TabLayoutMediator
+import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.database.ktx.getValue
 import com.google.firebase.database.ktx.values
@@ -30,15 +36,50 @@ class RecipeLocker: AppCompatActivity() {
     private val binding by lazy { ActivityRecipeLockerBinding.inflate(layoutInflater) }
     private lateinit var context:Context
     private lateinit var adpater: LockerViewPagerAdapter
-    private val db = Firebase.database("https://knu-capstone-f9f55-default-rtdb.asia-southeast1.firebasedatabase.app/")
+    private val db = Firebase.database
     private val userRef = db.getReference("users")
     private var lockerOwnerId = ""
     private var lockerOwner: DataSnapshot? = null
     private var userId: String = ""
     private lateinit var image: Pair<Uri, Uri>
+
+    private lateinit var imageChanger :ActivityResultLauncher<Intent>
+
 //    private var userInfo = User()
 
     private suspend fun getUser(userId: String) = userRef.child(userId).get().await()
+    private fun addValueChangeListener(){
+        Log.d("LOG_CHECK", "RecipeLocker :: addValueChangeListener() -> val  : ${lockerOwner?.value}")
+        userRef.child(userId).addChildEventListener(object: ChildEventListener{
+            override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
+                Log.d("LOG_CHECK", "RecipeLocker :: onChildAdded() -> " +
+                        "owner : $lockerOwnerId" +
+                        "snapshot : ${snapshot.value}")
+                Log.d("LOG_CHECK", "RecipeLocker :: onChildAdded() -> previousChildName : $previousChildName")
+            }
+
+            @SuppressLint("SetTextI18n")
+            override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
+                Log.d("LOG_CHECK", "RecipeLocker :: onChildChanged() -> " +
+                        "owner : $lockerOwnerId" +
+                        "previousChildName : $previousChildName")
+                Log.d("LOG_CHECK", "RecipeLocker :: onChildChanged() -> snapshot : ${snapshot.value}")
+                when(previousChildName){
+                    "id" -> binding.tvUserNameWithId.text = "${snapshot.value} @$lockerOwnerId"
+                }
+
+            }
+
+            override fun onChildRemoved(snapshot: DataSnapshot) {
+                Log.d("LOG_CHECK", "RecipeLocker :: onChildRemoved() -> " +
+                        "owner : $lockerOwnerId" +
+                        "snapshot : ${snapshot.value}")
+            }
+
+            override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {}
+            override fun onCancelled(error: DatabaseError) {}
+        })
+    }
 
     @SuppressLint("SetTextI18n")
     private suspend fun setUserView(user: DataSnapshot) = withContext(Dispatchers.Main){
@@ -124,6 +165,19 @@ class RecipeLocker: AppCompatActivity() {
 
         binding.viewPager.adapter = adpater
 
+        imageChanger = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){ result ->
+            if(result.resultCode == RESULT_OK){
+                val newProfileUri = result.data?.getStringExtra("profile")!!
+                val newBackUri = result.data?.getStringExtra("back")!!
+                image = Pair(newProfileUri.toUri(), newBackUri.toUri())
+
+                Glide.with(context).load(image.first).into(binding.ivLockerUserImage)
+                Glide.with(context).load(image.second                                    ).into(binding.ivLockerBackImage)
+
+            }
+        }
+
+
 //        binding.viewPager.currentItem = intent.getIntExtra("page", 0)
 //        intent.removeExtra("page")
 
@@ -149,6 +203,7 @@ class RecipeLocker: AppCompatActivity() {
 
         lifecycleScope.launch(Dispatchers.IO) {
             lockerOwner = getUser(lockerOwnerId)
+            addValueChangeListener()
             launch(Dispatchers.Main) {
                 setUserView(lockerOwner!!)
                 adpater = LockerViewPagerAdapter(lockerOwner, this@RecipeLocker)
@@ -159,7 +214,7 @@ class RecipeLocker: AppCompatActivity() {
                         val intent = Intent(context, ModifyRecipeLocker::class.java)
                         intent.putExtra("profileUri", image.first.toString())
                         intent.putExtra("backUri", image.second.toString())
-                        startActivity(intent)
+                        imageChanger.launch(intent)
                     }
                 }
                 else{ // 현재 보여지는 RecipeLocker의 주인이 현재 앱 사용자와 다름 -> 친구 추가/삭제 가능

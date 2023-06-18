@@ -17,9 +17,22 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/Theme.Capstone_Recipe"
+        android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
-            android:name=".test_______.TestActivity3"
+            android:name=".test_______.Test1"
+            android:exported="false" />
+        <activity
+            android:name=".create_test.SupplementCalculate"
+            android:exported="false" />
+        <activity
+            android:name=".post_viewer.PostViewer"
+            android:exported="false" />
+        <activity
+            android:name=".test_______.RetrofitTest"
+            android:exported="false" />
+        <activity
+            android:name=".test_______.TestActivity4"
             android:exported="false" />
         <activity
             android:name=".create_test.RecipeCreateT"
@@ -29,9 +42,6 @@
             android:name=".search.SetFilter"
             android:exported="false"
             android:windowSoftInputMode="adjustResize|stateAlwaysHidden" />
-        <activity
-            android:name=".test_______.TestActivity2"
-            android:exported="false" />
         <activity
             android:name=".recipe_locker.ModifyRecipeLocker"
             android:exported="false" />
@@ -43,9 +53,6 @@
             android:exported="false" />
         <activity
             android:name=".TalkingRecipe"
-            android:exported="false" />
-        <activity
-            android:name=".PostViewer"
             android:exported="false" />
         <activity
             android:name=".recipe_create.RecipeCreate"

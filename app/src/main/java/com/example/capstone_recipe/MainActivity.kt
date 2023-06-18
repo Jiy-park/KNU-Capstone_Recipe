@@ -16,10 +16,11 @@ import com.example.capstone_recipe.create_test.RecipeCreateT
 import com.example.capstone_recipe.data_class.RecipeBasicInfo
 import com.example.capstone_recipe.databinding.ActivityMainBinding
 import com.example.capstone_recipe.dialog.DialogFunc
+import com.example.capstone_recipe.post_viewer.PostViewer
 import com.example.capstone_recipe.recipe_create.RecipeCreate
 import com.example.capstone_recipe.recipe_locker.RecipeLocker
 import com.example.capstone_recipe.search.Search
-import com.example.capstone_recipe.test_______.TestActivity3
+import com.example.capstone_recipe.test_______.*
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
@@ -30,7 +31,7 @@ import kotlinx.coroutines.withContext
 
 class MainActivity : AppCompatActivity() {
     private val binding by lazy { ActivityMainBinding.inflate(layoutInflater) }
-    private val db = Firebase.database("https://knu-capstone-f9f55-default-rtdb.asia-southeast1.firebasedatabase.app/")
+    private val db = Firebase.database
     private val storage = Firebase.storage
     private lateinit var context: Context
     private var pressTime = 0L //뒤로가기 키 두번 누르는거
@@ -39,7 +40,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun testFunction(){ // 테스트 용
         binding.tvTop.setOnClickListener {
-            val intent = Intent(context, TestActivity3::class.java)
+            val intent = Intent(context, TestActivity4::class.java)
             startActivity(intent)
         }
     }
@@ -78,7 +79,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.ivRecipeCreate.setOnClickListener {
-            val intent = Intent(context, RecipeCreate::class.java)
+            val intent = Intent(context, RecipeCreateT::class.java)
             startActivity(intent)
         }
 
@@ -94,19 +95,17 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.layerRecentRecipe.root.setOnClickListener {
-//            Toast.makeText(context, "@@", Toast.LENGTH_SHORT).show()
             db.getReference("users")
                 .child(Preference(context).getUserId())
                 .child("recentRecipe")
                 .get()
                 .addOnSuccessListener {
-                    Toast.makeText(context, it.value.toString(), Toast.LENGTH_SHORT).show()
                     val intent = Intent(context, PostViewer::class.java)
                     intent.putExtra("recipeId", it.value.toString())
                     startActivity(intent)
                 }
                 .addOnFailureListener {
-                    Log.e("LOG_CHECK", "MainActivity :: onCreate() -> $it")
+                    Log.e("ERROR", "MainActivity :: onCreate() -> $it")
                 }
         }
 

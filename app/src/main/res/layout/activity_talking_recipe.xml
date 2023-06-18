@@ -29,6 +29,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginTop="15dp"
+        tools:background="@color/test_color_dark_green"
         app:layout_constraintTop_toBottomOf="@id/layerRecipeTitle"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -45,7 +46,16 @@
         app:layout_constraintBottom_toTopOf="@+id/bottomPanel"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent">
+        <TextView
+            android:id="@+id/tvToxiText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginBottom="20dp"
+            android:layout_marginEnd="20dp"
+            android:text="듣고 있어요!"/>
         <ImageView
+            android:id="@+id/ivToxi"
             android:layout_width="150dp"
             android:layout_height="150dp"
             android:src="@drawable/rabbit_talking_recipe"/>
@@ -80,6 +90,18 @@
             android:background="@drawable/style_main_color"
             android:fontFamily="@font/kopup_d_medium"
             android:text="@string/next"
+            android:textColor="@color/white"
+            android:textSize="15sp"
+            tools:ignore="VisualLintButtonSize,TextContrastCheck" />
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnDone"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/style_main_color"
+            android:fontFamily="@font/kopup_d_medium"
+            android:text="완성!"
+            tools:visibility="visible"
             android:textColor="@color/white"
             android:textSize="15sp"
             tools:ignore="VisualLintButtonSize,TextContrastCheck" />

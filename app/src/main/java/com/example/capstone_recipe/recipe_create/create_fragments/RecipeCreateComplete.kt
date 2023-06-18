@@ -9,7 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.FragmentManager
-import com.example.capstone_recipe.PostViewer
+import com.example.capstone_recipe.post_viewer.PostViewer
 import com.example.capstone_recipe.databinding.FragmentRecipeCreateCompleteBinding
 
 class RecipeCreateComplete(private val recipeId: String) : Fragment() {
@@ -29,6 +29,7 @@ class RecipeCreateComplete(private val recipeId: String) : Fragment() {
             requireActivity().supportFragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
             requireActivity().finish()
             val intent = Intent(context, PostViewer::class.java)
+            intent.putExtra("from", "user")
             intent.putExtra("recipeId", recipeId) // 포스트 고유 id값
             startActivity(intent)
         }

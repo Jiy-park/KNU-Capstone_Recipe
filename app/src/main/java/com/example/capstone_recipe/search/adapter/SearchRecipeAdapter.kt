@@ -1,4 +1,4 @@
-package com.example.capstone_recipe.search
+package com.example.capstone_recipe.search.adapter
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -8,7 +8,8 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.example.capstone_recipe.PostViewer
+import com.example.capstone_recipe.R
+import com.example.capstone_recipe.post_viewer.PostViewer
 import com.example.capstone_recipe.data_class.RecipeBasicInfo
 import com.example.capstone_recipe.databinding.ItemLockerRecipeViewerBinding
 
@@ -48,7 +49,12 @@ class SearchRecipeAdapter: RecyclerView.Adapter<SearchRecipeAdapter.Holder>() {
             binding.layerViewer.recipeTime.text = recipe.time + "분"
             binding.layerViewer.recipeLevel.text = recipe.level.toKor
             binding.layerViewer.recipeLike.text = recipe.score.toString()
-            Glide.with(context).load(mainImageUri).into(binding.layerViewer.ivRecipeMainImage)
+            Glide.with(context)
+                .let {
+                    if(mainImageUri == Uri.EMPTY){ it.load(R.drawable.default_recipe_main_image) }
+                    else { it.load(mainImageUri) }
+                }
+                .into(binding.layerViewer.ivRecipeMainImage)
             setClickEvent(recipe.id)
         }
         private fun setClickEvent(recipeId: String){

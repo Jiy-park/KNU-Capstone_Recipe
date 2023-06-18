@@ -34,6 +34,7 @@ class RecipeSelectMainImageAdapter: RecyclerView.Adapter<RecipeSelectMainImageAd
         if((checkedImageIndex == -1 || checkedImageIndex >= recipeStepImageUriList.size) && position == 0){
             checkedView = holder.itemView
             checkedImageIndex = 0
+            checkImageUri = imageUri
             holder.itemView.findViewById<FrameLayout>(R.id.frameChecked).visibility = View.VISIBLE
         }
         else if(checkedImageIndex == position){
@@ -49,7 +50,6 @@ class RecipeSelectMainImageAdapter: RecyclerView.Adapter<RecipeSelectMainImageAd
 
     inner class Holder(val binding: ItemSelectMainImageBinding): RecyclerView.ViewHolder(binding.root){
         fun bind(imageUri: Uri){
-            Log.d("LOG_CHECK", "Holder :: bind() -> imageUri : $imageUri")
             Glide.with(context)
                 .load(imageUri)
                 .centerCrop()

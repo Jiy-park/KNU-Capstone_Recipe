@@ -1,8 +1,7 @@
-package com.example.capstone_recipe.search
+package com.example.capstone_recipe.search.adapter
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -59,13 +58,13 @@ class SearchFilterAdapter: RecyclerView.Adapter<SearchFilterAdapter.Holder>() {
                     if(filter.excludeIngredient!!.isEmpty()) { filter.excludeIngredient = null }
                 }
                 "분" -> {
-                    filter.time = null
+                    filter.timeLimit = null
                 }
                 "kcal이하" -> {
-                    filter.calorie = null
+                    filter.calorieLimit = null
                 }
                 "난이도" ->{
-                    filter.level = null
+                    filter.levelLimit = null
 
                 }
             }

@@ -21,6 +21,7 @@ import com.example.capstone_recipe.create_test.create_fragment.RecipeCreateStepT
 import com.example.capstone_recipe.data_class.Ingredient
 import com.example.capstone_recipe.data_class.RecipeBasicInfo
 import com.example.capstone_recipe.data_class.RecipeStep
+import com.example.capstone_recipe.data_class.RecipeSupplement
 import com.example.capstone_recipe.databinding.ActivityRecipeCreateBinding
 import com.google.firebase.database.ktx.database
 import com.google.firebase.database.ktx.getValue
@@ -45,6 +46,7 @@ class RecipeCreateT : AppCompatActivity() {
     private var currentStep = STEP_FIRST
 
     private var recipeBasicInfo = RecipeBasicInfo()
+    private var recipeSupplement = RecipeSupplement()
     private var recipeIngredientList = listOf<Ingredient>()
     private var recipeStepList = listOf<RecipeStep>(RecipeStep())
     private var recipeStepImageUriList = listOf<Uri>()
@@ -194,12 +196,11 @@ class RecipeCreateT : AppCompatActivity() {
                 binding.btnDone.visibility = View.VISIBLE
             }
             STEP_COMPLETE -> {
-                if(toNext) { replaceFragment(RecipeCreateComplete()) }
+                startUpload()
                 binding.btnNext.visibility = View.GONE
                 binding.btnPrev.visibility = View.GONE
                 binding.btnDone.visibility = View.GONE
                 binding.topPanel.root.visibility = View.GONE
-                startUpload()
             }
         }
     }
@@ -246,6 +247,9 @@ class RecipeCreateT : AppCompatActivity() {
             recipeBasicInfo.id = recipeId
         }
         makeUpRecipeInfo()
+    }
+
+    private fun uploadAll(){
         lifecycleScope.launch(Dispatchers.IO) {
             async { uploadToUserDB() }.await()
             async { uploadToRecipeDB() }.await()
@@ -256,6 +260,7 @@ class RecipeCreateT : AppCompatActivity() {
 
     private fun endUpload(){
         setProgress(on = false)
+        replaceFragment(RecipeCreateComplete(recipeId))
     }
 
     /** * 레시피 아이디를 생성하여 반납. 생성일_작성자_레시피 타이틀*/
@@ -269,10 +274,29 @@ class RecipeCreateT : AppCompatActivity() {
     /** * 레시피에 필요한 정보를 최종 정리 :
      * recipeBasicInfo
      * recipeIngredientList
-     * recipeStepList*/
+     * recipeStepList
+     * recipeSupplement */
     private fun makeUpRecipeInfo(){
+        recipeStepImageUriList.forEachIndexed { index, uri ->
+            Log.d("LOG_CHECK", "RecipeCreateT :: makeUpRecipeInfo() -> index : $index , path : ${recipeStepList[index].imagePath} uri : $uri")
+            if(uri.toString().startsWith("https://")){
+                val extension = recipeStepList[index].imagePath.split(".")[1] // q_step_2.jpeg -> jpeg
+                recipeStepList[index].imagePath = "${creatorId}_step_${index}.$extension"// q_step_2.jpeg -> q_step_$index.jpeg
+            }
+            else {
+                Log.d("LOG_CHECK", "RecipeCreateT :: makeUpRecipeInfo() -> inner uri : $uri")
+                val imagePath = uriToPath(uri, index)
+                recipeStepList[index].imagePath = imagePath
+
+            }
+        }
+
         if(recipeMainImageUri.toString().startsWith("https://")){
-            recipeBasicInfo.mainImagePath = recipeStepList[recipeMainImageIndex].imagePath
+            Log.d("LOG_CHECK", "RecipeCreateT :: makeUpRecipeInfo() -> main uri : $recipeMainImageUri")
+            val extension = recipeStepList[recipeMainImageIndex].imagePath.split(".")[1] // q_step_2.jpeg -> jpeg
+            recipeBasicInfo.mainImagePath = "${recipeMainImageIndex}_${creatorId}_main.$extension"// q_step_2.jpeg -> $mainImageIndex_q_main.jpeg
+            Log.d("LOG_CHECK", "RecipeCreateT :: makeUpRecipeInfo() -> recipeBasicInfo.mainImagePath : ${recipeBasicInfo.mainImagePath}")
+
         }
         else {
             val mainImagePath = uriToPath(recipeMainImageUri)
@@ -281,22 +305,13 @@ class RecipeCreateT : AppCompatActivity() {
                 else { "" }
         }
 
-
-
-//
-//        if(!recipeMainImageUri.toString().startsWith("https://")){
-//            val mainImagePath = uriToPath(recipeMainImageUri)
-//            recipeBasicInfo.mainImagePath =
-//                if(mainImagePath.isNotEmpty()) { "${recipeMainImageIndex}_$mainImagePath" }
-//                else { "" }
-//        }
-
-        recipeStepImageUriList.forEachIndexed { index, uri ->
-            Log.d("LOG_CHECK", "RecipeCreateT :: makeUpRecipeInfo() -> index : $index->uri : $uri")
-            if(!uri.toString().startsWith("https://")){
-                Log.d("LOG_CHECK", "RecipeCreateT :: makeUpRecipeInfo() -> inner uri : $uri")
-                val imagePath = uriToPath(uri, index)
-                recipeStepList[index].imagePath = imagePath
+        val ingredient = ingredientListToString(recipeIngredientList)
+        TextTranslate().translate(ingredient){ translatedText ->
+            Log.d("LOG_CHECK", "RecipeCreateT :: makeUpRecipeInfo() -> 변환 후 $translatedText")
+            SupplementCalculate().calculateSupplement(translatedText){
+                Log.d("LOG_CHECK", "RecipeCreateT :: makeUpRecipeInfo() -> 영양 성분 계산 : $it")
+                recipeSupplement = it
+                uploadAll()
             }
         }
     }
@@ -316,12 +331,14 @@ class RecipeCreateT : AppCompatActivity() {
         val basicInfoPath = recipeRef.child("basicInfo")
         val ingredientPath = recipeRef.child("ingredient")
         val stepPath = recipeRef.child("step")
-        val favoritePeople = recipeRef.child( "favoritePeople")
+        val favoritePeoplePath = recipeRef.child( "favoritePeople")
+        val supplementPath = recipeRef.child("supplement")
 
         basicInfoPath.setValue(recipeBasicInfo)
         ingredientPath.setValue(recipeIngredientList)
-        favoritePeople.setValue("")
+        favoritePeoplePath.setValue("")
         stepPath.setValue(recipeStepList)
+        supplementPath.setValue(recipeSupplement)
     }
 
     /** * 레시피에 사용된 이미지를 데이터베이스에 업로드 함*/
@@ -333,7 +350,7 @@ class RecipeCreateT : AppCompatActivity() {
         withContext(Dispatchers.IO){
             recipeStepImageUriList.mapIndexed { index, uri ->
                 async {
-                    if(uri != defaultImageUri){
+                    if(uri != defaultImageUri && !uri.toString().startsWith("https://")){
                         stepRef
                             .child(recipeStepList[index].imagePath)
                             .putFile(uri)
@@ -358,12 +375,23 @@ class RecipeCreateT : AppCompatActivity() {
 
     /** * 매개변수로 들어온 uri 를 기반으로 imagePath 생성 후 반납, step 값을 통해 단계별 이미지의 사진을 변환할 수 있음*/
     private fun uriToPath(uri: Uri, step:Int = -1): String {
+        Log.d("LOG_CHECK", "RecipeCreateT :: uriToPath() -> uri : $uri")
         if(uri == defaultImageUri) { return "" }
         val mimeType = contentResolver?.getType(uri)?: "/none" //마임타입 ex) images/jpeg
         val ext = mimeType.split("/")[1] //확장자 ex) jpeg
 
         return if(step == -1) { "${creatorId}_main.$ext" }  // step이 -1인 경우 메인 이미지로 간주
         else { "${creatorId}_step_$step.$ext" }             // step 이미지인 경우 각 스텝 번호를 이미지 경로에 부여
+    }
+
+    /** * 영양 성분 분석에 필요한 재료 문자열을 만들어줌*/
+    private fun ingredientListToString(ingredientList: List<Ingredient>,): String{
+        var ingredient = ""
+        ingredientList.forEachIndexed() { index, it ->
+            ingredient += "${it.name} ${it.amount}"
+            if(index < recipeIngredientList.size-1) { ingredient += ", " }
+        }
+        return ingredient
     }
 
     /** *현재 키보드가 올라와 있는 상태면 강제로 내림 */

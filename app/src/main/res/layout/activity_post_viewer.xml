@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".PostViewer">
+    tools:context=".post_viewer.PostViewer">
 
     <LinearLayout
         android:id="@+id/linearProgress"
@@ -14,7 +14,7 @@
         android:gravity="center"
         android:translationZ="1dp"
         android:orientation="vertical"
-        tools:visibility="gone"
+        android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -29,7 +29,7 @@
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
     </LinearLayout>
-<!--    최상단 패널-->
+    <!--    최상단 패널-->
     <include layout="@layout/common_top_panel_sub"
         android:id="@+id/layerTopPanel"
         android:layout_width="match_parent"
@@ -38,7 +38,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
-<!--    메인 콘텐츠-->
+    <!--    메인 콘텐츠-->
     <androidx.core.widget.NestedScrollView
         android:id="@+id/scrollView2"
         android:layout_width="match_parent"
@@ -122,7 +122,7 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/__timer" />
                 <TextView
-                    android:id="@+id/tvCreateServing"
+                    android:id="@+id/tvCreateAmount"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/kopup_d_medium"
@@ -166,13 +166,24 @@
                 android:fontFamily="@font/kopup_d_medium"
                 android:textSize="17sp"
                 android:padding="15dp"/>
-<!--            재료 설명-->
+            <!--            재료 설명-->
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recyclerviewRecipeIngredients"
+                android:id="@+id/recyclerviewRecipeIngredientsForUser"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingHorizontal="15dp"
                 android:overScrollMode="never"/>
+            <TextView
+                android:id="@+id/tvIngredientForApi"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                tools:text="재료123"
+                android:fontFamily="@font/kopup_d_medium"
+                android:textColor="@color/main_text"
+                android:textSize="15sp"
+                android:paddingHorizontal="15dp"
+                android:visibility="gone"/>
+
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -181,6 +192,13 @@
                 android:fontFamily="@font/kopup_d_medium"
                 android:textSize="17sp"
                 android:padding="15dp"/>
+            <include layout="@layout/common_recipe_supplement"
+                android:id="@+id/layerSupplement"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:nestedScrollingEnabled="false"
+                android:layout_marginHorizontal="15dp"
+                android:overScrollMode="never"/>
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -189,14 +207,14 @@
                 android:fontFamily="@font/kopup_d_medium"
                 android:textSize="17sp"
                 android:padding="15dp"/>
-<!--            레시피 단계-->
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/recyclerviewRecipeStep"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:nestedScrollingEnabled="false"
-                    android:overScrollMode="never"
-                    android:paddingHorizontal="15dp" />
+            <!--            레시피 단계-->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerviewRecipeStep"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:nestedScrollingEnabled="false"
+                android:overScrollMode="never"
+                android:paddingHorizontal="15dp" />
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
     <!--    토킹레시피 버튼-->

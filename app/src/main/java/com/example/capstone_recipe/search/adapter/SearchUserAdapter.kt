@@ -1,4 +1,4 @@
-package com.example.capstone_recipe.search
+package com.example.capstone_recipe.search.adapter
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -24,22 +24,20 @@ class SearchUserAdapter:RecyclerView.Adapter<SearchUserAdapter.Holder>() {
     }
 
     override fun onBindViewHolder(holder: Holder, position: Int) {
-        Log.d("LOG_CHECK", "SearchUserAdapter :: onBindViewHolder() -> position : $position")
-        holder.bind(userList[position])
+        if (userList.isNotEmpty()) { holder.bind(userList[position]) }
     }
 
     override fun getItemCount() = userList.size
 
+    @SuppressLint("NotifyDataSetChanged")
     fun updateUserList(newList: List<UserInfo>){
         userList = newList
         notifyDataSetChanged()
-        Log.d("LOG_CHECK", "SearchUserAdapter :: updateUserList() -> userIdList : $userList")
     }
 
     inner class Holder(val binding: ItemUserSimpleViewerBinding):RecyclerView.ViewHolder(binding.root){
         @SuppressLint("SetTextI18n")
         fun bind(userInfo: UserInfo){
-            Log.d("LOG_CHECK", "Holder :: bind() -> userInfo : $userInfo")
             binding.tvFriendNameWithId.text = "${userInfo.name} @${userInfo.id}"
             Glide.with(context)
                 .load(userInfo.profileImageUri)

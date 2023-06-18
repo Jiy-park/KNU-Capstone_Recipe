@@ -14,54 +14,38 @@ import android.view.ViewGroup
 import android.widget.Toast
 import com.bumptech.glide.Glide
 import com.example.capstone_recipe.Preference
+import com.example.capstone_recipe.R
 import com.example.capstone_recipe.databinding.FragmentTalkingRecipeStepBinding
 
 class TalkingRecipeStep(
-        private val tts: TextToSpeech,
-        step: Int,
-        val stepExplanationList: List<String>,
-        private val stepImageUriList: List<Uri>
+        _step: Int,
+        private val stepExplanation: String,
+        private val stepImageUri: Uri
     ): Fragment() {
 
     private lateinit var binding: FragmentTalkingRecipeStepBinding
     private lateinit var context: Context
-    private lateinit var pref: Preference
-    private var isToastShown = false
-    var currentStep = step // 1 단계 = 0
+    private var currentStep = _step // 1 단계 = 0
 
 
     @SuppressLint("SetTextI18n")
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding =  FragmentTalkingRecipeStepBinding.inflate(inflater, container, false)
         context = binding.root.context
-        pref = Preference(context)
 
-        if(stepExplanationList.isNotEmpty()) {
-            updateView(currentStep)
-            if(pref.getUseTTS()) { startTTS(currentStep) }
-            else{
-                if(currentStep == 0 && !isToastShown){
-                    Toast.makeText(context, "레시피를 읽어주길 원하신다면,\n환경설정에서 '읽어주기'를 허용해 주세요.", Toast.LENGTH_SHORT).show()
-                    isToastShown = true
-                }
-            }
-        }
+        setView()
         return binding.root
     }
 
+    /** * 설명, 이미지에 맞게 뷰 설정*/
     @SuppressLint("SetTextI18n")
-    private fun updateView(step: Int){
-        binding.tvRecipeStep.text = "${step+1}단계"
-        binding.tvRecipeStepExplanation.text = stepExplanationList[step]
+    private fun setView() = with(binding){
+        tvRecipeStep.text = "${currentStep+1} 단계"
+        tvRecipeStepExplanation.text = stepExplanation
+
         Glide.with(context)
-            .load(stepImageUriList[step])
-            .into(binding.ivRecipeStepImage)
+            .load(stepImageUri)
+            .error(R.drawable.default_recipe_main_image)
+            .into(ivRecipeStepImage)
     }
-
-    private fun startTTS(step: Int){
-        val text = stepExplanationList[step]
-        tts.speak(text, TextToSpeech.QUEUE_FLUSH, null, null)
-    }
-
-
 }

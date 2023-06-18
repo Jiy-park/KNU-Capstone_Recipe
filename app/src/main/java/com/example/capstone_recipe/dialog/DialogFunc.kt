@@ -8,6 +8,7 @@ import android.os.Build
 import android.os.VibrationEffect
 import android.os.Vibrator
 import android.os.VibratorManager
+import android.util.Log
 import android.view.LayoutInflater
 import android.widget.*
 import androidx.annotation.RequiresApi
@@ -132,5 +133,60 @@ class DialogFunc {
             dialog.setDialogSize(DialogInterface.SIZE.SMALL, null)
             dialog.initDialog()
         }
+
+        @SuppressLint("MissingInflatedId")
+        fun settingToxiDialog(context: Context, callback: (speed: Int, tone: Int, responsiveness: Int)->Unit){
+            val dialog = DialogInterface(context)
+            val pref = Preference(context)
+            val view = LayoutInflater.from(context).inflate(R.layout.dialog_toxi_setting, null)
+            dialog.title = "토시 설정"
+
+            val speakSpeed = view.findViewById<SeekBar>(R.id.seekbarSpeakSpeed)
+            speakSpeed.progress = pref.getSpeakSpeed()// =  pref.getSpeakSpeed()
+
+            val voiceTone = view.findViewById<SeekBar>(R.id.seekbarVoiceTone)
+            voiceTone.progress =  pref.getVoiceTone()
+
+            val responsiveness = view.findViewById<SeekBar>(R.id.seekbarRecognitionResponsiveness)
+            responsiveness.progress =  pref.getResponsiveness()
+
+            var afterSpeed = speakSpeed.progress
+            var afterTone = voiceTone.progress
+            var afterResponsiveness = responsiveness.progress
+
+            val seekBarListener =  object: SeekBar.OnSeekBarChangeListener{
+                override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {}
+                override fun onStartTrackingTouch(seekBar: SeekBar?) {}
+                override fun onStopTrackingTouch(seekBar: SeekBar?) {
+                    when(seekBar?.id){
+                        R.id.seekbarSpeakSpeed -> { afterSpeed = seekBar.progress }
+                        R.id.seekbarVoiceTone -> { afterTone = seekBar.progress }
+                        R.id.seekbarRecognitionResponsiveness -> { afterResponsiveness = seekBar.progress }
+                    }
+                }
+            }
+
+            speakSpeed.setOnSeekBarChangeListener(seekBarListener)
+            voiceTone.setOnSeekBarChangeListener(seekBarListener)
+            responsiveness.setOnSeekBarChangeListener(seekBarListener)
+
+            view.findViewById<Button>(R.id.btnDialogOK).setOnClickListener {
+                pref.setSpeakSpeed(afterSpeed)
+                pref.setVoiceTone(afterTone)
+                pref.setResponsiveness(afterResponsiveness)
+
+                dialog.dismiss()
+                callback(afterSpeed, afterTone, afterResponsiveness)
+            }
+
+            view.findViewById<Button>(R.id.btnDialogCancel).setOnClickListener {
+                dialog.dismiss()
+            }
+
+            dialog.view = view
+            dialog.setDialogSize(DialogInterface.SIZE.NORMAL, null)
+            dialog.initDialog()
+        }
+
     }
 }

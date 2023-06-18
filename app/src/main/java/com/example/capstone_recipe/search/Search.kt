@@ -10,8 +10,10 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.view.inputmethod.EditorInfo
+import android.widget.TableLayout
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.view.get
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.capstone_recipe.Preference
@@ -21,6 +23,11 @@ import com.example.capstone_recipe.data_class.Ingredient
 import com.example.capstone_recipe.data_class.RecipeBasicInfo
 import com.example.capstone_recipe.data_class.UserInfo
 import com.example.capstone_recipe.databinding.ActivitySearchBinding
+import com.example.capstone_recipe.search.adapter.*
+import com.example.capstone_recipe.search.fragment.SearchApiRecipeFragment
+import com.example.capstone_recipe.search.fragment.SearchRecipeFragment
+import com.example.capstone_recipe.search.fragment.SearchUserFragment
+import com.google.android.material.tabs.TabLayoutMediator
 import com.google.firebase.database.ktx.database
 import com.google.firebase.database.ktx.getValue
 import com.google.firebase.ktx.Firebase
@@ -33,12 +40,8 @@ import kotlinx.coroutines.tasks.await
 class Search : AppCompatActivity() {
     private val binding by lazy { ActivitySearchBinding.inflate(layoutInflater) }
     private lateinit var context: Context
-    private val db = Firebase.database("https://knu-capstone-f9f55-default-rtdb.asia-southeast1.firebasedatabase.app/")
-    private val storage = Firebase.storage
-    private lateinit var mutex: Mutex
-    private lateinit var searchUserAdapter: SearchUserAdapter
-    private lateinit var searchRecipeAdapter: SearchRecipeAdapter
     private lateinit var searchFilterAdapter: SearchFilterAdapter
+    private lateinit var searchViewPagerAdapter: SearchViewPagerAdapter
     private var searchFilter = Filter()
 
     private var resultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){ result->
@@ -47,27 +50,36 @@ class Search : AppCompatActivity() {
             else{ result.data?.getSerializableExtra("filter") as Filter }
             searchFilterAdapter.updateList(makeFilterOptionList(searchFilter))
             searchFilterAdapter.filter = searchFilter
-            Log.d("LOG_CHECK", "Search :: onCreate() -> after searchFilter : $searchFilter")
         }
     }
 
+    @Suppress("DeferredResultUnused")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
         context = binding.root.context
 
-        searchUserAdapter = SearchUserAdapter() // 유저 검색 리사이클러뷰 세팅
-        binding.recyclerviewUserResult.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
-        binding.recyclerviewUserResult.adapter = searchUserAdapter
+        binding.recyclerviewFilters.apply {
+            searchFilterAdapter = SearchFilterAdapter()
+            searchFilterAdapter.filter = searchFilter
+            layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+            adapter = searchFilterAdapter
+        }
 
-        searchRecipeAdapter = SearchRecipeAdapter() // 레시피 검색 리사이클러뷰 세팅
-        binding.recyclerviewRecipeResult.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
-        binding.recyclerviewRecipeResult.adapter = searchRecipeAdapter
+        initTab()
 
-        searchFilterAdapter = SearchFilterAdapter()
-        searchFilterAdapter.filter = searchFilter
-        binding.recyclerviewFilters.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
-        binding.recyclerviewFilters.adapter = searchFilterAdapter
+        binding.tabLayout.addTab(binding.tabLayout.newTab(), 0)
+        binding.tabLayout.addTab(binding.tabLayout.newTab(), 1)
+        binding.tabLayout.addTab(binding.tabLayout.newTab(), 2)
+        binding.viewPager.adapter = searchViewPagerAdapter
+
+        TabLayoutMediator(binding.tabLayout, binding.viewPager){ tab, position ->
+            when (position) {
+                0 -> tab.text = "유저"
+                1 -> tab.text = "유저 작성글"
+                2 -> tab.text = "토시 작성글"
+            }
+        }.attach()
 
         binding.btnSetFilter.setOnClickListener {
             val intent = Intent(context, SetFilter::class.java)
@@ -75,31 +87,30 @@ class Search : AppCompatActivity() {
             resultLauncher.launch(intent)
         }
 
+        binding.layerTopPanel.btnBack.setOnClickListener { finish() }
+
         binding.editSearch.setOnEditorActionListener { _, actionId, _ ->
             if(actionId == EditorInfo.IME_ACTION_SEARCH){
                 val searchTarget = binding.editSearch.text.toString()
                 if(searchTarget.isNotEmpty()){
                     lifecycleScope.launch(Dispatchers.IO) {
-                        async{// 유저 검색
-                            val userIdList = searchUserByName(searchTarget)
-                            val userInfoList = getUsersInfo(userIdList)
-                            Log.d("LOG_CHECK", "Search :: onCreate() -> \nuserIdList : $userIdList\nuserInfoList : $userInfoList")
-                            withContext(Dispatchers.Main){
-                                if(userInfoList.isNotEmpty()){ binding.linearUserSearch.visibility = View.VISIBLE }
-                                else { binding.linearUserSearch.visibility = View.GONE }
-                                searchUserAdapter.updateUserList(userInfoList)
-                            }
+                        async {
+                            (searchViewPagerAdapter.fragmentList[0] as SearchUserFragment)
+                                .startSearch(searchTarget){ size ->
+                                    binding.tabLayout.getTabAt(0)?.text = "유저 \n$size 명"
+                                }
                         }
-                        async {// 레시피 검색
-                            val recipeIdList = searchRecipeIdByTitleWithFilter(searchTarget, searchFilter)
-                            val recipeBasicInfoList = getRecipesBasicInfo(recipeIdList)
-                            val creatorList = getCreatorList(recipeBasicInfoList)
-                            val mainImageUriList = getRecipeMainImage(recipeBasicInfoList)
-                            withContext(Dispatchers.Main){
-                                if(recipeBasicInfoList.isNotEmpty()){ binding.recyclerviewRecipeResult.visibility = View.VISIBLE }
-                                else { binding.recyclerviewRecipeResult.visibility = View.GONE }
-                                searchRecipeAdapter.updateAdapterList(recipeBasicInfoList, creatorList, mainImageUriList)
-                            }
+                        async {
+                            (searchViewPagerAdapter.fragmentList[1] as SearchRecipeFragment)
+                                .startSearch(searchTarget, searchFilter){ size ->
+                                    binding.tabLayout.getTabAt(1)?.text = "유저 작성글\n$size 개"
+                                }
+                        }
+                        async {
+                            (searchViewPagerAdapter.fragmentList[2] as SearchApiRecipeFragment)
+                                .startSearch(searchTarget, searchFilter){ size ->
+                                    binding.tabLayout.getTabAt(2)?.text = "토시 작성글\n$size 개"
+                                }
                         }
                     }
                 }
@@ -119,223 +130,27 @@ class Search : AppCompatActivity() {
         filter.excludeIngredient?.let { list ->
             list.forEach { filterOptionList.add("$it 제외") }
         }
-        filter.time?.let { filterOptionList.add("$it 분") }
-        filter.calorie?.let { filterOptionList.add("$it kcal이하") }
-        filter.level?.let { filterOptionList.add("${it.toKor} 난이도") }
+        filter.timeLimit?.let { filterOptionList.add("$it 분") }
+        filter.calorieLimit?.let { filterOptionList.add("$it kcal이하") }
+        filter.levelLimit?.let { filterOptionList.add("${it.toKor} 난이도") }
         return filterOptionList
     }
 
-    /** * 입력받은 name을 갖는 유저의 아이디를 리스트 형태로 반환*/
-    private suspend fun searchUserByName(name: String): List<String>{
-        if(name.isEmpty()){ return emptyList() }
-        val foundList = mutableListOf<String>()
-        mutex = Mutex()
-        withContext(Dispatchers.IO){
-            db.getReference("users").get().await().children.map { userId ->
-                async {
-                    val userName = userId.child("name").value.toString()
-                    if(userName.contains(name)) {
-                        Log.d("LOG_CHECK", "Search :: searchUserByName() -> 서치 nmae : $name -> 발견 name : $userName")
-                        mutex.withLock {
-                            Log.d("LOG_CHECK", "Search :: searchUserByName() -> name에 해당하는 유저 ${userId.child("id").value.toString()} 추가 \n$foundList")
-                            foundList.add(userId.child("id").value.toString())
-                        }
-                    }
-                }
-            }.awaitAll()
-            Log.d("LOG_CHECK", "Search :: searchUserByName() -> 완료")
-        }
-        Log.d("LOG_CHECK", "Search :: searchUserByName() -> 완료 반환 리스트 : foundList : $foundList")
-        return foundList
-    }
+    /** * 탭 레이아웃, 뷰페이저 초기화 및 연동*/
+    private fun initTab(){
+        searchViewPagerAdapter = SearchViewPagerAdapter(this@Search)
 
-    /** *유저 아이디 리스트를 받아 해당 아이디에 맞는 유저들 정보 (: 이름, 아이디, 프로필 이미지, 친구 확인) 를 찾아 리스트 형태로 반납 */
-    private suspend fun getUsersInfo(userIdsList: List<String>):List<UserInfo>{
-        val userInfoList = mutableListOf<UserInfo>()
-        val userRef = db.getReference("users")
-        val userId = Preference(context).getUserId() // 디바이스 주인 == 검색한 주체
-        mutex = Mutex()
+        binding.tabLayout.addTab(binding.tabLayout.newTab(), 0)
+        binding.tabLayout.addTab(binding.tabLayout.newTab(), 1)
+        binding.tabLayout.addTab(binding.tabLayout.newTab(), 2)
+        binding.viewPager.adapter = searchViewPagerAdapter
 
-        withContext(Dispatchers.IO){
-            userIdsList.map { id->
-                async {
-                    val name = userRef.child(id).child("name").get().await().value.toString()
-                    val profilePath = userRef.child(id).child("profileImagePath").get().await().value.toString()
-                    val profileUri = getFriendImageByPath(id, profilePath)
-                    mutex.withLock{
-                        userInfoList.add(UserInfo(id, name, profileUri))
-                        Log.d("LOG_CHECK", "Search :: getUsersInfo() -> 추가 완료  userInfoList : $userInfoList")
-                    }
-                }
-            }.awaitAll()
-        }
-        Log.d("LOG_CHECK", "Search :: getUsersInfo() -> 완료 userInfoList : $userInfoList")
-        return userInfoList
-    }
-
-    /** *유저의 아이디와, 프로필 이미지 경로를 받아옴-> 해당 이미지를 반납 */
-    private suspend fun getFriendImageByPath(userId: String, imagePath: String): Uri {
-        val defaultImageUri by lazy { Uri.parse("android.resource://${context.packageName}/${R.drawable.default_user_profile_image}")!! }
-        val userImageRef = storage.getReference("user_image")
-        return if(imagePath.isNotEmpty()){ userImageRef.child(userId).child("profile").child(imagePath).downloadUrl.await() }
-                 else { defaultImageUri }
-    }
-
-    /** * 입력받은 타이틀 필터 옵션에 맞는 레시피의 아이디를 리스트 형태로 반납*/
-//    TODO: basicInfoFilterCheck() 구현해야 함
-    private suspend fun searchRecipeIdByTitleWithFilter(searchTitle: String, filter: Filter): List<String>{
-        mutex = Mutex()
-        val recipeIdList = mutableListOf<String>()
-        withContext(Dispatchers.IO){
-            db.getReference("recipes").get().await().children.map { recipe ->
-                async {
-                    val recipeBasicInfo = recipe.child("basicInfo").getValue(RecipeBasicInfo::class.java)!!
-                    val recipeTitle = recipeBasicInfo.title
-                    if((recipeTitle.contains(searchTitle) && searchTitle.isNotEmpty())) { // 해당 레시피의 타이틀에 검색어가 포함돼 있으면 다음 작업 시작
-                        Log.d("LOG_CHECK", "Search :: searchRecipeIdByTitleWithFilter() -> title : $recipeTitle")
-                        val ingredient = recipe.child("ingredient").getValue<List<Ingredient>>()!!
-                        val ingredientPass = ingredientFilterCheck(ingredient, filter)
-                        Log.d("LOG_CHECK", "Search :: searchRecipeByTitleWithIngredient() -> ingredientPass : $ingredientPass")
-                        val basicInfoPass = basicInfoFilterCheck(recipeBasicInfo, filter)
-                        if(ingredientPass && basicInfoPass){
-                            mutex.withLock {
-                                recipeIdList.add(recipeBasicInfo.id)
-                            }
-                        }
-
-                    }
-                }
+        TabLayoutMediator(binding.tabLayout, binding.viewPager){ tab, position ->
+            when (position) {
+                0 -> tab.text = "유저"
+                1 -> tab.text = "유저 작성글"
+                2 -> tab.text = "토시 작성글"
             }
-        }
-        return recipeIdList
-    }
-
-    /** * 레시피 재료가 필터 옵션에 맞는지 체크, 맞다면 true, 맞지 않으면 false 반납*/
-    private suspend fun ingredientFilterCheck(recipeIngredientList: List<Ingredient>, filter:Filter): Boolean{
-        var excludeOk = true // 검색 옵션으로 제외한 재료가 ingredient에 존재할 경우 false -> return false
-        var includeOk = (filter.includeIngredient == null)
-        val include = filter.includeIngredient
-        val exclude = filter.excludeIngredient
-
-        withContext(Dispatchers.Default){
-            async {
-                include?.let {
-                    recipeIngredientList.forEach {
-                        if(include.contains(it.name)){
-                            includeOk = true
-                            Log.d("LOG_CHECK", "Search :: ingredientFilterCheck() -> ${it.name}은 포함 목록에 포함돼 있다. includeOk : $includeOk")
-                            cancel()
-                        }
-                    }
-                }
-            }
-            async {
-                exclude?.let {
-                    recipeIngredientList.forEach {
-                        if(exclude.contains(it.name)) {
-                            excludeOk = false
-                            Log.d("LOG_CHECK", "Search :: ingredientFilterCheck() -> ${it.name}은 제외 목록에 포함돼 있다. excludeOk : $excludeOk")
-                            this.cancel()
-                        }
-                    }
-                }
-            }
-        }.await()
-        Log.d("LOG_CHECK", "Search :: ingredientFilterCheck() -> done excludeOk : $excludeOk , includeOk : $includeOk")
-        return (excludeOk && includeOk)
-    }
-
-    /** * 레시피 정보가 필터 옵션에 맞는지 체크, 맞다면 true, 맞지 않으면 false 반납*/
-    private fun basicInfoFilterCheck(recipeBasicInfo: RecipeBasicInfo, filter:Filter): Boolean{
-        var timeOk = (filter.time == null)
-        var calorieOk = (filter.calorie == null)
-        var levelOk = (filter.level == null)
-
-        filter.time?.let {
-            timeOk = (it.toInt() >= recipeBasicInfo.time.toInt())
-        }
-
-        filter.calorie?.let {
-//            TODO("RecipeBasicInfo 에 칼로리 변수 추가 해야함")
-//            calorieOk = (it.toInt() > recipeBasicInfo.)
-            calorieOk = true
-        }
-
-        filter.level?.let {
-            levelOk = (it == recipeBasicInfo.level)
-        }
-
-        return (timeOk && calorieOk && levelOk)
-    }
-
-    private suspend fun getRecipesBasicInfo(recipeIdsList: List<String>): List<RecipeBasicInfo>{
-        val recipeBasicInfoList = mutableListOf<RecipeBasicInfo>()
-        val recipeRef = db.getReference("recipes")
-        mutex = Mutex()
-
-        withContext(Dispatchers.IO){
-            recipeIdsList.map { id->
-                async {
-                    val basicInfo = recipeRef.child(id).child("basicInfo").get().await().getValue(RecipeBasicInfo::class.java)!!
-                    mutex.withLock{
-                        recipeBasicInfoList.add(basicInfo)
-                        Log.d("LOG_CHECK", "Search :: getUsersInfo() -> 추가 완료  recipeBasicInfoList : $recipeBasicInfoList")
-                    }
-                }
-            }.awaitAll()
-        }
-        Log.d("LOG_CHECK", "Search :: getUsersInfo() -> 완료 userInfoList : $recipeBasicInfoList")
-        return recipeBasicInfoList
-    }
-
-    private suspend fun getRecipeMainImage(recipeBasicInfoList: List<RecipeBasicInfo>): List<Uri>{
-        val mainImageList = MutableList(recipeBasicInfoList.size) { Uri.EMPTY }
-        val recipeImageRef = storage.getReference("recipe_image")
-        val defaultImageUri = Uri.parse("android.resource://$packageName/${R.drawable.default_recipe_main_image}")
-        withContext(Dispatchers.IO){
-            recipeBasicInfoList.mapIndexed { index, recipeBasicInfo ->
-                async {
-                    val imagePath = recipeBasicInfo.mainImagePath
-                    if(imagePath.isNotEmpty()){
-                        val recipeId = recipeBasicInfo.id
-                        val imageUri = recipeImageRef
-                            .child(recipeId)
-                            .child("main_image")
-                            .child(imagePath)
-                            .downloadUrl
-                            .await()
-                        mainImageList.add(index, imageUri)
-                    }
-                    else{
-                        mainImageList.add(index, defaultImageUri)
-                    }
-                }
-            }.awaitAll()
-        }
-        return mainImageList
-    }
-
-    private suspend fun getCreatorList(recipeBasicInfoList: List<RecipeBasicInfo>): List<String>{
-        val creatorList = MutableList(recipeBasicInfoList.size) { "" }
-        val userRef = db.getReference("users")
-        withContext(Dispatchers.IO){
-            recipeBasicInfoList.mapIndexed { index, recipeBasicInfo ->
-                async {
-                    val creatorId = recipeBasicInfo.id.split("_")[1]
-                    val creatorName = userRef
-                        .child(creatorId)
-                        .child("name")
-                        .get()
-                        .await()
-                        .value
-                        .toString()
-                    Log.d("LOG_CHECK", "Search :: getCreatorList() -> " +
-                            "id : $creatorId" +
-                            "name : $creatorName")
-                    creatorList.add(index, "$creatorName @$creatorId")
-                }
-            }
-        }.awaitAll()
-        return creatorList
+        }.attach()
     }
 }

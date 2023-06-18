@@ -12,6 +12,10 @@ class Preference(context: Context) {
     fun getUseTTS() = sharedPref.getBoolean(USE_TTS, true)
     fun getUseSTT() = sharedPref.getBoolean(USE_STT, true)
     fun getUseCloudMsg() = sharedPref.getBoolean(USE_CLOUD_MSG, true)
+    fun getSpeakSpeed() = sharedPref.getInt(SPEAK_SPEED, 2)
+    fun getVoiceTone() = sharedPref.getInt(VOICE_TONE, 2)
+    fun getResponsiveness() = sharedPref.getInt(RESPONSIVENESS, 8)
+
 
     fun setUseTTS(use: Boolean = true){
         val editor = sharedPref.edit()
@@ -52,13 +56,13 @@ class Preference(context: Context) {
         editor.apply()
     }
 
-
     fun saveAutoLogInInfo(userId: String, userPw: String){
         val editor = sharedPref.edit()
         editor.putString(USER_ID, userId)
         editor.putString(USER_PW, userPw)
         editor.apply()
     }
+
     fun autoLogIn(editId: EditText, editPw: EditText){
         val userId = sharedPref.getString(USER_ID, null)
         val userPw = sharedPref.getString(USER_PW, null)
@@ -66,6 +70,24 @@ class Preference(context: Context) {
             editId.setText(userId)
             editPw.setText(userPw)
         }
+    }
+
+    fun setSpeakSpeed(speed: Int){
+        val editor = sharedPref.edit()
+        editor.putInt(SPEAK_SPEED, speed)
+        editor.apply()
+    }
+
+    fun setVoiceTone(tone: Int){
+        val editor = sharedPref.edit()
+        editor.putInt(VOICE_TONE, tone)
+        editor.apply()
+    }
+
+    fun setResponsiveness(responsiveness: Int){
+        val editor = sharedPref.edit()
+        editor.putInt(RESPONSIVENESS, responsiveness)
+        editor.apply()
     }
 
     companion object KEYS{
@@ -80,5 +102,9 @@ class Preference(context: Context) {
         const val USE_TTS = "useTTS"
         const val USE_STT = "useSTT"
         const val USE_CLOUD_MSG = "useCloudMsg"
+
+        const val SPEAK_SPEED = "speakSpeed"
+        const val VOICE_TONE = "voiceTone"
+        const val RESPONSIVENESS = "responsiveness"
     }
 }
