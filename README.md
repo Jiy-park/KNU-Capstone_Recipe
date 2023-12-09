@@ -23,5 +23,5 @@
 - Firebase-Storage
 - Firebase-Authentication
 - Retrofit2
-- [조리식품 레시피 DB API](https://www.foodsafetykorea.go.kr/api/datasetAllSearch.do)
+- [조리식품 레시피 DB API](https://www.foodsafetykorea.go.kr/api/newDatasetDetail.do)
 - [식품 영양 성분 API](https://api.edamam.com/)
