@@ -11,7 +11,7 @@
 <details>
   <summary>
     
-    # 애플리케이션 화면 구성
+# 애플리케이션 화면 구성
     
   </summary>
   
