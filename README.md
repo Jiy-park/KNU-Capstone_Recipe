@@ -9,8 +9,10 @@
 ![talking_recipe_intro](https://github.com/Jiy-park/KNU-Capstone_Recipe/assets/79889934/646f9dee-4bb6-4106-b329-61f57aabc775)
 
 <details>
-  <summary>  
+  <summary>
+    
     # 애플리케이션 화면 구성
+    
   </summary>
   
   ![talking_recipe_flow](https://github.com/Jiy-park/KNU-Capstone_Recipe/assets/79889934/1b4d3817-3c52-4eca-8e2c-a1e7a53be846)
