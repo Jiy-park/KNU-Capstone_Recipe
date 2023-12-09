@@ -48,6 +48,7 @@
 - Firebase-Storage
 - Firebase-Authentication
 - Retrofit2
+- Glide
 
 # 사용 API
 - [조리식품 레시피 DB API](https://www.foodsafetykorea.go.kr/api/newDatasetDetail.do)
