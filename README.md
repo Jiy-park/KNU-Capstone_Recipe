@@ -14,6 +14,7 @@
   </summary>
   ![talking_recipe_flow](https://github.com/Jiy-park/KNU-Capstone_Recipe/assets/79889934/1b4d3817-3c52-4eca-8e2c-a1e7a53be846)
 </details>
+
 # 담당 역할
 - 4인 1팀 팀장
 - 데이터베이스 설계 개발
