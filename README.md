@@ -1,10 +1,11 @@
-# KNU-Capstone_Recipe
+# KNU CAPSTONE DESIGN -Talking Recipe-
 # 강원대학교 캠스톤 디자인 제출용 애플리케이션.
 
 # 토킹 레시피 설명
 핸즈 프리 레시피 어플리케이션.  
 조리식품의 레시피 DB API 를 통해 기본 탑재 레시피 3000개를 포함하며, 자체 로그인 또는 구글 로그인 기능을 통해 자신만의 레시피를 공유할 수 있다.
 식품 영양 성분 분석 API를 통해 레시피의 영양 성분을 분석해 알려줄 수 있다.  
+토킹 레시피는 Text To Speech, Speech To Text 기술을 활용하여 요리 중 손을 사용할 수 없는 상황에서도 음성을 통해 조작해 편리한 환경을 제공해준다.
 [소개 영상](https://youtu.be/EyVXPPh2V8Y?si=fq5TYXPU6-FZHi34)
 
 <details>
