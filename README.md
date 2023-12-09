@@ -38,7 +38,7 @@
 - Firebase를 통한 데이터 관리
 - 애플리케이션 전반적인 구현
 - 애플리케이션 내 레시피, 유저 검색 및 필터를 적용한 검색 구현
-- 각 팀원의 개발 파트 프로젝트 파일에 통합 (Java->Kotilin 코드 변환) 
+- 각 팀원의 개발 파트 프로젝트 파일에 통합 (Java->Kotlin 코드 변환) 
 
 # 사용 기술
 - Android
@@ -52,4 +52,4 @@
 # 사용 API
 - [조리식품 레시피 DB API](https://www.foodsafetykorea.go.kr/api/newDatasetDetail.do)
 - [식품 영양 성분 API](https://api.edamam.com/)
-- [영양 선분 번역용 NAVER PAPAGO API](https://developers.naver.com/products/papago/nmt/nmt.md)
+- [영양 성분 번역용 NAVER PAPAGO API](https://developers.naver.com/products/papago/nmt/nmt.md)
