@@ -8,9 +8,12 @@
 [소개 영상](https://youtu.be/EyVXPPh2V8Y?si=fq5TYXPU6-FZHi34)
 ![talking_recipe_intro](https://github.com/Jiy-park/KNU-Capstone_Recipe/assets/79889934/646f9dee-4bb6-4106-b329-61f57aabc775)
 
-# 애플리케이션 화면 구성
+<detail>
+  <summary>  
+    # 애플리케이션 화면 구성
+  </summary>
 ![talking_recipe_flow](https://github.com/Jiy-park/KNU-Capstone_Recipe/assets/79889934/1b4d3817-3c52-4eca-8e2c-a1e7a53be846)
-
+</detail>
 # 담당 역할
 - 4인 1팀 팀장
 - 데이터베이스 설계 개발
