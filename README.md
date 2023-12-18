@@ -19,11 +19,11 @@
 ![talking_recipe_flow](https://github.com/Jiy-park/KNU-Capstone_Recipe/assets/79889934/1b4d3817-3c52-4eca-8e2c-a1e7a53be846)
 
 # 개발 기간  
-2023.03.14 ~ 2023.06.18  
+* 2023.03.14 ~ 2023.06.18  
 
 # 개발 인원: 4명  
-개발자 3인  
-디자이너 1인
+* 개발자 3인  
+* 디자이너 1인
   
 # 담당 역할
 - 데이터베이스 설계 개발
