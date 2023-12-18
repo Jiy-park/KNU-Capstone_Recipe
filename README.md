@@ -10,30 +10,22 @@
 식품 영양 성분 분석 API를 통해 레시피의 영양 성분을 분석해 알려줄 수 있다.  
 [소개 영상](https://youtu.be/EyVXPPh2V8Y?si=fq5TYXPU6-FZHi34)
 
-<details>
-  <summary>
-    
-  # 토킹 레시피 소개 이미지
-  
-  </summary>
+# 토킹 레시피 소개 이미지
   
 ![talking_recipe_intro](https://github.com/Jiy-park/KNU-Capstone_Recipe/assets/79889934/646f9dee-4bb6-4106-b329-61f57aabc775)
 
-</details>
-
-<details>
-  <summary>
-    
 # 토킹레시피 화면 구성
     
-  </summary>
-  
-  ![talking_recipe_flow](https://github.com/Jiy-park/KNU-Capstone_Recipe/assets/79889934/1b4d3817-3c52-4eca-8e2c-a1e7a53be846)
-  
-</details>
+![talking_recipe_flow](https://github.com/Jiy-park/KNU-Capstone_Recipe/assets/79889934/1b4d3817-3c52-4eca-8e2c-a1e7a53be846)
 
+# 개발 기간  
+2023.03.14 ~ 2023.06.18  
+
+# 개발 인원: 4명  
+개발자 3인
+디자이너 1인
+  
 # 담당 역할
-- 4인 1팀 팀장
 - 데이터베이스 설계 개발
 - Firebase를 통한 데이터 관리
 - 애플리케이션 전반적인 구현
